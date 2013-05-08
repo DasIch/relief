@@ -43,9 +43,11 @@ class Element(object):
         return self
 
     def __init__(self, value=Unspecified):
-        self.is_valid = None
         self.value = value
+
+        self.is_valid = None
         self.raw_value = Unspecified
+        self.errors = []
 
     @property
     def value(self):

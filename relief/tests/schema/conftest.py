@@ -28,3 +28,10 @@ class ElementTest(object):
         element = element_cls.using(validators=[lambda e, c: False])(possible_value)
         assert not element.validate()
         assert not element.is_valid
+
+    def test_errors(self, element_cls):
+        # just check that we have an errors attribute we can do list-like stuff
+        # with
+        element = element_cls()
+        element.errors.append(u"something")
+        assert element.errors == [u"something"]
