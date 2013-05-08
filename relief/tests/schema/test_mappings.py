@@ -9,11 +9,12 @@
 from relief.constants import Unspecified, NotUnserializable
 from relief.schema.scalars import Unicode, Integer
 from relief.schema.mappings import Dict
+from relief.tests.schema.conftest import ElementTest
 
 import py.test
 
 
-class MappingTest(object):
+class MappingTest(ElementTest):
     def test_getitem(self, element_cls):
         element = element_cls({u"foo": 1})
         assert element[u"foo"].value == 1
@@ -66,6 +67,22 @@ class MappingTest(object):
         assert not element.validate()
         assert not element.is_valid
 
+    def test_validate_is_recursive(self):
+        validators = []
+        def key_validator(element, state):
+            validators.append("key")
+            return True
+        def value_validator(element, state):
+            validators.append("value")
+            return True
+        element = Dict.of(
+            Integer.using(validators=[key_validator]),
+            Integer.using(validators=[value_validator])
+        )({1: 1})
+        assert element.validate()
+        assert element.is_valid
+        assert validators == ["key", "value"]
+
 
 class MutableMappingTest(MappingTest):
     def test_setitem(self, element_cls):
@@ -110,6 +127,10 @@ class TestDict(MutableMappingTest):
     @py.test.fixture
     def element_cls(self):
         return Dict.of(Unicode, Integer)
+
+    @py.test.fixture
+    def possible_value(self):
+        return {u"foo": 1}
 
     def test_has_key(self, element_cls):
         assert element_cls({u"foo": 1}).has_key(u"foo")

@@ -11,36 +11,37 @@ from collections import Counter
 from relief.constants import Unspecified, NotUnserializable
 from relief.schema.scalars import Integer
 from relief.schema.sequences import Tuple, List
+from relief.tests.schema.conftest import ElementTest
 
 import six
 import py.test
 
 
-class SequenceTest(object):
-    def test_getitem(self, element_cls, values):
-        element = element_cls(values)
-        for i, value in enumerate(values):
+class SequenceTest(ElementTest):
+    def test_getitem(self, element_cls, possible_value):
+        element = element_cls(possible_value)
+        for i, value in enumerate(possible_value):
             assert isinstance(element[i], Integer)
             assert element[i].value == value
 
         with py.test.raises(IndexError):
             element[i + 1]
 
-        assert len(element[:]) == len(values)
-        for child, value in zip(element[:], values):
+        assert len(element[:]) == len(possible_value)
+        for child, value in zip(element[:], possible_value):
             assert isinstance(child, Integer)
             assert child.value == value
 
-    def test_contains(self, element_cls, values):
-        element = element_cls(values)
-        for value in values:
+    def test_contains(self, element_cls, possible_value):
+        element = element_cls(possible_value)
+        for value in possible_value:
             assert value in element
         assert 3 not in element
 
-    def test_index(self, element_cls, values):
-        element = element_cls(values)
+    def test_index(self, element_cls, possible_value):
+        element = element_cls(possible_value)
         seen = set()
-        for i, value in enumerate(values):
+        for i, value in enumerate(possible_value):
             if value in seen:
                 continue
             assert element.index(value) == i
@@ -49,9 +50,9 @@ class SequenceTest(object):
         with py.test.raises(ValueError):
             element.index(3)
 
-    def test_count(self, element_cls, values):
-        element = element_cls(values)
-        for value, count in six.iteritems(Counter(values)):
+    def test_count(self, element_cls, possible_value):
+        element = element_cls(possible_value)
+        for value, count in six.iteritems(Counter(possible_value)):
             assert element.count(value) == count
         assert element.count(3) == 0
 
@@ -60,18 +61,18 @@ class SequenceTest(object):
         assert not element.validate()
         assert not element.is_valid
 
-    def test_validate_value(self, element_cls, values):
-        element = element_cls(values)
-        assert element.value == values
-        assert element.raw_value == values
+    def test_validate_value(self, element_cls, possible_value):
+        element = element_cls(possible_value)
+        assert element.value == possible_value
+        assert element.raw_value == possible_value
         assert element.validate()
         assert element.is_valid
 
-    def test_validate_raw_value(self, element_cls, values, raw_values):
-        element = element_cls.from_raw_value(raw_values)
-        assert element.raw_value == raw_values
-        assert element.value == values
-        for child, value, raw_value in zip(element, values, raw_values):
+    def test_validate_raw_value(self, element_cls, possible_value, possible_raw_value):
+        element = element_cls.from_raw_value(possible_raw_value)
+        assert element.raw_value == possible_raw_value
+        assert element.value == possible_value
+        for child, value, raw_value in zip(element, possible_value, possible_raw_value):
             assert child.value == value
             assert child.raw_value == raw_value
         assert element.validate()
@@ -84,6 +85,16 @@ class SequenceTest(object):
         assert not element.validate()
         assert not element.is_valid
 
+    def test_validate_is_recursive(self, element_cls, possible_value):
+        is_recursive = [False]
+        def validate(element, context):
+            is_recursive[0] = True
+            return True
+        element = element_cls.using(validators=[validate])(possible_value)
+        assert element.validate()
+        assert element.is_valid
+        assert is_recursive[0]
+
 
 class TestTuple(SequenceTest):
     @py.test.fixture
@@ -91,11 +102,11 @@ class TestTuple(SequenceTest):
         return Tuple.of(Integer, Integer, Integer)
 
     @py.test.fixture
-    def values(self):
+    def possible_value(self):
         return (1, 1, 2)
 
     @py.test.fixture
-    def raw_values(self):
+    def possible_raw_value(self):
         return ("1", 1, "2")
 
     @py.test.fixture
@@ -197,11 +208,11 @@ class TestList(MutableSequenceTest):
         return List.of(Integer)
 
     @py.test.fixture
-    def values(self):
+    def possible_value(self):
         return [1, 1, 2]
 
     @py.test.fixture
-    def raw_values(self):
+    def possible_raw_value(self):
         return ["1", 1, "2"]
 
     @py.test.fixture

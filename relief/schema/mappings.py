@@ -57,12 +57,14 @@ class Mapping(Container):
     def items(self):
         return list(self.iteritems())
 
-    def validate(self):
+    def validate(self, context=None):
+        if context is None:
+            context = {}
         self.is_valid = True
         for key, value in self.iteritems():
-            self.is_valid &= key.validate()
-            self.is_valid &= value.validate()
-        self.is_valid &= super(Mapping, self).validate()
+            self.is_valid &= key.validate(context)
+            self.is_valid &= value.validate(context)
+        self.is_valid &= super(Mapping, self).validate(context)
         return self.is_valid
 
 

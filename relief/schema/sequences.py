@@ -33,11 +33,13 @@ class Sequence(Container):
     def count(self, value):
         return sum(element.value == value for element in self)
 
-    def validate(self):
+    def validate(self, context=None):
+        if context is None:
+            context = {}
         self.is_valid = True
         for element in self:
-            self.is_valid &= element.validate()
-        self.is_valid &= super(Sequence, self).validate()
+            self.is_valid &= element.validate(context)
+        self.is_valid &= super(Sequence, self).validate(context)
         return self.is_valid
 
 

@@ -42,9 +42,9 @@ class Element(object):
         self.raw_value = raw_value
         return self
 
-    def __init__(self):
+    def __init__(self, value=Unspecified):
         self.is_valid = None
-        self.value = Unspecified
+        self.value = value
         self.raw_value = Unspecified
 
     @property
@@ -117,10 +117,12 @@ class Element(object):
     def unserialize(cls, raw_value):
         return raw_value
 
-    def validate(self):
+    def validate(self, context=None):
+        if context is None:
+            context = {}
         if self.validators:
             self.is_valid = all(
-                validator(self) for validator in self.validators
+                validator(self, context) for validator in self.validators
             )
         else:
             self.is_valid = self.state is None
@@ -135,7 +137,7 @@ class Container(Element):
         cls.member_schema = schema
         return cls
 
-    def __init__(self):
-        super(Container, self).__init__()
+    def __init__(self, value=Unspecified):
+        super(Container, self).__init__(value)
         if self.member_schema is None:
             raise TypeError("member_schema is unknown")

@@ -8,11 +8,20 @@
 """
 from relief.constants import Unspecified
 from relief.schema.core import Element
+from relief.tests.schema.conftest import ElementTest
 
 import py.test
 
 
-class TestElement(object):
+class TestElement(ElementTest):
+    @py.test.fixture
+    def element_cls(self):
+        return Element
+
+    @py.test.fixture
+    def possible_value(self):
+        return object()
+
     def test_using(self):
         assert Element.default is Unspecified
         NewElement = Element.using(default=1)
