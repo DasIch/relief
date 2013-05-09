@@ -38,29 +38,9 @@ class Boolean(Scalar):
         return NotUnserializable
 
 
-class Integer(Scalar):
-    @classmethod
-    def unserialize(cls, raw_value):
-        if isinstance(raw_value, int):
-            return raw_value
-        try:
-            return int(raw_value)
-        except (ValueError, TypeError):
-            return NotUnserializable
+class Number(Scalar):
+    number_cls = None
 
-
-class Float(Scalar):
-    @classmethod
-    def unserialize(cls, raw_value):
-        if isinstance(raw_value, float):
-            return raw_value
-        try:
-            return float(raw_value)
-        except (ValueError, TypeError):
-            return NotUnserializable
-
-
-class Complex(Scalar):
     @classmethod
     def unserialize(cls, raw_value):
         if isinstance(raw_value, complex):
@@ -68,9 +48,21 @@ class Complex(Scalar):
         elif isinstance(raw_value, bytes):
             raw_value = raw_value.decode(sys.getdefaultencoding())
         try:
-            return complex(raw_value)
+            return cls.number_cls(raw_value)
         except (ValueError, TypeError):
             return NotUnserializable
+
+
+class Integer(Number):
+    number_cls = int
+
+
+class Float(Number):
+    number_cls = float
+
+
+class Complex(Number):
+    number_cls = complex
 
 
 class Unicode(Scalar):
