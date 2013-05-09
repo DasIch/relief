@@ -84,24 +84,19 @@ class MappingTest(ElementTest):
         assert validators == ["key", "value"]
 
     def test_traverse(self, element_cls):
-        mapping = {u"foo": 1, u"bar": 2}
-        element = element_cls(mapping)
+        element = element_cls({u"foo": 1})
         assert [
             (prefix, child.value) for prefix, child in element.traverse()
         ] == [
             ([0, 0], u"foo"),
-            ([0, 1], 1),
-            ([1, 0], u"bar"),
-            ([1, 1], 2)
+            ([0, 1], 1)
         ]
         assert [
             (prefix, child.value)
             for prefix, child in element.traverse(prefix=["foo"])
         ] == [
             (["foo", 0, 0], u"foo"),
-            (["foo", 0, 1], 1),
-            (["foo", 1, 0], u"bar"),
-            (["foo", 1, 1], 2)
+            (["foo", 0, 1], 1)
         ]
 
 
