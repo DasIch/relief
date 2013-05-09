@@ -14,7 +14,7 @@ from relief.schema.scalars import Unicode, Integer
 
 
 def test_present():
-    Validated = Unicode.using(validators=[Present()])
+    Validated = Unicode.validated_by([Present()])
     unicode = Validated(u"foobar")
     assert unicode.validate()
     assert not unicode.errors
@@ -25,7 +25,7 @@ def test_present():
 
 
 def test_converted():
-    Validated = Integer.using(validators=[Converted()])
+    Validated = Integer.validated_by([Converted()])
     integer = Integer.from_raw_value(1)
     assert integer.validate()
     assert not integer.errors
@@ -36,7 +36,7 @@ def test_converted():
 
 
 def test_is_true():
-    Validated = Unicode.using(validators=[IsTrue()])
+    Validated = Unicode.validated_by([IsTrue()])
     unicode = Validated(u"foobar")
     assert unicode.validate()
     assert not unicode.errors
@@ -47,7 +47,7 @@ def test_is_true():
 
 
 def test_is_false():
-    Validated = Unicode.using(validators=[IsFalse()])
+    Validated = Unicode.validated_by([IsFalse()])
     unicode = Validated(u"")
     assert unicode.validate()
     assert not unicode.errors
@@ -58,7 +58,7 @@ def test_is_false():
 
 
 def test_shorter_than():
-    Validated = Unicode.using(validators=[ShorterThan(3)])
+    Validated = Unicode.validated_by([ShorterThan(3)])
     unicode = Validated(u"ab")
     assert unicode.validate()
     assert not unicode.errors
@@ -69,7 +69,7 @@ def test_shorter_than():
 
 
 def test_longer_than():
-    Validated = Unicode.using(validators=[LongerThan(3)])
+    Validated = Unicode.validated_by([LongerThan(3)])
     unicode = Validated(u"abcd")
     assert unicode.validate()
     assert not unicode.errors
@@ -80,7 +80,7 @@ def test_longer_than():
 
 
 def test_length_within_range():
-    Validated = Unicode.using(validators=[LengthWithinRange(3, 6)])
+    Validated = Unicode.validated_by([LengthWithinRange(3, 6)])
     unicode = Validated(u"abcd")
     assert unicode.validate()
     assert not unicode.errors
@@ -92,7 +92,7 @@ def test_length_within_range():
 
 
 def test_contained_in():
-    Validated = Unicode.using(validators=[ContainedIn([u"foo", u"bar"])])
+    Validated = Unicode.validated_by([ContainedIn([u"foo", u"bar"])])
     for value in [u"foo", u"bar"]:
         unicode = Validated(value)
         assert unicode.validate()
@@ -104,7 +104,7 @@ def test_contained_in():
 
 
 def test_less_than():
-    Validated = Integer.using(validators=[LessThan(3)])
+    Validated = Integer.validated_by([LessThan(3)])
     integer = Validated(2)
     assert integer.validate()
     assert not integer.errors
@@ -115,7 +115,7 @@ def test_less_than():
 
 
 def test_greater_than():
-    Validated = Integer.using(validators=[GreaterThan(3)])
+    Validated = Integer.validated_by([GreaterThan(3)])
     integer = Validated(4)
     assert integer.validate()
     assert not integer.errors
@@ -126,7 +126,7 @@ def test_greater_than():
 
 
 def test_within_range():
-    Validated = Integer.using(validators=[WithinRange(3, 6)])
+    Validated = Integer.validated_by([WithinRange(3, 6)])
     integer = Validated(4)
     assert integer.validate()
     assert not integer.errors

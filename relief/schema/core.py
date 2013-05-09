@@ -37,6 +37,10 @@ class Element(object):
         return cls
 
     @classmethod
+    def validated_by(cls, validators):
+        return cls.using(validators=cls.validators + validators)
+
+    @classmethod
     def from_raw_value(cls, raw_value):
         self = cls()
         self.raw_value = raw_value

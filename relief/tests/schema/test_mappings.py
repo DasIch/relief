@@ -76,8 +76,8 @@ class MappingTest(ElementTest):
             validators.append("value")
             return True
         element = Dict.of(
-            Integer.using(validators=[key_validator]),
-            Integer.using(validators=[value_validator])
+            Integer.validated_by([key_validator]),
+            Integer.validated_by([value_validator])
         )({1: 1})
         assert element.validate()
         assert element.is_valid

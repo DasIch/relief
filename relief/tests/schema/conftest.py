@@ -6,6 +6,7 @@
     :copyright: 2013 by Daniel Neuhäuser
     :license: BSD, see LICENSE.rst for details
 """
+from relief.validation import Present, Converted
 
 
 class ElementTest(object):
@@ -13,19 +14,19 @@ class ElementTest(object):
         def is_empty_dict(element, context):
             assert context == {}
             return True
-        element = element_cls.using(validators=[is_empty_dict])(possible_value)
+        element = element_cls.validated_by([is_empty_dict])(possible_value)
         assert element.validate()
         assert element.is_valid
 
         def contains_foo(element, context):
             assert context["foo"] == 1
             return True
-        element = element_cls.using(validators=[contains_foo])(possible_value)
+        element = element_cls.validated_by([contains_foo])(possible_value)
         assert element.validate(context={"foo": 1})
         assert element.is_valid
 
     def test_validate_fails_with_validator(self, element_cls, possible_value):
-        element = element_cls.using(validators=[lambda e, c: False])(possible_value)
+        element = element_cls.validated_by([lambda e, c: False])(possible_value)
         assert not element.validate()
         assert not element.is_valid
 
@@ -35,3 +36,8 @@ class ElementTest(object):
         element = element_cls()
         element.errors.append(u"something")
         assert element.errors == [u"something"]
+
+    def test_validated_by(self, element_cls, possible_value):
+        element = element_cls.validated_by([Present()]).validated_by([Converted()])()
+        assert not element.validate()
+        assert element.errors == [u"May not be blank."]

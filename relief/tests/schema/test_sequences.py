@@ -90,7 +90,7 @@ class SequenceTest(ElementTest):
         def validate(element, context):
             is_recursive[0] = True
             return True
-        element = element_cls.using(validators=[validate])(possible_value)
+        element = element_cls.validated_by([validate])(possible_value)
         assert element.validate()
         assert element.is_valid
         assert is_recursive[0]
