@@ -67,6 +67,17 @@ class Mapping(Container):
         self.is_valid &= super(Mapping, self).validate(context)
         return self.is_valid
 
+    def traverse(self, prefix=None):
+        for i, (key, value) in enumerate(self.iteritems()):
+            if prefix is None:
+                current_prefix = [i]
+            else:
+                current_prefix = prefix + [i]
+            for child in key.traverse(current_prefix + [0]):
+                yield child
+            for child in value.traverse(current_prefix + [1]):
+                yield child
+
 
 class MutableMapping(Mapping):
     @specifiying

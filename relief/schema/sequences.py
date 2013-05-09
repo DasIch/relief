@@ -42,6 +42,13 @@ class Sequence(Container):
         self.is_valid &= super(Sequence, self).validate(context)
         return self.is_valid
 
+    def traverse(self, prefix=None):
+        for i, element in enumerate(self):
+            if prefix is None:
+                yield i, element
+            else:
+                yield prefix + [i], element
+
 
 class Tuple(Sequence, tuple):
     @class_cloner

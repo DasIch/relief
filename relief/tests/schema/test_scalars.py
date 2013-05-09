@@ -51,6 +51,11 @@ class ScalarTest(ElementTest):
         assert element.raw_value == possible_value
         assert element.value == possible_value
 
+    def test_traverse(self, element_cls):
+        element = element_cls()
+        assert list(element.traverse()) == [(None, element)]
+        assert list(element.traverse(prefix=["foo"])) == [(["foo"], element)]
+
 
 class TestBoolean(ScalarTest):
     @py.test.fixture

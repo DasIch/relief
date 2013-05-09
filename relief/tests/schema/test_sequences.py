@@ -95,6 +95,16 @@ class SequenceTest(ElementTest):
         assert element.is_valid
         assert is_recursive[0]
 
+    def test_traverse(self, element_cls, possible_value):
+        element = element_cls(possible_value)
+        assert [
+            (prefix, child.value) for prefix, child in element.traverse()
+        ] == list(enumerate(possible_value))
+        assert [
+            (prefix, child.value)
+            for prefix, child in element.traverse(prefix=["foo"])
+        ] == [(["foo", i], value) for i, value in enumerate(possible_value)]
+
 
 class TestTuple(SequenceTest):
     @py.test.fixture

@@ -130,6 +130,9 @@ class Element(object):
             self.is_valid = self.state is None
         return self.is_valid
 
+    def traverse(self, prefix=None):
+        yield prefix, self
+
 
 class Container(Element):
     member_schema = None
