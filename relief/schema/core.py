@@ -50,7 +50,6 @@ class Element(object):
         self.value = value
 
         self.is_valid = None
-        self.raw_value = Unspecified
         self.errors = []
 
     @property
