@@ -9,11 +9,7 @@
 from relief.schema.core import Element
 from relief.schema.scalars import Unicode
 from relief.schema.special import Form
-
-import py.test
-
-
-python2_only = py.test.mark.skipif("sys.version_info >= (3, 0)")
+from relief.tests.schema.conftest import python2_only
 
 
 class TestForm(object):

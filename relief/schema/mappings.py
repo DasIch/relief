@@ -6,6 +6,8 @@
     :copyright: 2013 by Daniel Neuhäuser
     :license: BSD, see LICENSE.rst for details
 """
+import sys
+
 from relief.utils import class_cloner, inheritable_property
 from relief.constants import Unspecified, NotUnserializable
 from relief.schema.core import Container, specifiying
@@ -38,37 +40,47 @@ class Mapping(Container):
         for key in super(Mapping, self).__iter__():
             yield super(Mapping, self).__getitem__(key).key
 
-    def iterkeys(self):
-        return iter(self)
+    if sys.version_info < (3, 0):
+        def iterkeys(self):
+            return iter(self)
+
+        def itervalues(self):
+            return (self[key.value] for key in self)
+
+        def iteritems(self):
+            for key in self:
+                yield key, self[key.value]
+
+        def viewkeys(self):
+            return self.iterkeys()
+
+        def viewvalues(self):
+            return self.itervalues()
+
+        def viewitems(self):
+            return self.iteritems()
 
     def keys(self):
-        return list(self.iterkeys())
-
-    def itervalues(self):
-        return (self[key.value] for key in self)
+        return [key for key in self]
 
     def values(self):
-        return list(self.itervalues())
-
-    def iteritems(self):
-        for key in self:
-            yield key, self[key.value]
+        return [self[key.value] for key in self]
 
     def items(self):
-        return list(self.iteritems())
+        return [(key, self[key.value]) for key in self]
 
     def validate(self, context=None):
         if context is None:
             context = {}
         self.is_valid = True
-        for key, value in self.iteritems():
+        for key, value in six.iteritems(self):
             self.is_valid &= key.validate(context)
             self.is_valid &= value.validate(context)
         self.is_valid &= super(Mapping, self).validate(context)
         return self.is_valid
 
     def traverse(self, prefix=None):
-        for i, (key, value) in enumerate(self.iteritems()):
+        for i, (key, value) in enumerate(six.iteritems(self)):
             if prefix is None:
                 current_prefix = [i]
             else:
@@ -144,7 +156,7 @@ class Dict(MutableMapping, dict):
     def value(self):
         if self.state is not None:
             return self.state
-        return {key.value: v.value for key, v in self.iteritems()}
+        return {key.value: v.value for key, v in six.iteritems(self)}
 
     def set_value(self, new_value, propagate=True):
         if new_value is Unspecified:

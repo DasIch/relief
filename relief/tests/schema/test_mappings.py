@@ -9,7 +9,7 @@
 from relief.constants import Unspecified, NotUnserializable
 from relief.schema.scalars import Unicode, Integer
 from relief.schema.mappings import Dict
-from relief.tests.schema.conftest import ElementTest
+from relief.tests.schema.conftest import ElementTest, python2_only
 
 import py.test
 
@@ -29,8 +29,15 @@ class MappingTest(ElementTest):
         assert len(keys) == 1
         assert keys[0].value == u"foo"
 
+    @python2_only
     def test_iterkeys(self, element_cls):
         keys = list(element_cls({u"foo": 1}).iterkeys())
+        assert len(keys) == 1
+        assert keys[0].value == u"foo"
+
+    @python2_only
+    def test_viewkeys(self, element_cls):
+        keys = list(element_cls({u"foo": 1}).viewkeys())
         assert len(keys) == 1
         assert keys[0].value == u"foo"
 
@@ -39,8 +46,15 @@ class MappingTest(ElementTest):
         assert len(keys) == 1
         assert keys[0].value == u"foo"
 
+    @python2_only
     def test_itervalues(self, element_cls):
         values = list(element_cls({u"foo": 1}).itervalues())
+        assert len(values) == 1
+        assert values[0].value == 1
+
+    @python2_only
+    def test_viewvalues(self, element_cls):
+        values = list(element_cls({u"foo": 1}).viewvalues())
         assert len(values) == 1
         assert values[0].value == 1
 
@@ -49,8 +63,16 @@ class MappingTest(ElementTest):
         assert len(values) == 1
         assert values[0].value == 1
 
+    @python2_only
     def test_iteritems(self, element_cls):
         items = list(element_cls({u"foo": 1}).iteritems())
+        assert len(items) == 1
+        assert items[0][0].value == u"foo"
+        assert items[0][1].value == 1
+
+    @python2_only
+    def test_viewitems(self, element_cls):
+        items = list(element_cls({u"foo": 1}).viewitems())
         assert len(items) == 1
         assert items[0][0].value == u"foo"
         assert items[0][1].value == 1
