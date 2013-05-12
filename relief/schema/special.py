@@ -11,6 +11,7 @@ import inspect
 from collections import OrderedDict
 
 from relief.utils import inheritable_property
+from relief._compat import add_native_itermethods
 from relief.constants import Unspecified, NotUnserializable
 from relief.schema.core import Element
 from relief.schema.scalars import Unicode
@@ -79,6 +80,7 @@ class FormMeta(type):
                 yield name, attribute
 
 
+@add_native_itermethods
 class Form(six.with_metaclass(FormMeta, Element)):
     def __new__(cls, *args, **kwargs):
         self = super(Form, cls).__new__(cls)
@@ -171,24 +173,14 @@ class Form(six.with_metaclass(FormMeta, Element)):
     def __iter__(self):
         return iter(self._elements)
 
-    if sys.version_info < (3, 0):
-        def iterkeys(self):
-            return self._elements.iterkeys()
-
-        def itervalues(self):
-            return self._elements.itervalues()
-
-        def iteritems(self):
-            return self._elements.iteritems()
-
     def keys(self):
-        return self._elements.keys()
+        return six.iterkeys(self._elements)
 
     def values(self):
-        return self._elements.values()
+        return six.itervalues(self._elements)
 
     def items(self):
-        return self._elements.items()
+        return six.iteritems(self._elements)
 
     def validate(self, context=None):
         if context is None:

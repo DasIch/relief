@@ -8,6 +8,7 @@
 """
 import sys
 
+from relief._compat import add_native_itermethods
 from relief.utils import class_cloner, inheritable_property
 from relief.constants import Unspecified, NotUnserializable
 from relief.schema.core import Container, specifiying
@@ -21,6 +22,7 @@ class _Value(object):
         self.value = value
 
 
+@add_native_itermethods
 class Mapping(Container):
     @class_cloner
     def of(cls, key_schema, value_schema):
@@ -40,34 +42,14 @@ class Mapping(Container):
         for key in super(Mapping, self).__iter__():
             yield super(Mapping, self).__getitem__(key).key
 
-    if sys.version_info < (3, 0):
-        def iterkeys(self):
-            return iter(self)
-
-        def itervalues(self):
-            return (self[key.value] for key in self)
-
-        def iteritems(self):
-            for key in self:
-                yield key, self[key.value]
-
-        def viewkeys(self):
-            return self.iterkeys()
-
-        def viewvalues(self):
-            return self.itervalues()
-
-        def viewitems(self):
-            return self.iteritems()
-
     def keys(self):
-        return [key for key in self]
+        return iter(self)
 
     def values(self):
-        return [self[key.value] for key in self]
+        return (self[key.value] for key in self)
 
     def items(self):
-        return [(key, self[key.value]) for key in self]
+        return ((key, self[key.value]) for key in self)
 
     def validate(self, context=None):
         if context is None:

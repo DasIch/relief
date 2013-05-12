@@ -43,7 +43,7 @@ class MappingTest(ElementTest):
         assert keys[0].value == u"foo"
 
     def test_keys(self, element_cls):
-        keys = element_cls({u"foo": 1}).keys()
+        keys = list(element_cls({u"foo": 1}).keys())
         assert len(keys) == 1
         assert keys[0].value == u"foo"
 
@@ -60,7 +60,7 @@ class MappingTest(ElementTest):
         assert values[0].value == 1
 
     def test_values(self, element_cls):
-        values = element_cls({u"foo": 1}).values()
+        values = list(element_cls({u"foo": 1}).values())
         assert len(values) == 1
         assert values[0].value == 1
 
@@ -79,7 +79,7 @@ class MappingTest(ElementTest):
         assert items[0][1].value == 1
 
     def test_items(self, element_cls):
-        items = element_cls({u"foo": 1}).items()
+        items = list(element_cls({u"foo": 1}).items())
         assert len(items) == 1
         assert items[0][0].value == u"foo"
         assert items[0][1].value == 1
