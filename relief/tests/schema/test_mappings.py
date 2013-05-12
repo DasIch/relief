@@ -9,7 +9,8 @@
 from relief.constants import Unspecified, NotUnserializable
 from relief.schema.scalars import Unicode, Integer
 from relief.schema.mappings import Dict
-from relief.tests.schema.conftest import ElementTest, python2_only
+from relief.tests.conftest import python2_only
+from relief.tests.schema.conftest import ElementTest
 
 import py.test
 

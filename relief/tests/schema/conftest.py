@@ -8,11 +8,6 @@
 """
 from relief.validation import Present, Converted
 
-import py.test
-
-
-python2_only = py.test.mark.skipif("sys.version_info >= (3, 0)")
-
 
 class ElementTest(object):
     def test_validate_with_context(self, element_cls, possible_value):

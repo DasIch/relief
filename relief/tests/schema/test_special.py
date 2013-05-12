@@ -9,7 +9,7 @@
 from relief.schema.core import Element
 from relief.schema.scalars import Unicode
 from relief.schema.special import Form
-from relief.tests.schema.conftest import python2_only
+from relief.tests.conftest import python2_only
 
 
 class TestForm(object):
