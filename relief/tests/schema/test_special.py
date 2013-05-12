@@ -17,7 +17,6 @@ class TestForm(object):
         class Foo(Form):
             spam = Element
             eggs = Element
-        assert Foo._member_schema_is_ordered
         assert list(Foo.member_schema.keys()) == ["spam", "eggs"]
 
     def test_member_schema_inheritance(self):

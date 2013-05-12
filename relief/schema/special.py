@@ -6,12 +6,10 @@
     :copyright: 2013 by Daniel Neuhäuser
     :license: BSD, see LICENSE.rst for details
 """
-import sys
-import inspect
 from collections import OrderedDict
 
 from relief.utils import inheritable_property
-from relief._compat import add_native_itermethods
+from relief._compat import add_native_itermethods, Prepareable
 from relief.constants import Unspecified, NotUnserializable
 from relief.schema.core import Element
 from relief.schema.scalars import Unicode
@@ -19,65 +17,18 @@ from relief.schema.scalars import Unicode
 import six
 
 
-class FormMeta(type):
-    def __new__(cls, cls_name, bases, cls_attributes):
-        member_schema = cls_attributes["member_schema"] = OrderedDict()
+class FormMeta(six.with_metaclass(Prepareable, type)):
+    def __new__(cls, name, bases, attributes):
+        member_schema = attributes["member_schema"] = OrderedDict()
         for base in reversed(bases):
             member_schema.update(getattr(base, "member_schema", {}))
-
-        if isinstance(cls_attributes, OrderedDict):
-            # Python 3.x __prepare__ works.
-            member_schema_is_ordered = True
-            member_schema.update(cls._get_elements(cls_attributes))
-        else:
-            # This ensures that `member_schema` is ordered by the order in
-            # which the members are defined in the source code, if you are
-            # using a Python 2.x. You are not expected to understand how this
-            # works.
-            def get_index(name):
-                # Should provide random order.
-                return 0
-            member_schema_is_ordered = False
-            try:
-                # CPython implementation detail that not every implementation
-                # has to support. CPython and PyPy should both support it
-                # though.
-                sys._getframe
-            except AttributeError:
-                pass
-            else:
-                defining_frame = sys._getframe(1)
-                # class bodies are stored stored as code objects, with the name
-                # of their class as `co_name`, in the constants (`co_consts`)
-                # in the code object of the frame (`f_code`) in which the class
-                # is defined.
-                for constant in reversed(defining_frame.f_code.co_consts):
-                    if inspect.iscode(constant) and constant.co_name == cls_name:
-                        def get_index(name, _names=constant.co_names):
-                            return _names.index(name)
-                        member_schema_is_ordered = True
-                        break
-            schemas = []
-            for name, element in cls._get_elements(cls_attributes):
-                schemas.append((get_index(name), name, element))
-            member_schema.update(
-                (name, element) for _, name, element in sorted(schemas)
-            )
-        # This should be useful for debugging in case someone is wondering why
-        # the ordering is off.
-        cls_attributes["_member_schema_is_ordered"] = member_schema_is_ordered
-        return super(FormMeta, cls).__new__(
-            cls, cls_name, bases, cls_attributes
-        )
+        for name, attribute in six.iteritems(attributes):
+            if isinstance(attribute, type) and issubclass(attribute, Element):
+                member_schema[name] = attribute
+        return super(FormMeta, cls).__new__(cls, name, bases, attributes)
 
     def __prepare__(name, bases, **kwargs):
         return OrderedDict()
-
-    @staticmethod
-    def _get_elements(attributes):
-        for name, attribute in six.iteritems(attributes):
-            if isinstance(attribute, type) and issubclass(attribute, Element):
-                yield name, attribute
 
 
 @add_native_itermethods
