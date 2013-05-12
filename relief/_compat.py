@@ -31,7 +31,7 @@ class Prepareable(type):
             try:
                 constructor = attributes["__new__"]
             except KeyError:
-                return type.__new__(cls, name, bases, attributes)
+                return super(Prepareable, cls).__new__(cls, name, bases, attributes)
 
             def preparing_constructor(cls, name, bases, attributes):
                 try:
@@ -55,4 +55,4 @@ class Prepareable(type):
                     namespace[key] = value
                 return constructor(cls, name, bases, namespace)
             attributes["__new__"] = wraps(constructor)(preparing_constructor)
-            return type.__new__(cls, name, bases, attributes)
+            return super(Prepareable, cls).__new__(cls, name, bases, attributes)
