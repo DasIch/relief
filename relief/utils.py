@@ -11,6 +11,9 @@ from functools import partial
 
 
 class class_cloner(object):
+    """
+    Like :class:`classmethod` but calls the method with a clone of the class.
+    """
     def __init__(self, function):
         self.function = function
 
