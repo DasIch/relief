@@ -75,8 +75,8 @@ class Tuple(Sequence, tuple):
     @property
     def value(self):
         if not isinstance(self.raw_value, tuple):
-            if self.raw_value in [Unspecified, NotUnserializable]:
-                return self.raw_value
+            if self.raw_value is Unspecified:
+                return Unspecified
             return NotUnserializable
         elif len(self.raw_value) != len(self):
             return NotUnserializable
@@ -143,7 +143,7 @@ class List(MutableSequence, list):
     @property
     def value(self):
         if not isinstance(self.raw_value, list):
-            if self.raw_value in [Unspecified, NotUnserializable]:
+            if self.raw_value is Unspecified:
                 return self.raw_value
             return NotUnserializable
         result = []
