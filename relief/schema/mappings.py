@@ -145,8 +145,10 @@ class Dict(MutableMapping, dict):
 
     @property
     def value(self):
-        if self.raw_value is Unspecified:
-            return Unspecified
+        if not isinstance(self.raw_value, dict):
+            if self.raw_value is Unspecified:
+                return Unspecified
+            return NotUnserializable
         result = {}
         for key, value in six.iteritems(self):
             if key.value is NotUnserializable or value.value is NotUnserializable:
@@ -154,23 +156,12 @@ class Dict(MutableMapping, dict):
             result[key.value] = value.value
         return result
 
-    @property
-    def raw_value(self):
-        if hasattr(self, "_raw_value"):
-            return self._raw_value
-        return {
-            key.raw_value: value.raw_value for key, value in six.iteritems(self)
-        }
-
     def set(self, raw_value):
+        self.raw_value = raw_value
         self.clear()
-        if raw_value is Unspecified:
-            self._raw_value = raw_value
-        else:
+        if raw_value is not Unspecified:
             unserialized = self.unserialize(raw_value, shallow=True)
-            if unserialized is NotUnserializable:
-                self._raw_value = raw_value
-            else:
+            if unserialized is not NotUnserializable:
                 if hasattr(self, "_raw_value"):
                     del self._raw_value
                 self.update(unserialized)

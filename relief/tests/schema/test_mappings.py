@@ -85,6 +85,11 @@ class MappingTest(ElementTest):
         assert items[0][0].value == u"foo"
         assert items[0][1].value == 1
 
+    def test_set_non_mapping(self, element_cls):
+        element = element_cls(1)
+        assert element.raw_value == 1
+        assert element.value is NotUnserializable
+
     def test_validate_empty(self, element_cls):
         element = element_cls()
         assert element.is_valid is None
