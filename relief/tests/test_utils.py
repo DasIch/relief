@@ -10,8 +10,6 @@ import inspect
 
 from relief.utils import class_cloner
 
-import py.test
-
 
 class TestClassCloner(object):
     class Foo(object):

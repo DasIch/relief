@@ -6,8 +6,6 @@
     :copyright: 2013 by Daniel Neuhäuser
     :license: BSD, see LICENSE.rst for details
 """
-import sys
-
 from relief._compat import add_native_itermethods
 from relief.utils import class_cloner
 from relief.constants import Unspecified, NotUnserializable
