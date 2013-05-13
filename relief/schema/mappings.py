@@ -9,9 +9,9 @@
 import sys
 
 from relief._compat import add_native_itermethods
-from relief.utils import class_cloner, inheritable_property
+from relief.utils import class_cloner
 from relief.constants import Unspecified, NotUnserializable
-from relief.schema.core import Container, specifiying
+from relief.schema.core import Container
 
 import six
 
@@ -74,14 +74,12 @@ class Mapping(Container):
 
 
 class MutableMapping(Mapping):
-    @specifiying
     def __setitem__(self, key, value):
         super(Mapping, self).__setitem__(key, _Value(
             self.member_schema[0](key),
             self.member_schema[1](value)
         ))
 
-    @specifiying
     def setdefault(self, key, default=None):
         try:
             return self[key]
@@ -89,12 +87,10 @@ class MutableMapping(Mapping):
             self[key] = default
             return self[key]
 
-    @specifiying
     def popitem(self):
         v = super(MutableMapping, self).popitem()[1]
         return v.key, v.value
 
-    @specifiying
     def pop(self, key, *args):
         if len(args) > 1:
             raise TypeError(
@@ -109,7 +105,6 @@ class MutableMapping(Mapping):
                 raise
         return value
 
-    @specifiying
     def update(self, *args, **kwargs):
         if len(args) > 1:
             raise TypeError(
@@ -128,55 +123,15 @@ class MutableMapping(Mapping):
 
 
 class Dict(MutableMapping, dict):
-    def __init__(self, *args, **kwargs):
-        super(MutableMapping, self).__init__()
-        self.state = Unspecified
-        if args or kwargs:
-            self.update(*args, **kwargs)
-
-    @inheritable_property
-    def value(self):
-        if self.state is not None:
-            return self.state
-        return {key.value: v.value for key, v in six.iteritems(self)}
-
-    def set_value(self, new_value, propagate=True):
-        if new_value is Unspecified:
-            del self.value
-        elif new_value is NotUnserializable:
-            self.state = NotUnserializable
-        else:
-            self.state = None
-            self.clear()
-            self.update(new_value)
-        if propagate:
-            self.set_raw_value(self.serialize(new_value), propagate=False)
-
-    @value.deleter
-    def value(self):
-        self.clear()
-        self._raw_value = Unspecified
-        self.state = Unspecified
-
-    def has_key(self, key):
-        return key in self
-
     @classmethod
-    def serialize(cls, values):
-        if values is Unspecified:
-            return values
-        return dict(
-            (cls.member_schema[0].serialize(key), cls.member_schema[1].serialize(value))
-            for key, value in values.iteritems()
-        )
-
-    @classmethod
-    def unserialize(cls, raw_value):
+    def unserialize(cls, raw_value, shallow=False):
         if not isinstance(raw_value, dict):
             try:
-                raw_values = dict(raw_value)
+                raw_value = dict(raw_value)
             except TypeError:
                 return NotUnserializable
+        if shallow:
+            return raw_value
         result = {}
         for key, value in six.iteritems(raw_value):
             serialized_key = cls.member_schema[0].unserialize(key)
@@ -187,3 +142,38 @@ class Dict(MutableMapping, dict):
                 return NotUnserializable
             result[serialized_key] = serialized_value
         return result
+
+    @property
+    def value(self):
+        if self.raw_value is Unspecified:
+            return Unspecified
+        result = {}
+        for key, value in six.iteritems(self):
+            if key.value is NotUnserializable or value.value is NotUnserializable:
+                return NotUnserializable
+            result[key.value] = value.value
+        return result
+
+    @property
+    def raw_value(self):
+        if hasattr(self, "_raw_value"):
+            return self._raw_value
+        return {
+            key.raw_value: value.raw_value for key, value in six.iteritems(self)
+        }
+
+    def set(self, raw_value):
+        self.clear()
+        if raw_value is Unspecified:
+            self._raw_value = raw_value
+        else:
+            unserialized = self.unserialize(raw_value, shallow=True)
+            if unserialized is NotUnserializable:
+                self._raw_value = raw_value
+            else:
+                if hasattr(self, "_raw_value"):
+                    del self._raw_value
+                self.update(unserialized)
+
+    def has_key(self, key):
+        return key in self

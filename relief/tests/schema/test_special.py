@@ -6,6 +6,7 @@
     :copyright: 2013 by Daniel Neuhäuser
     :license: BSD, see LICENSE.rst for details
 """
+from relief.constants import NotUnserializable
 from relief.schema.core import Element
 from relief.schema.scalars import Unicode
 from relief.schema.special import Form
@@ -118,6 +119,25 @@ class TestForm(object):
             ("spam", u"one"),
             ("eggs", u"two")
         ]
+
+    def test_set_incomplete(self):
+        class Foo(Form):
+            spam = Unicode
+            eggs = Unicode
+
+        foo = Foo()
+        foo.set({"spam": u"one"})
+        assert foo.value is NotUnserializable
+        assert foo.raw_value == {"spam": u"one"}
+
+    def test_set_unexpected(self):
+        class Foo(Form):
+            spam = Unicode
+
+        foo = Foo()
+        foo.set({"spam": u"one", "eggs": u"two"})
+        assert foo.value is NotUnserializable
+        assert foo.raw_value == {"spam": u"one", "eggs": u"two"}
 
     def test_validate_empty(self):
         class Foo(Form):

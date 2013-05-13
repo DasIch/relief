@@ -21,10 +21,10 @@ class ScalarTest(ElementTest):
     def test_value(self, element_cls, possible_value):
         element = element_cls()
         assert element.value is Unspecified
-        element.value = possible_value
+        element.set(possible_value)
         assert element.value == possible_value
         assert element.raw_value == possible_value
-        del element.value
+        element.set(Unspecified)
         assert element.value is Unspecified
         assert element.raw_value is Unspecified
 
@@ -40,14 +40,15 @@ class ScalarTest(ElementTest):
         assert element.validate()
         assert element.is_valid
 
-    def test_validate_invalid_raw_value(self, element_cls, invalid_raw_value):
-        element = element_cls.from_raw_value(invalid_raw_value)
+    def test_validate_invalid(self, element_cls, invalid_value):
+        element = element_cls(invalid_value)
         assert element.is_valid is None
         assert not element.validate()
         assert not element.is_valid
 
-    def test_raw_value_native(self, element_cls, possible_value):
-        element = element_cls.from_raw_value(possible_value)
+    def test_set_native(self, element_cls, possible_value):
+        element = element_cls()
+        element.set(possible_value)
         assert element.raw_value == possible_value
         assert element.value == possible_value
 
@@ -67,7 +68,7 @@ class TestBoolean(ScalarTest):
         return request.param
 
     @py.test.fixture
-    def invalid_raw_value(self):
+    def invalid_value(self):
         return "asd"
 
     @py.test.mark.parametrize(("raw_value", "value"), [
@@ -75,8 +76,8 @@ class TestBoolean(ScalarTest):
         (u"False", False),
         (u"foo", NotUnserializable)
     ])
-    def test_raw_value_unicode(self, raw_value, value):
-        boolean = Boolean.from_raw_value(raw_value)
+    def test_value_unicode(self, raw_value, value):
+        boolean = Boolean(raw_value)
         assert boolean.raw_value is raw_value
         assert boolean.value is value
 
@@ -85,8 +86,8 @@ class TestBoolean(ScalarTest):
         (b"False", False),
         (b"foo", NotUnserializable)
     ])
-    def test_raw_value_bytes(self, raw_value, value):
-        boolean = Boolean.from_raw_value(raw_value)
+    def test_value_bytes(self, raw_value, value):
+        boolean = Boolean(raw_value)
         assert boolean.raw_value is raw_value
         assert boolean.value is value
 
@@ -101,15 +102,15 @@ class TestInteger(ScalarTest):
         return 1
 
     @py.test.fixture
-    def invalid_raw_value(self):
+    def invalid_value(self):
         return "asd"
 
     @py.test.mark.parametrize(("raw_value", "value"), [
         (u"1", 1),
         (u"foo", NotUnserializable)
     ])
-    def test_raw_value_unicode(self, raw_value, value):
-        integer = Integer.from_raw_value(raw_value)
+    def test_value_unicode(self, raw_value, value):
+        integer = Integer(raw_value)
         assert integer.raw_value == raw_value
         assert integer.value == value
 
@@ -117,8 +118,8 @@ class TestInteger(ScalarTest):
         (b"1", 1),
         (b"foo", NotUnserializable)
     ])
-    def test_raw_value_bytes(self, raw_value, value):
-        integer = Integer.from_raw_value(raw_value)
+    def test_value_bytes(self, raw_value, value):
+        integer = Integer(raw_value)
         assert integer.raw_value == raw_value
         assert integer.value == value
 
@@ -133,15 +134,15 @@ class TestFloat(ScalarTest):
         return 1.0
 
     @py.test.fixture
-    def invalid_raw_value(self):
+    def invalid_value(self):
         return "asd"
 
     @py.test.mark.parametrize(("raw_value", "value"), [
         (u"1.0", 1.0),
         (u"foo", NotUnserializable)
     ])
-    def test_raw_value_unicode(self, raw_value, value):
-        float = Float.from_raw_value(raw_value)
+    def test_value_unicode(self, raw_value, value):
+        float = Float(raw_value)
         assert float.raw_value == raw_value
         assert float.value == value
 
@@ -149,8 +150,8 @@ class TestFloat(ScalarTest):
         (b"1.0", 1.0),
         (b"foo", NotUnserializable)
     ])
-    def test_raw_value_bytes(self, raw_value, value):
-        float = Float.from_raw_value(raw_value)
+    def test_value_bytes(self, raw_value, value):
+        float = Float(raw_value)
         assert float.raw_value == raw_value
         assert float.value == value
 
@@ -165,15 +166,15 @@ class TestComplex(ScalarTest):
         return 1j
 
     @py.test.fixture
-    def invalid_raw_value(self):
+    def invalid_value(self):
         return "asd"
 
     @py.test.mark.parametrize(("raw_value", "value"), [
         (u"1j", 1j),
         (u"foo", NotUnserializable)
     ])
-    def test_raw_value_unicode(self, raw_value, value):
-        complex = Complex.from_raw_value(raw_value)
+    def test_value_unicode(self, raw_value, value):
+        complex = Complex(raw_value)
         assert complex.raw_value == raw_value
         assert complex.value == value
 
@@ -181,8 +182,8 @@ class TestComplex(ScalarTest):
         (b"1j", 1j),
         (b"foo", NotUnserializable)
     ])
-    def test_raw_value_bytes(self, raw_value, value):
-        complex = Complex.from_raw_value(raw_value)
+    def test_value_bytes(self, raw_value, value):
+        complex = Complex(raw_value)
         assert complex.raw_value == raw_value
         assert complex.value == value
 
@@ -197,7 +198,7 @@ class TestUnicode(ScalarTest):
         return u"foobar"
 
     @py.test.fixture
-    def invalid_raw_value(self):
+    def invalid_value(self):
         # is missing \xc4 after the first character
         return b"\xc3\xc3\xb6\xc3\xbc"
 
@@ -206,8 +207,8 @@ class TestUnicode(ScalarTest):
         # is missing \xc4 after the first character
         (b"\xc3\xc3\xb6\xc3\xbc", NotUnserializable)
     ])
-    def test_raw_value_bytes(self, raw_value, value):
-        unicode = Unicode.from_raw_value(raw_value)
+    def test_value_bytes(self, raw_value, value):
+        unicode = Unicode(raw_value)
         assert unicode.raw_value == raw_value
         assert unicode.value == value
 
@@ -222,7 +223,7 @@ class TestBytes(ScalarTest):
         return b"foobar"
 
     @py.test.fixture
-    def invalid_raw_value(self):
+    def invalid_value(self):
         if sys.version_info >= (3, 0):
             py.test.skip()
         return u"äöü"
@@ -231,7 +232,7 @@ class TestBytes(ScalarTest):
         (u"hello", b"hello"),
         (u"hëllö", u"hëllö".encode("utf-8") if sys.version_info >= (3, 0) else NotUnserializable)
     ])
-    def test_raw_value_bytes(self, raw_value, value):
-        bytes = Bytes.from_raw_value(raw_value)
+    def test_value_bytes(self, raw_value, value):
+        bytes = Bytes(raw_value)
         assert bytes.raw_value == raw_value
         assert bytes.value == value

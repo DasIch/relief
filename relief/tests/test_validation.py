@@ -26,11 +26,11 @@ def test_present():
 
 def test_converted():
     Validated = Integer.validated_by([Converted()])
-    integer = Integer.from_raw_value(1)
+    integer = Integer(1)
     assert integer.validate()
     assert not integer.errors
 
-    integer = Validated.from_raw_value("foobar")
+    integer = Validated("foobar")
     assert not integer.validate()
     assert integer.errors == [u"Not a valid value."]
 

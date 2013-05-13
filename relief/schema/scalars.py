@@ -14,13 +14,7 @@ from relief.schema.core import Element
 import six
 
 
-class Scalar(Element):
-    def __init__(self, value=Unspecified):
-        super(Scalar, self).__init__()
-        self.value = value
-
-
-class Boolean(Scalar):
+class Boolean(Element):
     @classmethod
     def unserialize(cls, raw_value):
         if isinstance(raw_value, bool):
@@ -38,7 +32,7 @@ class Boolean(Scalar):
         return NotUnserializable
 
 
-class Number(Scalar):
+class Number(Element):
     number_cls = None
 
     @classmethod
@@ -65,7 +59,7 @@ class Complex(Number):
     number_cls = complex
 
 
-class Unicode(Scalar):
+class Unicode(Element):
     encoding = sys.getdefaultencoding()
 
     @classmethod
@@ -78,7 +72,7 @@ class Unicode(Scalar):
             return NotUnserializable
 
 
-class Bytes(Scalar):
+class Bytes(Element):
     @classmethod
     def unserialize(cls, raw_value):
         if isinstance(raw_value, bytes):

@@ -69,7 +69,7 @@ class SequenceTest(ElementTest):
         assert element.is_valid
 
     def test_validate_raw_value(self, element_cls, possible_value, possible_raw_value):
-        element = element_cls.from_raw_value(possible_raw_value)
+        element = element_cls(possible_raw_value)
         assert element.raw_value == possible_raw_value
         assert element.value == possible_value
         for child, value, raw_value in zip(element, possible_value, possible_raw_value):
@@ -79,7 +79,7 @@ class SequenceTest(ElementTest):
         assert element.is_valid
 
     def test_validate_invalid_raw_value(self, element_cls, invalid_raw_values):
-        element = element_cls.from_raw_value(invalid_raw_values)
+        element = element_cls(invalid_raw_values)
         assert element.raw_value == invalid_raw_values
         assert element.value is NotUnserializable
         assert not element.validate()
@@ -132,8 +132,8 @@ class TestTuple(SequenceTest):
         assert element.value == ()
         assert element.validate()
 
-    def test_raw_value_longer(self, element_cls):
-        element = element_cls.from_raw_value((1, 2, 3, 4))
+    def test_value_longer(self, element_cls):
+        element = element_cls((1, 2, 3, 4))
         assert element.raw_value == (1, 2, 3, 4)
         assert element.value is NotUnserializable
 
@@ -142,20 +142,20 @@ class TestTuple(SequenceTest):
         # that the Tuple has to store a longer raw_value somewhere else and has
         # to update it somehow, if the raw_value of a child that fits within
         # the fixed length of the Tuple is changed.
-        element[0].set_raw_value(5)
+        element[0].set(5)
         assert element.raw_value == (5, 2, 3, 4)
         assert element.value is NotUnserializable
 
-    def test_raw_value_shorter(self, element_cls):
-        element = element_cls.from_raw_value((1, 2))
+    def test_value_shorter(self, element_cls):
+        element = element_cls((1, 2))
         assert element.raw_value == (1, 2)
         assert element.value is NotUnserializable
 
-        element[0].set_raw_value(3)
+        element[0].set(3)
         assert element.raw_value == (3, 2)
         assert element.value is NotUnserializable
 
-        element[2].set_raw_value(4)
+        element[2].set(4)
         assert element.raw_value == (3, 2, 4)
         assert element.value == (3, 2, 4)
 

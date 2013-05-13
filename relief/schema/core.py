@@ -14,18 +14,7 @@ from relief.constants import Unspecified, NotUnserializable
 import six
 
 
-def specifiying(method):
-    @wraps(method)
-    def wrapper(self, *args, **kwargs):
-        result = method(self, *args, **kwargs)
-        self.state = None
-        return result
-    return wrapper
-
-
 class Element(object):
-    default = Unspecified
-    default_factory = Unspecified
     validators = []
 
     @class_cloner
@@ -41,86 +30,21 @@ class Element(object):
         return cls.using(validators=cls.validators + validators)
 
     @classmethod
-    def from_raw_value(cls, raw_value):
-        self = cls()
-        self.raw_value = raw_value
-        return self
+    def unserialize(cls, raw_value):
+        return raw_value
 
     def __init__(self, value=Unspecified):
-        self.value = value
-
         self.is_valid = None
         self.errors = []
 
-    @property
-    def value(self):
-        if self._value is not Unspecified:
-            return self._value
-        if self.default is not Unspecified:
-            return self.default
-        if self.default_factory is not Unspecified:
-            return self.default_factory()
-        return Unspecified
+        self.set(value)
 
-    def set_value(self, value, propagate=True):
-        self._value = value
-        if propagate:
-            self.set_raw_value(self.serialize(value), propagate=False)
-
-    @value.setter
-    def value(self, new_value):
-        self.set_value(new_value)
-
-    @value.deleter
-    def value(self):
-        self._value = self._raw_value = Unspecified
-
-    @property
-    def raw_value(self):
-        if self._raw_value is not Unspecified:
-            return self._raw_value
-        return Unspecified
-
-    def set_raw_value(self, raw_value, propagate=True):
-        self._raw_value = raw_value
-        if propagate:
-            self.set_value(
-                raw_value if raw_value is Unspecified else self.unserialize(raw_value),
-                propagate=False
-            )
-
-    @raw_value.setter
-    def raw_value(self, new_raw_value):
-        self.set_raw_value(new_raw_value)
-
-    @raw_value.deleter
-    def raw_value(self):
-        self._raw_value = self._value = Unspecified
-
-    @property
-    def state(self):
-        missing = object()
-        if getattr(self, "_state", missing) is not missing:
-            return self._state
-        if self.value is Unspecified or self.value is NotUnserializable:
-            return self.value
-
-    @state.setter
-    def state(self, new_state):
-        self._state = new_state
-
-    @state.deleter
-    def state(self):
-        if hasattr(self, "_state"):
-            del self._state
-
-    @classmethod
-    def serialize(cls, value):
-        return value
-
-    @classmethod
-    def unserialize(cls, raw_value):
-        return raw_value
+    def set(self, raw_value):
+        self.raw_value = raw_value
+        if raw_value is Unspecified:
+            self.value = raw_value
+        else:
+            self.value = self.unserialize(raw_value)
 
     def validate(self, context=None):
         if context is None:
@@ -130,7 +54,7 @@ class Element(object):
                 validator(self, context) for validator in self.validators
             )
         else:
-            self.is_valid = self.state is None
+            self.is_valid = self.value not in [Unspecified, NotUnserializable]
         return self.is_valid
 
     def traverse(self, prefix=None):
