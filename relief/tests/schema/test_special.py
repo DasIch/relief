@@ -120,6 +120,16 @@ class TestForm(object):
             ("eggs", u"two")
         ]
 
+    def test_set(self):
+        class Foo(Form):
+            spam = Integer
+
+        foo = Foo({"spam": "1"})
+        assert foo.raw_value == {"spam": "1"}
+        assert foo.value == {"spam": 1}
+        assert foo["spam"].raw_value == "1"
+        assert foo["spam"].value == 1
+
     def test_set_non_mapping(self):
         class Foo(Form):
             spam = Unicode

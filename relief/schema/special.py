@@ -103,7 +103,7 @@ class Form(six.with_metaclass(FormMeta, Element)):
             for element in six.itervalues(self):
                 element.set(raw_value)
         else:
-            unserialized = self.unserialize(raw_value)
+            unserialized = self.unserialize(raw_value, shallow=True)
             if unserialized is not NotUnserializable:
                 for key, value in six.iteritems(unserialized):
                     self[key].set(value)
