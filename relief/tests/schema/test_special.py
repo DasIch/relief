@@ -8,7 +8,7 @@
 """
 from relief.constants import NotUnserializable
 from relief.schema.core import Element
-from relief.schema.scalars import Unicode
+from relief.schema.scalars import Unicode, Integer
 from relief.schema.special import Form
 from relief.tests.conftest import python2_only
 
@@ -38,11 +38,11 @@ class TestForm(object):
 
     def test_setitem(self):
         class Foo(Form):
-            spam = Unicode
+            spam = Integer
 
         foo = Foo()
-        foo["spam"] = u"one"
-        assert foo["spam"].value == u"one"
+        foo["spam"] = "1"
+        assert foo["spam"].value == 1
 
     def test_contains(self):
         class Foo(Form):

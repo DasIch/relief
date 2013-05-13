@@ -46,7 +46,7 @@ class Form(six.with_metaclass(FormMeta, Element)):
     def __setitem__(self, key, value):
         if key not in self:
             raise KeyError(key)
-        self._elements[key].value = value
+        self._elements[key].set(value)
 
     def __contains__(self, key):
         return key in self._elements
