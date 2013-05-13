@@ -124,24 +124,11 @@ class MutableMapping(Mapping):
 
 class Dict(MutableMapping, dict):
     @classmethod
-    def unserialize(cls, raw_value, shallow=False):
-        if not isinstance(raw_value, dict):
-            try:
-                raw_value = dict(raw_value)
-            except TypeError:
-                return NotUnserializable
-        if shallow:
-            return raw_value
-        result = {}
-        for key, value in six.iteritems(raw_value):
-            serialized_key = cls.member_schema[0].unserialize(key)
-            if serialized_key is NotUnserializable:
-                return NotUnserializable
-            serialized_value = cls.member_schema[1].unserialize(value)
-            if serialized_value is NotUnserializable:
-                return NotUnserializable
-            result[serialized_key] = serialized_value
-        return result
+    def unserialize(cls, raw_value):
+        try:
+            return dict(raw_value)
+        except TypeError:
+            return NotUnserializable
 
     @property
     def value(self):
@@ -160,7 +147,7 @@ class Dict(MutableMapping, dict):
         self.raw_value = raw_value
         self.clear()
         if raw_value is not Unspecified:
-            unserialized = self.unserialize(raw_value, shallow=True)
+            unserialized = self.unserialize(raw_value)
             if unserialized is not NotUnserializable:
                 if hasattr(self, "_raw_value"):
                     del self._raw_value

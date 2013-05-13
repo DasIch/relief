@@ -33,7 +33,7 @@ class FormMeta(six.with_metaclass(Prepareable, type)):
 @add_native_itermethods
 class Form(six.with_metaclass(FormMeta, Element)):
     @classmethod
-    def unserialize(cls, raw_value, shallow=False):
+    def unserialize(cls, raw_value):
         if not isinstance(raw_value, dict):
             try:
                 raw_value = dict(raw_value)
@@ -41,12 +41,7 @@ class Form(six.with_metaclass(FormMeta, Element)):
                 return NotUnserializable
         if set(raw_value) != set(cls.member_schema):
             return NotUnserializable
-        if shallow:
-            return raw_value
-        result = OrderedDict()
-        for key, schema in six.iteritems(cls.member_schema):
-            result[key] = schema.unserialize(raw_value[key])
-        return result
+        return raw_value
 
     def __new__(cls, *args, **kwargs):
         self = super(Form, cls).__new__(cls)
@@ -103,7 +98,7 @@ class Form(six.with_metaclass(FormMeta, Element)):
             for element in six.itervalues(self):
                 element.set(raw_value)
         else:
-            unserialized = self.unserialize(raw_value, shallow=True)
+            unserialized = self.unserialize(raw_value)
             if unserialized is not NotUnserializable:
                 for key, value in six.iteritems(unserialized):
                     self[key].set(value)

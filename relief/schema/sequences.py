@@ -58,19 +58,14 @@ class Tuple(Sequence, tuple):
         )
 
     @classmethod
-    def unserialize(cls, raw_values, shallow=False):
+    def unserialize(cls, raw_value):
         try:
-            if len(raw_values) != len(cls.member_schema):
-                return NotUnserializable
+            raw_value = tuple(raw_value)
         except TypeError:
-            # raw_values is not a sequence
             return NotUnserializable
-        if shallow:
-            return tuple(raw_values)
-        return tuple(
-            schema.unserialize(raw_value)
-            for schema, raw_value in zip(cls.member_schema, raw_values)
-        )
+        if len(raw_value) != len(cls.member_schema):
+            return NotUnserializable
+        return raw_value
 
     @property
     def value(self):
@@ -93,7 +88,7 @@ class Tuple(Sequence, tuple):
             for element in self:
                 element.set(raw_value)
         else:
-            unserialized = self.unserialize(raw_value, shallow=True)
+            unserialized = self.unserialize(raw_value)
             if unserialized is not NotUnserializable:
                 for element, raw_part in zip(self, unserialized):
                     element.set(raw_part)
@@ -130,15 +125,11 @@ class MutableSequence(Sequence):
 
 class List(MutableSequence, list):
     @classmethod
-    def unserialize(cls, raw_values, shallow=False):
-        if not isinstance(raw_values, list):
-            try:
-                raw_values = list(raw_values)
-            except TypeError:
-                return NotUnserializable
-        if shallow:
-            return raw_values
-        return map(cls.member_schema.unserialize, raw_values)
+    def unserialize(cls, raw_values):
+        try:
+            return list(raw_values)
+        except TypeError:
+            return NotUnserializable
 
     @property
     def value(self):
@@ -159,7 +150,7 @@ class List(MutableSequence, list):
             for element in self:
                 element.set(raw_value)
         else:
-            unserialized = self.unserialize(raw_value, shallow=True)
+            unserialized = self.unserialize(raw_value)
             if unserialized is NotUnserializable:
                 del self[:]
             else:
