@@ -129,6 +129,8 @@ class TestForm(object):
         foo.set({"spam": u"one"})
         assert foo.value is NotUnserializable
         assert foo.raw_value == {"spam": u"one"}
+        assert foo["spam"].value == u"one"
+        assert foo["spam"].raw_value == u"one"
 
     def test_set_unexpected(self):
         class Foo(Form):
@@ -138,6 +140,8 @@ class TestForm(object):
         foo.set({"spam": u"one", "eggs": u"two"})
         assert foo.value is NotUnserializable
         assert foo.raw_value == {"spam": u"one", "eggs": u"two"}
+        assert foo["spam"].value == u"one"
+        assert foo["spam"].raw_value == u"one"
 
     def test_validate_empty(self):
         class Foo(Form):
