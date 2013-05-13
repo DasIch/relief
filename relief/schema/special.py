@@ -35,7 +35,8 @@ class Form(six.with_metaclass(FormMeta, Element)):
     def __new__(cls, *args, **kwargs):
         self = super(Form, cls).__new__(cls)
         self._elements = OrderedDict(
-            (name, element()) for name, element in six.iteritems(self.member_schema)
+            (name, element())
+            for name, element in six.iteritems(self.member_schema)
         )
         return self
 
