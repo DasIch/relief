@@ -143,7 +143,9 @@ class List(MutableSequence, list):
     @property
     def value(self):
         if not isinstance(self.raw_value, list):
-            return Unspecified
+            if self.raw_value in [Unspecified, NotUnserializable]:
+                return self.raw_value
+            return NotUnserializable
         result = []
         for element in self:
             if element.value is NotUnserializable:

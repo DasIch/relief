@@ -198,6 +198,8 @@ class TestList(MutableSequenceTest):
     def possible_raw_value(self):
         return ["1", 1, "2"]
 
-    @py.test.fixture
-    def invalid_raw_values(self):
-        return ["1", 1, "foobar"]
+    @py.test.fixture(params=[("1", 1, "foobar"), 1])
+    def invalid_raw_values(self, request):
+        if isinstance(request.param, tuple):
+            return list(request.param)
+        return request.param
