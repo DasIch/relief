@@ -7,4 +7,5 @@ install:
   - python setup.py install
   - pip install pyflakes
 script:
-  - make test
+  - find relief -iname "*.py" | xargs pyflakes
+  - py.test -vv
