@@ -132,33 +132,6 @@ class TestTuple(SequenceTest):
         assert element.value == ()
         assert element.validate()
 
-    def test_value_longer(self, element_cls):
-        element = element_cls((1, 2, 3, 4))
-        assert element.raw_value == (1, 2, 3, 4)
-        assert element.value is NotUnserializable
-
-        # Tuples always have a fixed length and a fixed amount of elements.
-        # However we allow raw_value to be longer than that size. This means
-        # that the Tuple has to store a longer raw_value somewhere else and has
-        # to update it somehow, if the raw_value of a child that fits within
-        # the fixed length of the Tuple is changed.
-        element[0].set(5)
-        assert element.raw_value == (5, 2, 3, 4)
-        assert element.value is NotUnserializable
-
-    def test_value_shorter(self, element_cls):
-        element = element_cls((1, 2))
-        assert element.raw_value == (1, 2)
-        assert element.value is NotUnserializable
-
-        element[0].set(3)
-        assert element.raw_value == (3, 2)
-        assert element.value is NotUnserializable
-
-        element[2].set(4)
-        assert element.raw_value == (3, 2, 4)
-        assert element.value == (3, 2, 4)
-
 
 class MutableSequenceTest(SequenceTest):
     def test_setitem(self, element_cls):

@@ -79,30 +79,13 @@ class Tuple(Sequence, tuple):
             result.append(element.value)
         return tuple(result)
 
-    @property
-    def raw_value(self):
-        if hasattr(self, "_raw_value"):
-            if self._raw_value is Unspecified:
-                return self._raw_value
-            raw_value = list(self._raw_value)
-        else:
-            raw_value = [element.raw_value for element in self]
-        for i, element in enumerate(self):
-            if len(raw_value) == i and element.raw_value is not Unspecified:
-                raw_value.append(element.raw_value)
-            elif element.raw_value is not Unspecified and element.raw_value != raw_value[i]:
-                raw_value[i] = element.raw_value
-        return tuple(raw_value)
-
     def set(self, raw_value):
+        self.raw_value = raw_value
         if raw_value is Unspecified:
-            self._raw_value = raw_value
             for element in self:
                 element.set(raw_value)
         else:
             unserialized = self.unserialize(raw_value)
-            if unserialized is NotUnserializable:
-                self._raw_value = raw_value
             for element, raw_part in zip(self, raw_value):
                 element.set(raw_part)
 
@@ -159,21 +142,14 @@ class List(MutableSequence, list):
             result.append(element.value)
         return result
 
-    @property
-    def raw_value(self):
-        if getattr(self, "_raw_value", None) is not None:
-            return self._raw_value
-        return [element.raw_value for element in self]
-
     def set(self, raw_value):
+        self.raw_value = raw_value
         if raw_value is Unspecified:
-            self._raw_value = raw_value
             for element in self:
                 element.set(raw_value)
         else:
             unserialized = self.unserialize(raw_value, shallow=True)
             if unserialized is NotUnserializable:
-                self._raw_value = raw_value
                 del self[:]
             else:
                 self.extend(unserialized)

@@ -68,6 +68,8 @@ class Form(six.with_metaclass(FormMeta, Element)):
 
     @property
     def value(self):
+        if self.raw_value is Unspecified:
+            return Unspecified
         if set(self.raw_value) != set(self):
             return NotUnserializable
         result = OrderedDict()
@@ -77,25 +79,12 @@ class Form(six.with_metaclass(FormMeta, Element)):
             result[key] = element.value
         return result
 
-    @property
-    def raw_value(self):
-        if not hasattr(self, "_raw_value"):
-            self._raw_value = OrderedDict()
-        for key, element in six.iteritems(self):
-            if element.raw_value is Unspecified:
-                if key in self._raw_value:
-                    del self._raw_value[key]
-            else:
-                self._raw_value[key] = element.raw_value
-        return self._raw_value
-
     def set(self, raw_value):
+        self.raw_value = raw_value
         if raw_value is Unspecified:
             for element in six.itervalues(self):
                 element.set(raw_value)
         else:
-            if set(raw_value) != set(self):
-                self._raw_value = raw_value
             for key, element in six.iteritems(self):
                 try:
                     raw_value_ = raw_value[key]
