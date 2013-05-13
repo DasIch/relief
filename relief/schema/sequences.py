@@ -58,9 +58,15 @@ class Tuple(Sequence, tuple):
         )
 
     @classmethod
-    def unserialize(cls, raw_values):
-        if len(raw_values) != len(cls.member_schema):
+    def unserialize(cls, raw_values, shallow=False):
+        try:
+            if len(raw_values) != len(cls.member_schema):
+                return NotUnserializable
+        except TypeError:
+            # raw_values is not a sequence
             return NotUnserializable
+        if shallow:
+            return tuple(raw_values)
         return tuple(
             schema.unserialize(raw_value)
             for schema, raw_value in zip(cls.member_schema, raw_values)
@@ -68,8 +74,10 @@ class Tuple(Sequence, tuple):
 
     @property
     def value(self):
-        if self.raw_value is Unspecified:
-            return self.raw_value
+        if not isinstance(self.raw_value, tuple):
+            if self.raw_value in [Unspecified, NotUnserializable]:
+                return self.raw_value
+            return NotUnserializable
         elif len(self.raw_value) != len(self):
             return NotUnserializable
         result = []
@@ -85,9 +93,10 @@ class Tuple(Sequence, tuple):
             for element in self:
                 element.set(raw_value)
         else:
-            unserialized = self.unserialize(raw_value)
-            for element, raw_part in zip(self, raw_value):
-                element.set(raw_part)
+            unserialized = self.unserialize(raw_value, shallow=True)
+            if unserialized is not NotUnserializable:
+                for element, raw_part in zip(self, unserialized):
+                    element.set(raw_part)
 
 
 class MutableSequence(Sequence):
