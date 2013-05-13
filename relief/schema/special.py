@@ -32,6 +32,22 @@ class FormMeta(six.with_metaclass(Prepareable, type)):
 
 @add_native_itermethods
 class Form(six.with_metaclass(FormMeta, Element)):
+    @classmethod
+    def unserialize(cls, raw_value, shallow=False):
+        if not isinstance(raw_value, dict):
+            try:
+                raw_value = dict(raw_value)
+            except TypeError:
+                return NotUnserializable
+        if set(raw_value) != set(cls.member_schema):
+            return NotUnserializable
+        if shallow:
+            return raw_value
+        result = OrderedDict()
+        for key, schema in six.iteritems(cls.member_schema):
+            result[key] = schema.unserialize(raw_value[key])
+        return result
+
     def __new__(cls, *args, **kwargs):
         self = super(Form, cls).__new__(cls)
         self._elements = OrderedDict(
@@ -68,8 +84,10 @@ class Form(six.with_metaclass(FormMeta, Element)):
 
     @property
     def value(self):
-        if self.raw_value is Unspecified:
-            return Unspecified
+        if not isinstance(self.raw_value, dict):
+            if self.raw_value is Unspecified:
+                return Unspecified
+            return NotUnserializable
         if set(self.raw_value) != set(self):
             return NotUnserializable
         result = OrderedDict()
@@ -85,13 +103,10 @@ class Form(six.with_metaclass(FormMeta, Element)):
             for element in six.itervalues(self):
                 element.set(raw_value)
         else:
-            for key, element in six.iteritems(self):
-                try:
-                    raw_value_ = raw_value[key]
-                except KeyError:
-                    pass
-                else:
-                    element.set(raw_value_)
+            unserialized = self.unserialize(raw_value)
+            if unserialized is not NotUnserializable:
+                for key, value in six.iteritems(unserialized):
+                    self[key].set(value)
 
     def validate(self, context=None):
         if context is None:

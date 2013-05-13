@@ -120,28 +120,13 @@ class TestForm(object):
             ("eggs", u"two")
         ]
 
-    def test_set_incomplete(self):
-        class Foo(Form):
-            spam = Unicode
-            eggs = Unicode
-
-        foo = Foo()
-        foo.set({"spam": u"one"})
-        assert foo.value is NotUnserializable
-        assert foo.raw_value == {"spam": u"one"}
-        assert foo["spam"].value == u"one"
-        assert foo["spam"].raw_value == u"one"
-
-    def test_set_unexpected(self):
+    def test_set_non_mapping(self):
         class Foo(Form):
             spam = Unicode
 
-        foo = Foo()
-        foo.set({"spam": u"one", "eggs": u"two"})
+        foo = Foo(1)
+        assert foo.raw_value == 1
         assert foo.value is NotUnserializable
-        assert foo.raw_value == {"spam": u"one", "eggs": u"two"}
-        assert foo["spam"].value == u"one"
-        assert foo["spam"].raw_value == u"one"
 
     def test_validate_empty(self):
         class Foo(Form):
