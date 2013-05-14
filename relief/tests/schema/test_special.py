@@ -168,3 +168,8 @@ class TestForm(object):
         assert [
             (prefix, child.value) for prefix, child in foo.traverse(prefix=["foo"])
         ] == [(["foo", "spam"], u"one"), (["foo", "eggs"], u"two")]
+
+    def test_of(self):
+        form = Form.of({"spam": Unicode})({"spam": "foo"})
+        assert form.value == {"spam": u"foo"}
+        assert form.raw_value == {"spam": "foo"}

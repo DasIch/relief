@@ -47,7 +47,13 @@ class Prepareable(type):
                                 return _names.index(attribute_name)
                             except ValueError:
                                 return 0
+                        assert get_index # silence pyflakes
                         break
+                else:
+                    # If a subclass is created dynamically we won't find a code
+                    # object and there is no attribute order to recover.
+                    def get_index(attribute_name):
+                        return 0
                 by_appearance = sorted(
                     attributes.items(), key=lambda item: get_index(item[0])
                 )

@@ -9,8 +9,9 @@
 from collections import OrderedDict
 
 from relief import Unspecified, NotUnserializable
+from relief.utils import class_cloner
 from relief._compat import add_native_itermethods, Prepareable
-from relief.schema.core import Element
+from relief.schema.core import Element, Container
 
 import six
 
@@ -19,7 +20,7 @@ class FormMeta(six.with_metaclass(Prepareable, type)):
     def __new__(cls, cls_name, bases, attributes):
         member_schema = attributes["member_schema"] = OrderedDict()
         for base in reversed(bases):
-            member_schema.update(getattr(base, "member_schema", {}))
+            member_schema.update(getattr(base, "member_schema", {}) or {})
         for name, attribute in six.iteritems(attributes):
             if isinstance(attribute, type) and issubclass(attribute, Element):
                 member_schema[name] = attribute
@@ -30,7 +31,12 @@ class FormMeta(six.with_metaclass(Prepareable, type)):
 
 
 @add_native_itermethods
-class Form(six.with_metaclass(FormMeta, Element)):
+class Form(six.with_metaclass(FormMeta, Container)):
+    @class_cloner
+    def of(cls, schema):
+        cls.member_schema = OrderedDict(schema)
+        return cls
+
     @classmethod
     def unserialize(cls, raw_value):
         if not isinstance(raw_value, dict):
