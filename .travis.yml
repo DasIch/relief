@@ -6,7 +6,7 @@ python:
 install:
   - python setup.py install
   - pip install --use-mirrors pyflakes
-  - pip install --use-mirrors sphinx
+  - pip install --use-mirrors sphinx==1.1.3
 script:
   - find relief -iname "*.py" | xargs pyflakes
   - py.test -vv relief
