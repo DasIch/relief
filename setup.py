@@ -1,10 +1,12 @@
 # coding: utf-8
 from setuptools import setup
 
+from relief import __version__
+
 
 setup(
     name="Relief",
-    version="0.0.0-dev",
+    version=__version__,
     author="Daniel Neuhäuser",
     author_email="ich@danielneuhaeuser.de",
     license="BSD",
