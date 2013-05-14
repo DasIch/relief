@@ -2,7 +2,7 @@ language: python
 python:
   - 2.7
   - 3.3
-  - pypy
+#  - pypy we require at least pypy >= 2.0 travis doesn't it, yet.
 install:
   - python setup.py install
   - pip install --use-mirrors pyflakes
