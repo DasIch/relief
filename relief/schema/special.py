@@ -91,6 +91,11 @@ class Form(six.with_metaclass(FormMeta, Element)):
             result[key] = element.value
         return result
 
+    @value.setter
+    def value(self, new_value):
+        if new_value is not Unspecified:
+            raise AttributeError("can't set attribute")
+
     def set(self, raw_value):
         self.raw_value = raw_value
         if raw_value is Unspecified:

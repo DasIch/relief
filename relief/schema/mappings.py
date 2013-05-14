@@ -145,6 +145,11 @@ class Dict(MutableMapping, dict):
             result[key.value] = value.value
         return result
 
+    @value.setter
+    def value(self, new_value):
+        if new_value is not Unspecified:
+            raise AttributeError("can't set attribute")
+
     def set(self, raw_value):
         self.raw_value = raw_value
         self.clear()
@@ -183,6 +188,11 @@ class OrderedDict(MutableMapping, collections.OrderedDict):
                 return NotUnserializable
             result[key.value] = value.value
         return result
+
+    @value.setter
+    def value(self, new_value):
+        if new_value is not Unspecified:
+            raise AttributeError("can't set attribute")
 
     def set(self, raw_value):
         self.raw_value = raw_value

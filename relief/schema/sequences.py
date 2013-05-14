@@ -80,6 +80,11 @@ class Tuple(Sequence, tuple):
             result.append(element.value)
         return tuple(result)
 
+    @value.setter
+    def value(self, new_value):
+        if new_value is not Unspecified:
+            raise ValueError("can't set attribute")
+
     def set(self, raw_value):
         self.raw_value = raw_value
         if raw_value is Unspecified:
@@ -141,6 +146,11 @@ class List(MutableSequence, list):
                 return NotUnserializable
             result.append(element.value)
         return result
+
+    @value.setter
+    def value(self, new_value):
+        if new_value is not Unspecified:
+            raise AttributeError("can't set attribute")
 
     def set(self, raw_value):
         self.raw_value = raw_value
