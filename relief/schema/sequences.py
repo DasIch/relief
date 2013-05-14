@@ -34,6 +34,16 @@ class Sequence(Container):
         return self.is_valid
 
     def traverse(self, prefix=None):
+        """
+        Recursively traverses over the elements over the list. Adds the index
+        of each element to the prefix:
+
+        >>> from relief import Integer
+        >>> Sequence.of(Integer)([1, 2, 3]).traverse()
+        ([0], 1)
+        ([1], 2)
+        ([2], 3)
+        """
         for i, element in enumerate(self):
             if prefix is None:
                 current_prefix = [i]
@@ -44,14 +54,38 @@ class Sequence(Container):
 
 
 class Tuple(Sequence, tuple):
+    """
+    Represents a :func:`tuple`.
+
+    In order to use :class:`Tuple`, you need to define the elements it contains
+    using :meth:`of`, which will return a new :class:`Tuple` class::
+
+        Tuple.of(Integer, Unicode)
+
+    would be a :class:`Tuple` of length 2, with an :class:`~relief.Integer` at
+    index 0, and a :class:`~relief.Unicode` string at index 1.
+
+        Tuple.of()
+
+    would be a :class:`Tuple` of length 0.
+
+    Any kind of iterable will be accepted as raw value.
+    """
+
     @class_cloner
     def of(cls, *schemas):
+        """
+        Returns a new :class:`Tuple` class whose contents are defined by the
+        given element types.
+        """
         cls.member_schema = schemas
         return cls
 
     def __new__(cls, *args, **kwargs):
         if cls.member_schema is None:
-            raise TypeError("member_schema is None")
+            raise TypeError(
+                "You need to create a %s type with .of()" % cls.__name__
+            )
         return super(Tuple, cls).__new__(
             cls,
             (schema() for schema in cls.member_schema)
@@ -129,6 +163,19 @@ class MutableSequence(Sequence):
 
 
 class List(MutableSequence, list):
+    """
+    Represents a :func:`list`.
+
+    In order to use :class:`List`, you need to define the element type the list
+    is supposed to contain with :meth:`of`::
+
+        List.of(Integer)
+
+    would be a :class:`List` containing integers. Unlike :class:`Tuple` the
+    length is not part of the element definition and lists are homogeneous.
+
+    Any kind of iterable will be accepted as raw value.
+    """
     @classmethod
     def unserialize(cls, raw_values):
         try:

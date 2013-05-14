@@ -20,3 +20,13 @@ Scalars
 
 .. autoclass:: Bytes
    :members:
+
+
+Sequences
+---------
+
+.. autoclass:: Tuple
+   :members:
+
+.. autoclass:: List
+   :members:
