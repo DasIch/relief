@@ -6,6 +6,7 @@
     :copyright: 2013 by Daniel Neuhäuser
     :license: BSD, see LICENSE.rst for details
 """
+import sys
 import inspect
 
 from relief.utils import class_cloner
@@ -24,9 +25,9 @@ class TestClassCloner(object):
         assert unbound.__name__ == "method"
         assert unbound.__module__ == "relief.tests.test_utils"
         assert unbound.__doc__ == "Documentation"
-        assert unbound.im_class is type
-        assert unbound.im_self is self.Foo
-        assert inspect.isfunction(unbound.im_func)
+        if sys.version_info < (3, 0):
+            assert issubclass(unbound.im_self, self.Foo)
+            assert inspect.isfunction(unbound.im_func)
 
     def test_wraps_bound_correctly(self):
         instance = self.Foo()
@@ -34,9 +35,9 @@ class TestClassCloner(object):
         assert bound.__name__ == "method"
         assert bound.__module__ == "relief.tests.test_utils"
         assert bound.__doc__ == "Documentation"
-        assert bound.im_class is type
-        assert bound.im_self is self.Foo
-        assert inspect.isfunction(bound.im_func)
+        if sys.version_info < (3, 0):
+            assert issubclass(bound.im_self, self.Foo)
+            assert inspect.isfunction(bound.im_func)
 
     def test_called_with_clone(self):
         assert self.Foo.method() is not self.Foo
