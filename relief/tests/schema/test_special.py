@@ -6,10 +6,9 @@
     :copyright: 2013 by Daniel Neuhäuser
     :license: BSD, see LICENSE.rst for details
 """
+from relief import Form, Unicode, Integer
 from relief.constants import NotUnserializable
 from relief.schema.core import Element
-from relief.schema.scalars import Unicode, Integer
-from relief.schema.special import Form
 from relief.tests.conftest import python2_only
 
 

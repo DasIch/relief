@@ -8,10 +8,8 @@
 """
 import sys
 
+from relief import Boolean, Integer, Float, Complex, Unicode, Bytes
 from relief.constants import NotUnserializable, Unspecified
-from relief.schema.scalars import (
-    Boolean, Integer, Float, Complex, Unicode, Bytes
-)
 from relief.tests.schema.conftest import ElementTest
 
 import py.test

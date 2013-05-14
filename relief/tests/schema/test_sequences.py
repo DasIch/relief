@@ -8,9 +8,8 @@
 """
 from collections import Counter
 
+from relief import Tuple, List, Integer
 from relief.constants import Unspecified, NotUnserializable
-from relief.schema.scalars import Integer
-from relief.schema.sequences import Tuple, List
 from relief.tests.schema.conftest import ElementTest
 
 import six

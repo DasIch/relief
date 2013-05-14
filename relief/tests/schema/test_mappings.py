@@ -6,9 +6,8 @@
     :copyright: 2013 by Daniel Neuhäuser
     :license: BSD, see LICENSE.rst for details
 """
+from relief import Dict, Unicode, Integer
 from relief.constants import NotUnserializable
-from relief.schema.scalars import Unicode, Integer
-from relief.schema.mappings import Dict
 from relief.tests.conftest import python2_only
 from relief.tests.schema.conftest import ElementTest
 
