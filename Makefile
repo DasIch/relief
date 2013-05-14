@@ -29,4 +29,4 @@ docs:
 view-docs: docs
 	open docs/_build/html/index.html
 
-.PHONY: help clean delete-bytecode test style docs view-docs
+.PHONY: help dev clean delete-bytecode test style docs view-docs

@@ -15,6 +15,7 @@ Additional Information
 
 .. toctree::
 
+   other/contributing.rst
    other/license.rst
 
 
