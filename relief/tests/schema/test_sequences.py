@@ -97,7 +97,7 @@ class SequenceTest(ElementTest):
         element = element_cls(possible_value)
         assert [
             (prefix, child.value) for prefix, child in element.traverse()
-        ] == list(enumerate(possible_value))
+        ] == [([i], value) for i, value in enumerate(possible_value)]
         assert [
             (prefix, child.value)
             for prefix, child in element.traverse(prefix=["foo"])
@@ -129,6 +129,17 @@ class TestTuple(SequenceTest):
         element = Tuple.of()(())
         assert element.value == ()
         assert element.validate()
+
+    def test_traverse_nested(self):
+        element_cls = Tuple.of(Tuple.of(Integer, Integer), Integer)
+        element = element_cls(((1, 2), (3)))
+        assert [
+            (prefix, child.value) for prefix, child in element.traverse()
+        ] == [
+            ([0, 0], 1),
+            ([0, 1], 2),
+            ([1], 3)
+        ]
 
 
 class MutableSequenceTest(SequenceTest):
@@ -201,3 +212,15 @@ class TestList(MutableSequenceTest):
         if isinstance(request.param, tuple):
             return list(request.param)
         return request.param
+
+    def test_traverse_nested(self):
+        element_cls = List.of(List.of(Integer))
+        element = element_cls([[1, 2], [3, 4]])
+        assert [
+            (prefix, child.value) for prefix, child in element.traverse()
+        ] == [
+            ([0, 0], 1),
+            ([0, 1], 2),
+            ([1, 0], 3),
+            ([1, 1], 4)
+        ]

@@ -36,9 +36,11 @@ class Sequence(Container):
     def traverse(self, prefix=None):
         for i, element in enumerate(self):
             if prefix is None:
-                yield i, element
+                current_prefix = [i]
             else:
-                yield prefix + [i], element
+                current_prefix = prefix + [i]
+            for child in element.traverse(current_prefix):
+                yield child
 
 
 class Tuple(Sequence, tuple):
