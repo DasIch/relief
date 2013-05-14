@@ -10,8 +10,7 @@ from relief.constants import Unspecified, NotUnserializable
 from relief.schema.scalars import (
     Boolean, Integer, Float, Complex, Unicode, Bytes
 )
-from relief.schema.special import Form
-from relief.schema.mappings import Dict, OrderedDict
+from relief.schema.mappings import Dict, OrderedDict, Form
 from relief.schema.sequences import Tuple, List
 
 
