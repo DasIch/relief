@@ -6,8 +6,8 @@
     :copyright: 2013 by Daniel Neuhäuser
     :license: BSD, see LICENSE.rst for details
 """
+from relief import Unspecified, NotUnserializable
 from relief.utils import class_cloner
-from relief.constants import Unspecified, NotUnserializable
 
 import six
 

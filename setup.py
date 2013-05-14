@@ -1,6 +1,6 @@
 # coding: utf-8
 import os
-from setuptools import setup
+from setuptools import setup, find_packages
 
 
 PACKAGE_PATH = os.path.join(
@@ -26,7 +26,7 @@ setup(
     license="BSD",
     description="datastructure validation",
     install_requires=["six"],
-    packages=["relief", "relief.schema", "relief.tests", "relief.tests.schema"],
+    packages=find_packages(),
     classifiers=[
         "License :: OSI Approved :: BSD License",
         "Operating System :: OS Independent",

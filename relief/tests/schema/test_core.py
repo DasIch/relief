@@ -6,7 +6,7 @@
     :copyright: 2013 by Daniel Neuhäuser
     :license: BSD, see LICENSE.rst for details
 """
-from relief.constants import Unspecified
+from relief import Unspecified
 from relief.schema.core import Element
 from relief.tests.schema.conftest import ElementTest
 

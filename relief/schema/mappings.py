@@ -6,9 +6,9 @@
     :copyright: 2013 by Daniel Neuhäuser
     :license: BSD, see LICENSE.rst for details
 """
+from relief import Unspecified, NotUnserializable
 from relief._compat import add_native_itermethods
 from relief.utils import class_cloner
-from relief.constants import Unspecified, NotUnserializable
 from relief.schema.core import Container
 
 import six

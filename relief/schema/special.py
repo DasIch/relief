@@ -8,8 +8,8 @@
 """
 from collections import OrderedDict
 
+from relief import Unspecified, NotUnserializable
 from relief._compat import add_native_itermethods, Prepareable
-from relief.constants import Unspecified, NotUnserializable
 from relief.schema.core import Element
 
 import six
