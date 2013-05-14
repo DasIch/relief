@@ -1,0 +1,6 @@
+# testing
+py.test
+tox
+pyflakes
+# documentation
+sphinx==1.1.3

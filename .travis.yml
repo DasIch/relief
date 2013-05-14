@@ -6,9 +6,7 @@ python:
 #  - pypy we require at least pypy >= 2.0 travis doesn't it, yet.
 
 install:
-  - python setup.py install
-  - pip install --use-mirrors pyflakes
-  - pip install --use-mirrors sphinx==1.1.3
+  - make dev
 
 script:
   - find relief -iname "*.py" | xargs pyflakes
