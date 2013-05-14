@@ -10,6 +10,14 @@ API
    api/validation.rst
 
 
+Additional Information
+----------------------
+
+.. toctree::
+
+   other/license.rst
+
+
 Indices and tables
 ==================
 

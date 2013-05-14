@@ -1,3 +1,6 @@
+License
+=======
+
 Copyright (c) 2013 by Daniel Neuhäuser
 
 Redistribution and use in source and binary forms of the software as well
