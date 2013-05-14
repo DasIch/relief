@@ -12,4 +12,7 @@ any kind of untrusted data.
 Relief is licensed under a 3-clause BSD license. See LICENSE.rst for more
 details.
 
+Read the documentation at `read the docs`_.
+
 .. _Flatland: http://discorporate.us/projects/flatland/
+.. _read the docs: https://relief.readthedocs.org
