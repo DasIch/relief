@@ -11,7 +11,7 @@ from relief.schema.scalars import (
     Boolean, Integer, Float, Complex, Unicode, Bytes
 )
 from relief.schema.special import Form
-from relief.schema.mappings import Dict
+from relief.schema.mappings import Dict, OrderedDict
 from relief.schema.sequences import Tuple, List
 
 
@@ -21,5 +21,6 @@ __version_info__ = (0, 0, 0)
 
 __all__ = [
     "Unspecified", "NotUnserializable", "Boolean", "Integer", "Float",
-    "Complex", "Unicode", "Bytes", "Form", "Dict", "Tuple", "List"
+    "Complex", "Unicode", "Bytes", "Form", "Dict", "OrderedDict", "Tuple",
+    "List"
 ]

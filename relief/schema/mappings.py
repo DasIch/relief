@@ -6,6 +6,8 @@
     :copyright: 2013 by Daniel Neuhäuser
     :license: BSD, see LICENSE.rst for details
 """
+import collections
+
 from relief import Unspecified, NotUnserializable
 from relief._compat import add_native_itermethods
 from relief.utils import class_cloner
@@ -155,3 +157,63 @@ class Dict(MutableMapping, dict):
 
     def has_key(self, key):
         return key in self
+
+
+class OrderedDict(MutableMapping, collections.OrderedDict):
+    @classmethod
+    def unserialize(cls, raw_value):
+        try:
+            return collections.OrderedDict(raw_value)
+        except TypeError:
+            return NotUnserializable
+
+    def __init__(self, value=Unspecified):
+        collections.OrderedDict.__init__(self)
+        MutableMapping.__init__(self, value=value)
+
+    @property
+    def value(self):
+        if not isinstance(self.raw_value, dict):
+            if self.raw_value is Unspecified:
+                return Unspecified
+            return NotUnserializable
+        result = collections.OrderedDict()
+        for key, value in six.iteritems(self):
+            if key.value is NotUnserializable or value.value is NotUnserializable:
+                return NotUnserializable
+            result[key.value] = value.value
+        return result
+
+    def set(self, raw_value):
+        self.raw_value = raw_value
+        self.clear()
+        if raw_value is not Unspecified:
+            unserialized = self.unserialize(raw_value)
+            if unserialized is not NotUnserializable:
+                if hasattr(self, "_raw_value"):
+                    del self._raw_value
+                self.update(unserialized)
+
+    def has_key(self, key):
+        return key in self
+
+    def __reversed__(self):
+        for key in super(OrderedDict, self).__reversed__():
+            yield super(collections.OrderedDict, self).__getitem__(key).key
+
+    def popitem(self, last=True):
+        if not self:
+            raise KeyError("dictionary is empty")
+        key = next(reversed(self) if last else iter(self))
+        value = self.pop(key.value)
+        return key, value
+
+    __missing = object()
+    def pop(self, key, default=__missing):
+        if key in self:
+            value = self[key]
+            del self[key]
+            return value
+        if default is self.__missing:
+            raise KeyError(key)
+        return self.member_schema[1](default)

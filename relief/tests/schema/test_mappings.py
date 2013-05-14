@@ -6,7 +6,7 @@
     :copyright: 2013 by Daniel Neuhäuser
     :license: BSD, see LICENSE.rst for details
 """
-from relief import Dict, Unicode, Integer, NotUnserializable
+from relief import Dict, OrderedDict, Unicode, Integer, NotUnserializable
 from relief.tests.conftest import python2_only
 from relief.tests.schema.conftest import ElementTest
 
@@ -165,20 +165,6 @@ class MutableMappingTest(MappingTest):
         element.update(foo=1)
         assert element[u"foo"].value == 1
 
-
-class TestDict(MutableMappingTest):
-    @py.test.fixture
-    def element_cls(self):
-        return Dict.of(Unicode, Integer)
-
-    @py.test.fixture
-    def possible_value(self):
-        return {u"foo": 1}
-
-    def test_has_key(self, element_cls):
-        assert element_cls({u"foo": 1}).has_key(u"foo")
-        assert not element_cls({u"foo": 1}).has_key(u"bar")
-
     def test_validate_value_empty(self, element_cls):
         element = element_cls({})
         assert element.is_valid is None
@@ -200,3 +186,31 @@ class TestDict(MutableMappingTest):
         assert element.is_valid is None
         assert not element.validate()
         assert not element.is_valid
+
+
+class TestDict(MutableMappingTest):
+    @py.test.fixture
+    def element_cls(self):
+        return Dict.of(Unicode, Integer)
+
+    @py.test.fixture
+    def possible_value(self):
+        return {u"foo": 1}
+
+    def test_has_key(self, element_cls):
+        assert element_cls({u"foo": 1}).has_key(u"foo")
+        assert not element_cls({u"foo": 1}).has_key(u"bar")
+
+
+class TestOrderedDict(MutableMappingTest):
+    @py.test.fixture
+    def element_cls(self):
+        return OrderedDict.of(Unicode, Integer)
+
+    @py.test.fixture
+    def possible_value(self):
+        return [(u"foo", 1)]
+
+    def test_has_key(self, element_cls):
+        assert element_cls({u"foo": 1}).has_key(u"foo")
+        assert not element_cls({u"foo": 1}).has_key(u"bar")
