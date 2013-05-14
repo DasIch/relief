@@ -6,6 +6,8 @@ python:
 install:
   - python setup.py install
   - pip install pyflakes
+  - pip install sphinx
 script:
   - find relief -iname "*.py" | xargs pyflakes
   - py.test -vv relief
+  - sphinx-build -aEWb linkcheck docs docs/_build
