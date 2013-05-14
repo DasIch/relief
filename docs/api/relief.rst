@@ -30,3 +30,13 @@ Sequences
 
 .. autoclass:: List
    :members:
+
+
+Mappings
+--------
+
+.. autoclass:: Dict
+   :members:
+
+.. autoclass:: OrderedDict
+   :members:

@@ -125,6 +125,20 @@ class MutableMapping(Mapping):
 
 
 class Dict(MutableMapping, dict):
+    """
+    Represents a :func:`dict`.
+
+    In order to use :class:`Dict`, you need to define the element type for keys
+    and values using :meth:`of`, which will return a new :class:`Dict` class::
+
+        Dict.of(Unicode, Integer)
+
+    would be a :class:`Dict` whose keys are :class:`~relief.Unicode` strings
+    and whose values are :class:`~relief.Integer`.
+
+    Anything that can be coerced to a dictionary will be accepted as a raw
+    value.
+    """
     @classmethod
     def unserialize(cls, raw_value):
         try:
@@ -165,6 +179,11 @@ class Dict(MutableMapping, dict):
 
 
 class OrderedDict(MutableMapping, collections.OrderedDict):
+    """
+    Represents a :class:`collections.OrderedDict`.
+
+    See :class:`Dict` for more information.
+    """
     @classmethod
     def unserialize(cls, raw_value):
         try:
