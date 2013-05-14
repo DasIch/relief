@@ -5,8 +5,8 @@ python:
   - pypy
 install:
   - python setup.py install
-  - pip install pyflakes
-  - pip install sphinx
+  - pip install --use-mirrors pyflakes
+  - pip install --use-mirrors sphinx
 script:
   - find relief -iname "*.py" | xargs pyflakes
   - py.test -vv relief
