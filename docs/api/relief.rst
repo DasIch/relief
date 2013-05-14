@@ -1,0 +1,22 @@
+relief
+======
+
+
+.. module:: relief
+
+Scalars
+-------
+
+.. autoclass:: Boolean
+
+.. autoclass:: Integer
+
+.. autoclass:: Float
+
+.. autoclass:: Complex
+
+.. autoclass:: Unicode
+   :members:
+
+.. autoclass:: Bytes
+   :members:

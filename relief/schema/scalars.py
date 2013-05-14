@@ -15,6 +15,12 @@ import six
 
 
 class Boolean(Element):
+    """
+    Represents a :func:`bool`.
+
+    Accepts ``u"True"``, ``u"False"``, ``b"True"``, and ``b"False"`` as raw
+    values.
+    """
     @classmethod
     def unserialize(cls, raw_value):
         if isinstance(raw_value, bool):
@@ -48,31 +54,64 @@ class Number(Element):
 
 
 class Integer(Number):
+    """
+    Represents an :func:`int`.
+
+    Accepts :func:`unicode` and :func:`bytes` representation in base 10 as raw
+    value.
+    """
     number_cls = int
 
 
 class Float(Number):
+    """
+    Represents a :func:`float`.
+
+    Accepts :func:`unicode` and :func:`bytes` representation as raw value.
+    """
     number_cls = float
 
 
 class Complex(Number):
+    """
+    Represents a :func:`complex`.
+
+    Accepts :func:`unicode` and :func:`bytes` representation as raw value.
+    """
     number_cls = complex
 
 
 class Unicode(Element):
-    encoding = sys.getdefaultencoding()
+    """
+    Represents a :func:`unicode` string.
+
+    Accepts :func:`bytes` encoded using :attr:`encoding`.
+    """
+    #: The encoding used to decode raw values, can be set with :meth:`using`
+    #: and defaults to the default encoding, which is usually ASCII or UTF-8
+    #: depending on whether you use 2.x or 3.x.
+    encoding = None
 
     @classmethod
     def unserialize(cls, raw_value):
         if isinstance(raw_value, six.text_type):
             return raw_value
         try:
-            return raw_value.decode(cls.encoding)
+            if cls.encoding is None:
+                encoding = sys.getdefaultencoding()
+            else:
+                encoding  = cls.encoding
+            return raw_value.decode(encoding)
         except UnicodeDecodeError:
             return NotUnserializable
 
 
 class Bytes(Element):
+    """
+    Represents a :func:`bytes` string.
+
+    Accepts :func:`unicode` if it can be coerced to bytes.
+    """
     @classmethod
     def unserialize(cls, raw_value):
         if isinstance(raw_value, bytes):

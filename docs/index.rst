@@ -6,6 +6,7 @@ API
 
 .. toctree::
 
+   api/relief.rst
    api/validation.rst
 
 
