@@ -1,5 +1,5 @@
 # testing
-py.test
+pytest
 tox
 pyflakes
 # documentation
