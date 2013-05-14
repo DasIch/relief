@@ -264,6 +264,33 @@ class FormMeta(six.with_metaclass(Prepareable, type)):
 
 @add_native_itermethods
 class Form(six.with_metaclass(FormMeta, Container)):
+    """
+    Represents a :func:`dict` that maps a fixed set of keys to heterogeneous
+    values.
+
+    In order to use :class:`Form`, you need to define the keys and the element
+    types to which they map using :meth:`of`, which will return a new
+    :class:`Form` class::
+
+        Form.of({
+            "foo": Integer,
+            "bar": Unicode
+        })
+
+    You can also use a list of tuples or a :class:`~collections.OrderedDict` if
+    you care about the order of the items.
+
+    Alternatively you can also use the equivalent declarative syntax::
+
+        class MyForm(Form):
+            foo = Integer
+            bar = Unicode
+
+    The order of the elements will be preserved.
+
+    Anything that can be coerced to a dictionary will be accepted as a raw
+    value.
+    """
     @class_cloner
     def of(cls, schema):
         cls.member_schema = collections.OrderedDict(schema)

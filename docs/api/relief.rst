@@ -40,3 +40,6 @@ Mappings
 
 .. autoclass:: OrderedDict
    :members:
+
+.. autoclass:: Form
+   :members:
