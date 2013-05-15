@@ -1,8 +1,8 @@
 Relief documentation
 ====================
 
-API
----
+API Reference
+-------------
 
 .. toctree::
 
