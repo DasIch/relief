@@ -1,6 +1,13 @@
 Relief documentation
 ====================
 
+Welcome to Relief's documentation. The project has not been released, yet, and
+the documentation is far from finished, but if you are interested you can still
+take a look at the :ref:`api reference`.
+
+
+.. _api reference:
+
 API Reference
 -------------
 
