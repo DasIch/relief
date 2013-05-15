@@ -6,6 +6,14 @@ the documentation is far from finished, but if you are interested you can still
 take a look at the :ref:`api reference`.
 
 
+User's Guide
+------------
+
+.. toctree::
+
+   tutorial.rst
+
+
 .. _api reference:
 
 API Reference
