@@ -84,8 +84,6 @@ class Complex(Number):
 class Unicode(Element):
     """
     Represents a :func:`unicode` string.
-
-    Accepts :func:`bytes` encoded using :attr:`encoding`.
     """
     #: The encoding used to decode raw values, can be set with :meth:`using`
     #: and defaults to the default encoding, which is usually ASCII or UTF-8
@@ -96,29 +94,32 @@ class Unicode(Element):
     def unserialize(cls, raw_value):
         if isinstance(raw_value, six.text_type):
             return raw_value
-        try:
+        elif isinstance(raw_value, six.binary_type):
             if cls.encoding is None:
                 encoding = sys.getdefaultencoding()
             else:
                 encoding  = cls.encoding
-            return raw_value.decode(encoding)
-        except UnicodeDecodeError:
-            return NotUnserializable
+            try:
+                return raw_value.decode(encoding)
+            except UnicodeDecodeError:
+                return NotUnserializable
+        return six.text_type(raw_value)
 
 
 class Bytes(Element):
     """
     Represents a :func:`bytes` string.
-
-    Accepts :func:`unicode` if it can be coerced to bytes.
     """
     @classmethod
     def unserialize(cls, raw_value):
         if isinstance(raw_value, bytes):
             return raw_value
-        try:
-            if isinstance(raw_value, six.text_type):
+        elif isinstance(raw_value, six.text_type):
+            try:
                 return raw_value.encode(sys.getdefaultencoding())
+            except UnicodeEncodeError:
+                return NotUnserializable
+        try:
             return bytes(raw_value)
-        except UnicodeEncodeError:
+        except TypeError:
             return NotUnserializable

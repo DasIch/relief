@@ -212,6 +212,11 @@ class TestUnicode(ScalarTest):
         assert unicode.raw_value == raw_value
         assert unicode.value == value
 
+    def test_value_non_string(self):
+        unicode = Unicode(1)
+        assert unicode.raw_value == 1
+        assert unicode.value == u"1"
+
 
 class TestBytes(ScalarTest):
     @py.test.fixture
@@ -236,3 +241,14 @@ class TestBytes(ScalarTest):
         bytes = Bytes(raw_value)
         assert bytes.raw_value == raw_value
         assert bytes.value == value
+
+    if sys.version_info >= (3, 0):
+        def test_value_non_string(self):
+            bytes = Bytes(1)
+            assert bytes.raw_value == 1
+            assert bytes.value == b"\x00"
+    else:
+        def test_value_non_string(self):
+            bytes = Bytes(1)
+            assert bytes.raw_value == 1
+            assert bytes.value == b"1"
