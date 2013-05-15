@@ -86,6 +86,11 @@ class MappingTest(ElementTest):
         assert items[0][0].value == u"foo"
         assert items[0][1].value == 1
 
+    def test_set_list_of_tuples(self, element_cls):
+        element = element_cls([(u"foo", 1)])
+        assert element.raw_value == [(u"foo", 1)]
+        assert element.value == {u"foo": 1}
+
     def test_set_non_mapping(self, element_cls):
         element = element_cls(1)
         assert element.raw_value == 1
@@ -335,6 +340,11 @@ class TestForm(object):
         assert foo.value == {"spam": 1}
         assert foo["spam"].raw_value == "1"
         assert foo["spam"].value == 1
+
+    def test_set_list_of_tuples(self):
+        form = Form.of({"spam": Integer})([("spam", 1)])
+        assert form.raw_value == [("spam", 1)]
+        assert form.value == {"spam": 1}
 
     def test_set_non_mapping(self):
         class Foo(Form):

@@ -146,12 +146,14 @@ class Dict(MutableMapping, dict):
         except TypeError:
             return NotUnserializable
 
+    def __init__(self, value=Unspecified):
+        self._state = Unspecified
+        super(Dict, self).__init__(value=value)
+
     @property
     def value(self):
-        if not isinstance(self.raw_value, dict):
-            if self.raw_value is Unspecified:
-                return Unspecified
-            return NotUnserializable
+        if self._state is not None:
+            return self._state
         result = {}
         for key, value in six.iteritems(self):
             if key.value is NotUnserializable or value.value is NotUnserializable:
@@ -167,9 +169,14 @@ class Dict(MutableMapping, dict):
     def set(self, raw_value):
         self.raw_value = raw_value
         self.clear()
-        if raw_value is not Unspecified:
+        self._state = None
+        if raw_value is Unspecified:
+            self._state = Unspecified
+        else:
             unserialized = self.unserialize(raw_value)
-            if unserialized is not NotUnserializable:
+            if unserialized is NotUnserializable:
+                self._state = NotUnserializable
+            else:
                 if hasattr(self, "_raw_value"):
                     del self._raw_value
                 self.update(unserialized)
@@ -193,14 +200,13 @@ class OrderedDict(MutableMapping, collections.OrderedDict):
 
     def __init__(self, value=Unspecified):
         collections.OrderedDict.__init__(self)
+        self._state = Unspecified
         MutableMapping.__init__(self, value=value)
 
     @property
     def value(self):
-        if not isinstance(self.raw_value, dict):
-            if self.raw_value is Unspecified:
-                return Unspecified
-            return NotUnserializable
+        if self._state is not None:
+            return self._state
         result = collections.OrderedDict()
         for key, value in six.iteritems(self):
             if key.value is NotUnserializable or value.value is NotUnserializable:
@@ -216,9 +222,14 @@ class OrderedDict(MutableMapping, collections.OrderedDict):
     def set(self, raw_value):
         self.raw_value = raw_value
         self.clear()
-        if raw_value is not Unspecified:
+        self._state = None
+        if raw_value is Unspecified:
+            self._state = Unspecified
+        else:
             unserialized = self.unserialize(raw_value)
-            if unserialized is not NotUnserializable:
+            if unserialized is NotUnserializable:
+                self._state = NotUnserializable
+            else:
                 if hasattr(self, "_raw_value"):
                     del self._raw_value
                 self.update(unserialized)
@@ -315,6 +326,10 @@ class Form(six.with_metaclass(FormMeta, Container)):
         )
         return self
 
+    def __init__(self, value=Unspecified):
+        self._state = Unspecified
+        super(Form, self).__init__(value=value)
+
     def __getitem__(self, key):
         return self._elements[key]
 
@@ -343,12 +358,8 @@ class Form(six.with_metaclass(FormMeta, Container)):
 
     @property
     def value(self):
-        if not isinstance(self.raw_value, dict):
-            if self.raw_value is Unspecified:
-                return Unspecified
-            return NotUnserializable
-        if set(self.raw_value) != set(self):
-            return NotUnserializable
+        if self._state is not None:
+            return self._state
         result = collections.OrderedDict()
         for key, element in six.iteritems(self):
             if element.value is Unspecified:
@@ -363,12 +374,16 @@ class Form(six.with_metaclass(FormMeta, Container)):
 
     def set(self, raw_value):
         self.raw_value = raw_value
+        self._state = None
         if raw_value is Unspecified:
+            self._state = Unspecified
             for element in six.itervalues(self):
                 element.set(raw_value)
         else:
             unserialized = self.unserialize(raw_value)
-            if unserialized is not NotUnserializable:
+            if unserialized is NotUnserializable:
+                self._state = NotUnserializable
+            else:
                 for key, value in six.iteritems(unserialized):
                     self[key].set(value)
 
