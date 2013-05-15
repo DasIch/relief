@@ -121,6 +121,11 @@ class TestTuple(SequenceTest):
     def invalid_raw_values(self, request):
         return request.param
 
+    def test_set_list(self):
+        element = self.element_cls()([1, 2, 3])
+        assert element.raw_value == [1, 2, 3]
+        assert element.value == (1, 2, 3)
+
     def test_validate_without_members(self):
         element = Tuple.of()()
         assert element.value is Unspecified
@@ -212,6 +217,11 @@ class TestList(MutableSequenceTest):
         if isinstance(request.param, tuple):
             return list(request.param)
         return request.param
+
+    def test_set_tuple(self):
+        element = self.element_cls()((1, 2, 3))
+        assert element.raw_value == (1, 2, 3)
+        assert element.value == [1, 2, 3]
 
     def test_traverse_nested(self):
         element_cls = List.of(List.of(Integer))

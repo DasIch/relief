@@ -91,6 +91,10 @@ class Tuple(Sequence, tuple):
             (schema() for schema in cls.member_schema)
         )
 
+    def __init__(self, value=Unspecified):
+        self._state = Unspecified
+        super(Tuple, self).__init__(value=value)
+
     @classmethod
     def unserialize(cls, raw_value):
         try:
@@ -103,12 +107,8 @@ class Tuple(Sequence, tuple):
 
     @property
     def value(self):
-        if not isinstance(self.raw_value, tuple):
-            if self.raw_value is Unspecified:
-                return Unspecified
-            return NotUnserializable
-        elif len(self.raw_value) != len(self):
-            return NotUnserializable
+        if self._state is not None:
+            return self._state
         result = []
         for element in self:
             if element.value is NotUnserializable:
@@ -123,12 +123,16 @@ class Tuple(Sequence, tuple):
 
     def set(self, raw_value):
         self.raw_value = raw_value
+        self._state = None
         if raw_value is Unspecified:
+            self._state = Unspecified
             for element in self:
                 element.set(raw_value)
         else:
             unserialized = self.unserialize(raw_value)
-            if unserialized is not NotUnserializable:
+            if unserialized is NotUnserializable:
+                self._state = NotUnserializable
+            else:
                 for element, raw_part in zip(self, unserialized):
                     element.set(raw_part)
 
@@ -183,12 +187,14 @@ class List(MutableSequence, list):
         except TypeError:
             return NotUnserializable
 
+    def __init__(self, value=Unspecified):
+        self._state = Unspecified
+        super(List, self).__init__(value=value)
+
     @property
     def value(self):
-        if not isinstance(self.raw_value, list):
-            if self.raw_value is Unspecified:
-                return self.raw_value
-            return NotUnserializable
+        if self._state is not None:
+            return self._state
         result = []
         for element in self:
             if element.value is NotUnserializable:
@@ -203,12 +209,15 @@ class List(MutableSequence, list):
 
     def set(self, raw_value):
         self.raw_value = raw_value
+        self._state = None
         if raw_value is Unspecified:
+            self._state = Unspecified
             for element in self:
                 element.set(raw_value)
         else:
             unserialized = self.unserialize(raw_value)
             if unserialized is NotUnserializable:
+                self._state = NotUnserializable
                 del self[:]
             else:
                 self.extend(unserialized)
