@@ -128,8 +128,8 @@ class Dict(MutableMapping, dict):
     """
     Represents a :func:`dict`.
 
-    In order to use :class:`Dict`, you need to define the element type for keys
-    and values using :meth:`of`, which will return a new :class:`Dict` class::
+    In order to use :class:`Dict`, you need to define the schema for keys and
+    values using :meth:`of`, which will return a new :class:`Dict` class::
 
         Dict.of(Unicode, Integer)
 
@@ -268,9 +268,9 @@ class Form(six.with_metaclass(FormMeta, Container)):
     Represents a :func:`dict` that maps a fixed set of keys to heterogeneous
     values.
 
-    In order to use :class:`Form`, you need to define the keys and the element
-    types to which they map using :meth:`of`, which will return a new
-    :class:`Form` class::
+    In order to use :class:`Form`, you need to define the keys and the schema
+    to which they map using :meth:`of`, which will return a new :class:`Form`
+    class::
 
         Form.of({
             "foo": Integer,

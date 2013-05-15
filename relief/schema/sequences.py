@@ -76,7 +76,7 @@ class Tuple(Sequence, tuple):
     def of(cls, *schemas):
         """
         Returns a new :class:`Tuple` class whose contents are defined by the
-        given element types.
+        given schemas.
         """
         cls.member_schema = schemas
         return cls
@@ -166,8 +166,8 @@ class List(MutableSequence, list):
     """
     Represents a :func:`list`.
 
-    In order to use :class:`List`, you need to define the element type the list
-    is supposed to contain with :meth:`of`::
+    In order to use :class:`List`, you need to define the schema the list is
+    supposed to contain with :meth:`of`::
 
         List.of(Integer)
 
