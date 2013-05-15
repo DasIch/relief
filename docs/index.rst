@@ -17,11 +17,3 @@ Additional Information
 
    other/contributing.rst
    other/license.rst
-
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
