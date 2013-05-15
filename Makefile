@@ -29,4 +29,7 @@ docs:
 view-docs: docs
 	open docs/_build/html/index.html
 
-.PHONY: help dev clean delete-bytecode test style docs view-docs
+test-docs: docs
+	sphinx-build -aEWb doctest -d docs/_build/doctrees docs docs/_build
+
+.PHONY: help dev clean delete-bytecode test style docs view-docs test-docs
