@@ -46,6 +46,16 @@ class ScalarTest(ElementTest):
         assert not element.validate()
         assert not element.is_valid
 
+    def test_set_strict(self, element_cls, possible_value):
+        element = element_cls.using(strict=True)(possible_value)
+        assert element.raw_value == possible_value
+        assert element.value == possible_value
+
+    def test_set_strict_raw_value(self, element_cls, possible_raw_value):
+        element = element_cls.using(strict=True)(possible_raw_value)
+        assert element.raw_value == possible_raw_value
+        assert element.value is NotUnserializable
+
     def test_set_native(self, element_cls, possible_value):
         element = element_cls()
         element.set(possible_value)
@@ -65,6 +75,10 @@ class TestBoolean(ScalarTest):
 
     @py.test.fixture(params=[True, False])
     def possible_value(self, request):
+        return request.param
+
+    @py.test.fixture(params=[u"True", u"False"])
+    def possible_raw_value(self, request):
         return request.param
 
     @py.test.fixture
@@ -102,6 +116,10 @@ class TestInteger(ScalarTest):
         return 1
 
     @py.test.fixture
+    def possible_raw_value(self):
+        return "1"
+
+    @py.test.fixture
     def invalid_value(self):
         return "asd"
 
@@ -132,6 +150,10 @@ class TestFloat(ScalarTest):
     @py.test.fixture
     def possible_value(self):
         return 1.0
+
+    @py.test.fixture
+    def possible_raw_value(self):
+        return "1.0"
 
     @py.test.fixture
     def invalid_value(self):
@@ -166,6 +188,10 @@ class TestComplex(ScalarTest):
         return 1j
 
     @py.test.fixture
+    def possible_raw_value(self):
+        return "1j"
+
+    @py.test.fixture
     def invalid_value(self):
         return "asd"
 
@@ -198,6 +224,10 @@ class TestUnicode(ScalarTest):
         return u"foobar"
 
     @py.test.fixture
+    def possible_raw_value(self):
+        return b"foobar"
+
+    @py.test.fixture
     def invalid_value(self):
         # is missing \xc4 after the first character
         return b"\xc3\xc3\xb6\xc3\xbc"
@@ -226,6 +256,10 @@ class TestBytes(ScalarTest):
     @py.test.fixture
     def possible_value(self):
         return b"foobar"
+
+    @py.test.fixture
+    def possible_raw_value(self):
+        return u"foobar"
 
     @py.test.fixture
     def invalid_value(self):

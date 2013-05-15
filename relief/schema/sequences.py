@@ -71,6 +71,7 @@ class Tuple(Sequence, tuple):
 
     Any kind of iterable will be accepted as raw value.
     """
+    native_type = tuple
 
     @class_cloner
     def of(cls, *schemas):
@@ -97,6 +98,9 @@ class Tuple(Sequence, tuple):
 
     @classmethod
     def unserialize(cls, raw_value):
+        raw_value = super(Tuple, cls).unserialize(raw_value)
+        if raw_value is NotUnserializable:
+            return raw_value
         try:
             raw_value = tuple(raw_value)
         except TypeError:
@@ -180,10 +184,15 @@ class List(MutableSequence, list):
 
     Any kind of iterable will be accepted as raw value.
     """
+    native_type = list
+
     @classmethod
-    def unserialize(cls, raw_values):
+    def unserialize(cls, raw_value):
+        raw_value = super(List, cls).unserialize(raw_value)
+        if raw_value is NotUnserializable:
+            return raw_value
         try:
-            return list(raw_values)
+            return list(raw_value)
         except TypeError:
             return NotUnserializable
 

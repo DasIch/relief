@@ -6,6 +6,8 @@
     :copyright: 2013 by Daniel Neuhäuser
     :license: BSD, see LICENSE.rst for details
 """
+import collections
+
 from relief import (
     Dict, OrderedDict, Unicode, Integer, NotUnserializable, Form
 )
@@ -209,6 +211,16 @@ class TestDict(MutableMappingTest):
         assert element_cls({u"foo": 1}).has_key(u"foo")
         assert not element_cls({u"foo": 1}).has_key(u"bar")
 
+    def test_set_strict(self, element_cls):
+        element = element_cls.using(strict=True)({u"foo": 1})
+        assert element.raw_value == {u"foo": 1}
+        assert element.value == {u"foo": 1}
+
+    def test_set_strict_raw(self, element_cls):
+        element = element_cls.using(strict=True)([(u"foo", 1)])
+        assert element.raw_value == [(u"foo", 1)]
+        assert element.value is NotUnserializable
+
 
 class TestOrderedDict(MutableMappingTest):
     @py.test.fixture
@@ -222,6 +234,17 @@ class TestOrderedDict(MutableMappingTest):
     def test_has_key(self, element_cls):
         assert element_cls({u"foo": 1}).has_key(u"foo")
         assert not element_cls({u"foo": 1}).has_key(u"bar")
+
+    def test_set_strict(self, element_cls):
+        value = collections.OrderedDict({u"foo": 1})
+        element = element_cls.using(strict=True)(value)
+        assert element.raw_value == value
+        assert element.value == value
+
+    def test_set_strict_raw(self, element_cls):
+        element = element_cls.using(strict=True)({u"foo": 1})
+        assert element.raw_value == {u"foo": 1}
+        assert element.value is NotUnserializable
 
 
 class TestForm(object):
@@ -353,6 +376,18 @@ class TestForm(object):
         foo = Foo(1)
         assert foo.raw_value == 1
         assert foo.value is NotUnserializable
+
+    def test_set_strict(self):
+        value = {"spam": 1}
+        form = Form.of({"spam": Integer}).using(strict=True)(value)
+        assert form.raw_value == value
+        assert form.value == value
+
+    def test_set_strict_raw(self):
+        value = [("spam", 1)]
+        form = Form.of({"spam": Integer}).using(strict=True)(value)
+        assert form.raw_value == value
+        assert form.value is NotUnserializable
 
     def test_validate_empty(self):
         class Foo(Form):

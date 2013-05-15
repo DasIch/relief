@@ -126,6 +126,16 @@ class TestTuple(SequenceTest):
         assert element.raw_value == [1, 2, 3]
         assert element.value == (1, 2, 3)
 
+    def test_set_strict(self):
+        element = self.element_cls().using(strict=True)((1, 2, 3))
+        assert element.raw_value == (1, 2, 3)
+        assert element.value == (1, 2, 3)
+
+    def test_set_strict_raw(self):
+        element = self.element_cls().using(strict=True)([1, 2, 3])
+        assert element.raw_value == [1, 2, 3]
+        assert element.value is NotUnserializable
+
     def test_validate_without_members(self):
         element = Tuple.of()()
         assert element.value is Unspecified
@@ -222,6 +232,16 @@ class TestList(MutableSequenceTest):
         element = self.element_cls()((1, 2, 3))
         assert element.raw_value == (1, 2, 3)
         assert element.value == [1, 2, 3]
+
+    def test_set_strict(self, element_cls):
+        element = element_cls.using(strict=True)([1, 2, 3])
+        assert element.raw_value == [1, 2, 3]
+        assert element.value == [1, 2, 3]
+
+    def test_set_strict_raw(self, element_cls):
+        element = element_cls.using(strict=True)((1, 2, 3))
+        assert element.raw_value == (1, 2, 3)
+        assert element.value is NotUnserializable
 
     def test_traverse_nested(self):
         element_cls = List.of(List.of(Integer))

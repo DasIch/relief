@@ -19,6 +19,14 @@ class Element(object):
     This class specifically defines a basic interface for elements and provides
     some generally useful methods.
     """
+    #: When `True` :meth:`unserialize` should not attempt to unserialize raw
+    #: values that are instances of :attr:`native_type` and return
+    #: `NotUnserializable` instead.
+    strict = False
+
+    #: The "native" type represented by this element.
+    native_type = None.__class__
+
     validators = []
 
     @class_cloner
@@ -47,6 +55,8 @@ class Element(object):
         Tries to unserialize the given `raw_value` and returns an object whose
         type matches the type described by the element.
         """
+        if cls.strict and not isinstance(raw_value, cls.native_type):
+            return NotUnserializable
         return raw_value
 
     def __init__(self, value=Unspecified):

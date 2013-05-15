@@ -139,8 +139,13 @@ class Dict(MutableMapping, dict):
     Anything that can be coerced to a dictionary will be accepted as a raw
     value.
     """
+    native_type = dict
+
     @classmethod
     def unserialize(cls, raw_value):
+        raw_value = super(Dict, cls).unserialize(raw_value)
+        if raw_value is NotUnserializable:
+            return raw_value
         try:
             return dict(raw_value)
         except TypeError:
@@ -191,8 +196,13 @@ class OrderedDict(MutableMapping, collections.OrderedDict):
 
     See :class:`Dict` for more information.
     """
+    native_type = collections.OrderedDict
+
     @classmethod
     def unserialize(cls, raw_value):
+        raw_value = super(OrderedDict, cls).unserialize(raw_value)
+        if raw_value is NotUnserializable:
+            return raw_value
         try:
             return collections.OrderedDict(raw_value)
         except TypeError:
@@ -302,6 +312,8 @@ class Form(six.with_metaclass(FormMeta, Container)):
     Anything that can be coerced to a dictionary will be accepted as a raw
     value.
     """
+    native_type = dict
+
     @class_cloner
     def of(cls, schema):
         cls.member_schema = collections.OrderedDict(schema)
@@ -309,6 +321,9 @@ class Form(six.with_metaclass(FormMeta, Container)):
 
     @classmethod
     def unserialize(cls, raw_value):
+        raw_value = super(Form, cls).unserialize(raw_value)
+        if raw_value is NotUnserializable:
+            return raw_value
         if not isinstance(raw_value, dict):
             try:
                 raw_value = dict(raw_value)

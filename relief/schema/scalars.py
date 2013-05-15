@@ -21,8 +21,11 @@ class Boolean(Element):
     Accepts ``u"True"``, ``u"False"``, ``b"True"``, and ``b"False"`` as raw
     values.
     """
+    native_type = bool
+
     @classmethod
     def unserialize(cls, raw_value):
+        raw_value = super(Boolean, cls).unserialize(raw_value)
         if isinstance(raw_value, bool):
             return raw_value
         if isinstance(raw_value, (bytes, six.text_type)):
@@ -39,16 +42,17 @@ class Boolean(Element):
 
 
 class Number(Element):
-    number_cls = None
-
     @classmethod
     def unserialize(cls, raw_value):
-        if isinstance(raw_value, complex):
+        raw_value = super(Number, cls).unserialize(raw_value)
+        if raw_value is NotUnserializable:
+            return raw_value
+        if isinstance(raw_value, cls.native_type):
             return raw_value
         elif isinstance(raw_value, bytes):
             raw_value = raw_value.decode(sys.getdefaultencoding())
         try:
-            return cls.number_cls(raw_value)
+            return cls.native_type(raw_value)
         except (ValueError, TypeError):
             return NotUnserializable
 
@@ -60,7 +64,7 @@ class Integer(Number):
     Accepts :func:`unicode` and :func:`bytes` representation in base 10 as raw
     value.
     """
-    number_cls = int
+    native_type = int
 
 
 class Float(Number):
@@ -69,7 +73,7 @@ class Float(Number):
 
     Accepts :func:`unicode` and :func:`bytes` representation as raw value.
     """
-    number_cls = float
+    native_type = float
 
 
 class Complex(Number):
@@ -78,13 +82,15 @@ class Complex(Number):
 
     Accepts :func:`unicode` and :func:`bytes` representation as raw value.
     """
-    number_cls = complex
+    native_type = complex
 
 
 class Unicode(Element):
     """
     Represents a :func:`unicode` string.
     """
+    native_type = six.text_type
+
     #: The encoding used to decode raw values, can be set with :meth:`using`
     #: and defaults to the default encoding, which is usually ASCII or UTF-8
     #: depending on whether you use 2.x or 3.x.
@@ -92,6 +98,9 @@ class Unicode(Element):
 
     @classmethod
     def unserialize(cls, raw_value):
+        raw_value = super(Unicode, cls).unserialize(raw_value)
+        if raw_value is NotUnserializable:
+            return raw_value
         if isinstance(raw_value, six.text_type):
             return raw_value
         elif isinstance(raw_value, six.binary_type):
@@ -110,8 +119,13 @@ class Bytes(Element):
     """
     Represents a :func:`bytes` string.
     """
+    native_type = bytes
+
     @classmethod
     def unserialize(cls, raw_value):
+        raw_value = super(Bytes, cls).unserialize(raw_value)
+        if raw_value is NotUnserializable:
+            return raw_value
         if isinstance(raw_value, bytes):
             return raw_value
         elif isinstance(raw_value, six.text_type):
