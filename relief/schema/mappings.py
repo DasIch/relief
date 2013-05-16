@@ -209,7 +209,7 @@ class OrderedDict(MutableMapping, collections.OrderedDict):
         return self.member_schema[1](default)
 
 
-class FormMeta(six.with_metaclass(Prepareable, type)):
+class FormMeta(collections.Mapping.__class__, six.with_metaclass(Prepareable, type)):
     def __new__(cls, cls_name, bases, attributes):
         member_schema = attributes["member_schema"] = collections.OrderedDict()
         for base in reversed(bases):
@@ -224,7 +224,7 @@ class FormMeta(six.with_metaclass(Prepareable, type)):
 
 
 @add_native_itermethods
-class Form(six.with_metaclass(FormMeta, Container)):
+class Form(collections.Mapping, six.with_metaclass(FormMeta, Container)):
     """
     Represents a :func:`dict` that maps a fixed set of keys to heterogeneous
     values.
@@ -289,23 +289,11 @@ class Form(six.with_metaclass(FormMeta, Container)):
             raise KeyError(key)
         self._elements[key].set(value)
 
-    def __contains__(self, key):
-        return key in self._elements
-
     def __len__(self):
         return len(self._elements)
 
     def __iter__(self):
         return iter(self._elements)
-
-    def keys(self):
-        return six.iterkeys(self._elements)
-
-    def values(self):
-        return six.itervalues(self._elements)
-
-    def items(self):
-        return six.iteritems(self._elements)
 
     @property
     def value(self):
