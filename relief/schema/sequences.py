@@ -194,15 +194,31 @@ class List(MutableSequence, list):
     """
     Represents a :func:`list`.
 
-    In order to use :class:`List`, you need to define the schema the list is
-    supposed to contain with :meth:`of`::
+    :class:`List` represents a homogeneous list of values, in order to define
+    what kind of values it contains and to actually use :class:`List` you have
+    to derive a specific :class:`List` schema using :meth:`of`:
 
-        List.of(Integer)
+    .. doctest::
 
-    would be a :class:`List` containing integers. Unlike :class:`Tuple` the
-    length is not part of the element definition and lists are homogeneous.
+       >>> from relief import List, Integer
+       >>> IntegerList = List.of(Integer)
 
-    Any kind of iterable will be accepted as raw value.
+    :class:`List` will successfully unserialize any iterable that yields 0 or
+    more objects, that can be unserialized by the schema defining the contents
+    of the list:
+
+    .. doctest::
+
+       >>> element = IntegerList()
+       >>> element.set([])
+       >>> element.value
+       []
+       >>> element.set([1, 2, 3])
+       >>> element.value
+       [1, 2, 3]
+       >>> element.set(["foobar", 2, 3])
+       >>> element.value
+       NotUnserializable
     """
     native_type = list
 
