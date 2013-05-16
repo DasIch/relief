@@ -94,6 +94,18 @@ class Complex(Number):
 class Unicode(Element):
     """
     Represents a :func:`unicode` string.
+
+    Accepts any byte string that is encoded using the default encoding or which
+    ever encoding has been set as :attr:`encoding`::
+
+        >>> from relief import Unicode
+        >>> element = Unicode()
+        >>> element.set(u"Hello, World!")
+        >>> element.value
+        u"Hello, World!"
+        >>> element.set(b"Hello, World!")
+        >>> element.value
+        u"Hello, World!"
     """
     native_type = six.text_type
 
