@@ -43,3 +43,11 @@ Mappings
 
 .. autoclass:: Form
    :members:
+
+
+Constants
+---------
+
+.. autodata:: Unspecified
+
+.. autodata:: NotUnserializable

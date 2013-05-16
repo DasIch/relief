@@ -21,7 +21,7 @@ class Element(object):
     """
     #: When `True` :meth:`unserialize` should not attempt to unserialize raw
     #: values that are instances of :attr:`native_type` and return
-    #: `NotUnserializable` instead.
+    #: :data:`~relief.NotUnserializable` instead.
     strict = False
 
     #: The "native" type represented by this element.
@@ -78,13 +78,15 @@ class Element(object):
         self.errors = []
 
         #: The unserialized concrete value this element represents. May also be
-        #: `Unspecified` if the value has not been set or `NotUnserializable`
-        #: if :meth:`unserialize` was unable to unserialize the value.
+        #: :data:`~relief.Unspecified` if the value has not been set or
+        #: :data:`~relief.NotUnserializable` if :meth:`unserialize` was unable
+        #: to unserialize the value.
         self.value = Unspecified
 
         #: The concrete value this element represents. May also be
-        #: `Unspecified` if the value has not been set. This may be helpful to
-        #: look at if :attr:`value` is `NotUnserializable`.
+        #: :data:`~relief.Unspecified` if the value has not been set. This may
+        #: be helpful to look at if :attr:`value` is
+        #: :data:`~relief.NotUnserializable`.
         self.raw_value = Unspecified
 
         self.set(value)
@@ -111,7 +113,8 @@ class Element(object):
         considered invalid.
 
         If no validators have been defined, the element will be considered
-        invalid if :attr:`value` is `Unspecified` or `NotUnserializable`.
+        invalid if :attr:`value` is :data:`~relief.Unspecified` or
+        :data:`~relief.NotUnserializable`.
         """
         if context is None:
             context = {}
