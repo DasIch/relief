@@ -29,16 +29,10 @@ class Boolean(Element):
         raw_value = super(Boolean, cls).unserialize(raw_value)
         if isinstance(raw_value, bool):
             return raw_value
-        if isinstance(raw_value, (bytes, six.text_type)):
-            if isinstance(raw_value, bytes):
-                try:
-                    raw_value = raw_value.decode(sys.getdefaultencoding())
-                except UnicodeDecodeError:
-                    return NotUnserializable
-            if raw_value == u"True":
-                return True
-            elif raw_value == u"False":
-                return False
+        elif raw_value in [u"True", b"True"]:
+            return True
+        elif raw_value in [u"False", b"False"]:
+            return False
         return NotUnserializable
 
 
