@@ -113,16 +113,6 @@ class Tuple(Sequence, tuple):
         cls.member_schema = schemas
         return cls
 
-    def __new__(cls, *args, **kwargs):
-        if cls.member_schema is None:
-            raise TypeError(
-                "You need to create a %s type with .of()" % cls.__name__
-            )
-        return super(Tuple, cls).__new__(
-            cls,
-            (schema() for schema in cls.member_schema)
-        )
-
     @classmethod
     def unserialize(cls, raw_value):
         raw_value = super(Tuple, cls).unserialize(raw_value)
@@ -135,6 +125,16 @@ class Tuple(Sequence, tuple):
         if len(raw_value) != len(cls.member_schema):
             return NotUnserializable
         return raw_value
+
+    def __new__(cls, *args, **kwargs):
+        if cls.member_schema is None:
+            raise TypeError(
+                "You need to create a %s type with .of()" % cls.__name__
+            )
+        return super(Tuple, cls).__new__(
+            cls,
+            (schema() for schema in cls.member_schema)
+        )
 
     @property
     def value(self):
