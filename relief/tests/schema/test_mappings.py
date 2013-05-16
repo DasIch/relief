@@ -207,6 +207,7 @@ class TestDict(MutableMappingTest):
     def possible_value(self):
         return {u"foo": 1}
 
+    @python2_only
     def test_has_key(self, element_cls):
         assert element_cls({u"foo": 1}).has_key(u"foo")
         assert not element_cls({u"foo": 1}).has_key(u"bar")
@@ -231,6 +232,7 @@ class TestOrderedDict(MutableMappingTest):
     def possible_value(self):
         return [(u"foo", 1)]
 
+    @python2_only
     def test_has_key(self, element_cls):
         assert element_cls({u"foo": 1}).has_key(u"foo")
         assert not element_cls({u"foo": 1}).has_key(u"bar")

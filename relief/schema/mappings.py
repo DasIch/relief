@@ -186,9 +186,6 @@ class Dict(MutableMapping, dict):
                     del self._raw_value
                 self.update(unserialized)
 
-    def has_key(self, key):
-        return key in self
-
 
 class OrderedDict(MutableMapping, collections.OrderedDict):
     """
@@ -217,9 +214,6 @@ class OrderedDict(MutableMapping, collections.OrderedDict):
                 if hasattr(self, "_raw_value"):
                     del self._raw_value
                 self.update(unserialized)
-
-    def has_key(self, key):
-        return key in self
 
     def __reversed__(self):
         for key in super(OrderedDict, self).__reversed__():
