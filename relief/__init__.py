@@ -7,6 +7,7 @@
     :license: BSD, see LICENSE.rst for details
 """
 from relief.constants import Unspecified, NotUnserializable
+from relief.schema.core import Element
 from relief.schema.scalars import (
     Boolean, Integer, Float, Complex, Unicode, Bytes
 )
@@ -19,7 +20,7 @@ __version_info__ = (0, 0, 0)
 
 
 __all__ = [
-    "Unspecified", "NotUnserializable", "Boolean", "Integer", "Float",
-    "Complex", "Unicode", "Bytes", "Form", "Dict", "OrderedDict", "Tuple",
-    "List"
+    "Unspecified", "NotUnserializable", "Element", "Boolean", "Integer",
+    "Float", "Complex", "Unicode", "Bytes", "Form", "Dict", "OrderedDict",
+    "Tuple", "List"
 ]

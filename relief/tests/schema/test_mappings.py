@@ -9,9 +9,8 @@
 import collections
 
 from relief import (
-    Dict, OrderedDict, Unicode, Integer, NotUnserializable, Form
+    Dict, OrderedDict, Unicode, Integer, NotUnserializable, Form, Element
 )
-from relief.schema.core import Element
 from relief.tests.conftest import python2_only
 from relief.tests.schema.conftest import ElementTest
 

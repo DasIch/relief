@@ -8,10 +8,10 @@
 """
 import collections
 
-from relief import Unspecified, NotUnserializable
+from relief import Unspecified, NotUnserializable, Element
 from relief._compat import add_native_itermethods, Prepareable
 from relief.utils import class_cloner
-from relief.schema.core import Container, Element
+from relief.schema.core import Container
 
 import six
 

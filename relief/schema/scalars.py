@@ -8,8 +8,7 @@
 """
 import sys
 
-from relief import NotUnserializable
-from relief.schema.core import Element
+from relief import NotUnserializable, Element
 
 import six
 
