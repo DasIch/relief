@@ -57,19 +57,50 @@ class Tuple(Sequence, tuple):
     """
     Represents a :func:`tuple`.
 
-    In order to use :class:`Tuple`, you need to define the elements it contains
-    using :meth:`of`, which will return a new :class:`Tuple` class::
+    You cannot use :class:`Tuple` directly, as it does not know what kind of
+    schemas it contains or which length it has, both fundamental properties of
+    a tuple.
 
-        Tuple.of(Integer, Unicode)
+    In order to use :class:`Tuple` you have to derive :class:`Tuple` schema
+    that knows about the length and the contents with :meth:`of`. You do this
+    by simply calling :meth:`of` with as many different schemas as the tuple
+    is supposed to be long, each schema responding to the contents you want the
+    contents to be::
 
-    would be a :class:`Tuple` of length 2, with an :class:`~relief.Integer` at
-    index 0, and a :class:`~relief.Unicode` string at index 1.
+        >>> from relief import Tuple, Integer, Unicode
+        >>> UsableTuple = Tuple.of(Integer, Unicode)
 
-        Tuple.of()
+    `UsableTuple` would be one such derived schema, that defines a tuple with
+    a length of 2, whose first item is an integer and whose second item is a
+    unicode string.
 
-    would be a :class:`Tuple` of length 0.
+    The derived schema can then be used like any other schema::
 
-    Any kind of iterable will be accepted as raw value.
+        >>> element = UsableTuple()
+        >>> element.set((1, u"Hello, World!"))
+        >>> element.value
+        (1, u"Hello, World!")
+
+    :class:`Tuple` will successfully unserialize any iterable that yields as
+    many times as the tuple is long. However should any of those schemas
+    contained within the tuple fail to unserialize a raw value yielded by an
+    iterable, :attr:`value` will be :data:`~relief.NotUnserializable`::
+
+        >>> element.set((u"foobar", u"Hello, World!"))
+        >>> element.value
+        NotUnserializable
+
+    Furthermore :class:`Tuple` elements inherit from :func:`tuple`, you can
+    perform all operations on them you can on any other :func:`tuple`::
+
+       >>> element = Tuple.of(Integer, Unicode)((1, u"Hello, World!"))
+       >>> element.count(1)
+       1
+       >>> element.index(u"Hello, World!")
+       1
+
+    Any operation that returns the contents of the element in some fashion,
+    will not return a value but an element.
     """
     native_type = tuple
 
