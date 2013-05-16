@@ -56,8 +56,19 @@ class Integer(Number):
     """
     Represents an :func:`int`.
 
-    Accepts :func:`unicode` and :func:`bytes` representation in base 10 as raw
-    value.
+    Unserializes unicode and byte strings that represent integers in base 10 as
+    raw values:
+
+    .. doctest::
+
+       >>> from relief import Integer
+       >>> element = Integer()
+       >>> element.set(u"1")
+       >>> element.value
+       1
+       >>> element.set(b"1")
+       >>> element.value
+       1
     """
     native_type = int
 
@@ -66,7 +77,7 @@ class Float(Number):
     """
     Represents a :func:`float`.
 
-    Accepts :func:`unicode` and :func:`bytes` representation as raw value.
+    Unserializes unicode and byte strings like :class:`Integer`.
     """
     native_type = float
 
@@ -75,7 +86,7 @@ class Complex(Number):
     """
     Represents a :func:`complex`.
 
-    Accepts :func:`unicode` and :func:`bytes` representation as raw value.
+    Unserializes unicode and byte strings like :class:`Integer`.
     """
     native_type = complex
 
