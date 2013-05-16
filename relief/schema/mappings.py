@@ -31,6 +31,16 @@ class Mapping(Container):
         cls.member_schema = (key_schema, value_schema)
         return cls
 
+    @classmethod
+    def unserialize(cls, raw_value):
+        raw_value = super(Mapping, cls).unserialize(raw_value)
+        if raw_value is NotUnserializable:
+            return raw_value
+        try:
+            return cls.native_type(raw_value)
+        except TypeError:
+            return NotUnserializable
+
     @property
     def value(self):
         if self._state is not None:
@@ -157,16 +167,6 @@ class Dict(MutableMapping, dict):
     """
     native_type = dict
 
-    @classmethod
-    def unserialize(cls, raw_value):
-        raw_value = super(Dict, cls).unserialize(raw_value)
-        if raw_value is NotUnserializable:
-            return raw_value
-        try:
-            return dict(raw_value)
-        except TypeError:
-            return NotUnserializable
-
     def __init__(self, value=Unspecified):
         self._state = Unspecified
         super(Dict, self).__init__(value=value)
@@ -197,16 +197,6 @@ class OrderedDict(MutableMapping, collections.OrderedDict):
     See :class:`Dict` for more information.
     """
     native_type = collections.OrderedDict
-
-    @classmethod
-    def unserialize(cls, raw_value):
-        raw_value = super(OrderedDict, cls).unserialize(raw_value)
-        if raw_value is NotUnserializable:
-            return raw_value
-        try:
-            return collections.OrderedDict(raw_value)
-        except TypeError:
-            return NotUnserializable
 
     def __init__(self, value=Unspecified):
         collections.OrderedDict.__init__(self)
