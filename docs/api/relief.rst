@@ -4,6 +4,11 @@ relief
 
 .. module:: relief
 
+
+.. autoclass:: Element
+   :members:
+
+
 Scalars
 -------
 
