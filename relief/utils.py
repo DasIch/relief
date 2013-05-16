@@ -17,7 +17,7 @@ class class_cloner(classmethod):
         attributes = {
             "__doc__": getattr(cls, "__doc__", None),
             # module name in the scope of the caller
-            "__module__": sys._getframe(1).f_globals["__name__"]
+            "__module__": sys._getframe(1).f_globals.get("__name__", "__main__")
         }
         clone = type(cls.__name__, (cls, ), attributes)
         return super(class_cloner, self).__get__(instance, clone)
