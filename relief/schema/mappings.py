@@ -57,6 +57,13 @@ class Mapping(Container):
         if new_value is not Unspecified:
             raise AttributeError("can't set attribute")
 
+    def _set_value(self, value):
+        self.clear()
+        if value is not Unspecified:
+            if hasattr(self, "_raw_value"):
+                del self._raw_value
+            self.update(value)
+
     def __getitem__(self, key):
         return super(Mapping, self).__getitem__(key).value
 
@@ -167,25 +174,6 @@ class Dict(MutableMapping, dict):
     """
     native_type = dict
 
-    def __init__(self, value=Unspecified):
-        self._state = Unspecified
-        super(Dict, self).__init__(value=value)
-
-    def set(self, raw_value):
-        self.raw_value = raw_value
-        self.clear()
-        self._state = None
-        if raw_value is Unspecified:
-            self._state = Unspecified
-        else:
-            unserialized = self.unserialize(raw_value)
-            if unserialized is NotUnserializable:
-                self._state = NotUnserializable
-            else:
-                if hasattr(self, "_raw_value"):
-                    del self._raw_value
-                self.update(unserialized)
-
 
 class OrderedDict(MutableMapping, collections.OrderedDict):
     """
@@ -197,23 +185,7 @@ class OrderedDict(MutableMapping, collections.OrderedDict):
 
     def __init__(self, value=Unspecified):
         collections.OrderedDict.__init__(self)
-        self._state = Unspecified
         MutableMapping.__init__(self, value=value)
-
-    def set(self, raw_value):
-        self.raw_value = raw_value
-        self.clear()
-        self._state = None
-        if raw_value is Unspecified:
-            self._state = Unspecified
-        else:
-            unserialized = self.unserialize(raw_value)
-            if unserialized is NotUnserializable:
-                self._state = NotUnserializable
-            else:
-                if hasattr(self, "_raw_value"):
-                    del self._raw_value
-                self.update(unserialized)
 
     def __reversed__(self):
         for key in super(OrderedDict, self).__reversed__():
@@ -309,10 +281,6 @@ class Form(six.with_metaclass(FormMeta, Container)):
         )
         return self
 
-    def __init__(self, value=Unspecified):
-        self._state = Unspecified
-        super(Form, self).__init__(value=value)
-
     def __getitem__(self, key):
         return self._elements[key]
 
@@ -355,20 +323,13 @@ class Form(six.with_metaclass(FormMeta, Container)):
         if new_value is not Unspecified:
             raise AttributeError("can't set attribute")
 
-    def set(self, raw_value):
-        self.raw_value = raw_value
-        self._state = None
-        if raw_value is Unspecified:
-            self._state = Unspecified
+    def _set_value(self, value):
+        if value is Unspecified:
             for element in six.itervalues(self):
-                element.set(raw_value)
+                element.set(value)
         else:
-            unserialized = self.unserialize(raw_value)
-            if unserialized is NotUnserializable:
-                self._state = NotUnserializable
-            else:
-                for key, value in six.iteritems(unserialized):
-                    self[key].set(value)
+            for key, value in six.iteritems(value):
+                self[key].set(value)
 
     def validate(self, context=None):
         if context is None:

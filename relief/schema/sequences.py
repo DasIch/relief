@@ -92,10 +92,6 @@ class Tuple(Sequence, tuple):
             (schema() for schema in cls.member_schema)
         )
 
-    def __init__(self, value=Unspecified):
-        self._state = Unspecified
-        super(Tuple, self).__init__(value=value)
-
     @classmethod
     def unserialize(cls, raw_value):
         raw_value = super(Tuple, cls).unserialize(raw_value)
@@ -125,20 +121,13 @@ class Tuple(Sequence, tuple):
         if new_value is not Unspecified:
             raise ValueError("can't set attribute")
 
-    def set(self, raw_value):
-        self.raw_value = raw_value
-        self._state = None
-        if raw_value is Unspecified:
-            self._state = Unspecified
+    def _set_value(self, value):
+        if value is Unspecified:
             for element in self:
-                element.set(raw_value)
+                element.set(value)
         else:
-            unserialized = self.unserialize(raw_value)
-            if unserialized is NotUnserializable:
-                self._state = NotUnserializable
-            else:
-                for element, raw_part in zip(self, unserialized):
-                    element.set(raw_part)
+            for element, raw_value in zip(self, value):
+                element.set(raw_value)
 
 
 class MutableSequence(Sequence):
@@ -196,10 +185,6 @@ class List(MutableSequence, list):
         except TypeError:
             return NotUnserializable
 
-    def __init__(self, value=Unspecified):
-        self._state = Unspecified
-        super(List, self).__init__(value=value)
-
     @property
     def value(self):
         if self._state is not None:
@@ -216,17 +201,7 @@ class List(MutableSequence, list):
         if new_value is not Unspecified:
             raise AttributeError("can't set attribute")
 
-    def set(self, raw_value):
-        self.raw_value = raw_value
-        self._state = None
-        if raw_value is Unspecified:
-            self._state = Unspecified
-            for element in self:
-                element.set(raw_value)
-        else:
-            unserialized = self.unserialize(raw_value)
-            if unserialized is NotUnserializable:
-                self._state = NotUnserializable
-                del self[:]
-            else:
-                self.extend(unserialized)
+    def _set_value(self, value):
+        del self[:]
+        if value is not Unspecified:
+            self.extend(value)

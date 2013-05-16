@@ -143,6 +143,20 @@ class Container(Element):
         return cls
 
     def __init__(self, value=Unspecified):
+        self._state = Unspecified
         super(Container, self).__init__(value)
         if self.member_schema is None:
             raise TypeError("member_schema is unknown")
+
+    def set(self, raw_value):
+        self.raw_value = raw_value
+        self._state = None
+        if raw_value is Unspecified:
+            self._state = Unspecified
+            self._set_value(raw_value)
+        else:
+            unserialized = self.unserialize(raw_value)
+            if unserialized is NotUnserializable:
+                self._state = NotUnserializable
+            else:
+                self._set_value(unserialized)
