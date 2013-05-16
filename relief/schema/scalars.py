@@ -17,8 +17,10 @@ class Boolean(Element):
     """
     Represents a :func:`bool`.
 
-    Accepts ``u"True"``, ``u"False"``, ``b"True"``, and ``b"False"`` as raw
-    values.
+    Unlike other elements this does not call :func:`bool` on an object to
+    unserialize a raw value, instead if the raw value is one of ``u"True"`` or
+    ``b"True"`` it will unserialize to `True` and if the raw value is one of
+    ``u"False"`` or ``b"False"`` it will unserialize to `False`.
     """
     native_type = bool
 
