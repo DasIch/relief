@@ -136,6 +136,17 @@ class Unicode(Element):
 class Bytes(Element):
     """
     Represents a :func:`bytes` string.
+
+    Accepts any unicode string that can be decoded using the default encoding::
+
+        >>> from relief import Bytes
+        >>> element = Bytes()
+        >>> element.set(b"Hello, World!")
+        >>> element.value
+        b"Hello, World!"
+        >>> element.set(u"Hello, World!")
+        >>> element.value
+        b"Hello, World!"
     """
     native_type = bytes
 
