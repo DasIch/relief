@@ -12,7 +12,7 @@ from relief.utils import as_singleton
 @as_singleton
 class Unspecified(object):
     """
-    A constant that described unspecified values.
+    A constant that describes unspecified values.
     """
     def __repr__(self):
         return self.__class__.__name__
