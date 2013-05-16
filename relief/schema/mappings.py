@@ -31,6 +31,22 @@ class Mapping(Container):
         cls.member_schema = (key_schema, value_schema)
         return cls
 
+    @property
+    def value(self):
+        if self._state is not None:
+            return self._state
+        result = self.native_type()
+        for key, value in six.iteritems(self):
+            if key.value is NotUnserializable or value.value is NotUnserializable:
+                return NotUnserializable
+            result[key.value] = value.value
+        return result
+
+    @value.setter
+    def value(self, new_value):
+        if new_value is not Unspecified:
+            raise AttributeError("can't set attribute")
+
     def __getitem__(self, key):
         return super(Mapping, self).__getitem__(key).value
 
@@ -155,22 +171,6 @@ class Dict(MutableMapping, dict):
         self._state = Unspecified
         super(Dict, self).__init__(value=value)
 
-    @property
-    def value(self):
-        if self._state is not None:
-            return self._state
-        result = {}
-        for key, value in six.iteritems(self):
-            if key.value is NotUnserializable or value.value is NotUnserializable:
-                return NotUnserializable
-            result[key.value] = value.value
-        return result
-
-    @value.setter
-    def value(self, new_value):
-        if new_value is not Unspecified:
-            raise AttributeError("can't set attribute")
-
     def set(self, raw_value):
         self.raw_value = raw_value
         self.clear()
@@ -212,22 +212,6 @@ class OrderedDict(MutableMapping, collections.OrderedDict):
         collections.OrderedDict.__init__(self)
         self._state = Unspecified
         MutableMapping.__init__(self, value=value)
-
-    @property
-    def value(self):
-        if self._state is not None:
-            return self._state
-        result = collections.OrderedDict()
-        for key, value in six.iteritems(self):
-            if key.value is NotUnserializable or value.value is NotUnserializable:
-                return NotUnserializable
-            result[key.value] = value.value
-        return result
-
-    @value.setter
-    def value(self, new_value):
-        if new_value is not Unspecified:
-            raise AttributeError("can't set attribute")
 
     def set(self, raw_value):
         self.raw_value = raw_value
