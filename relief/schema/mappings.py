@@ -161,16 +161,27 @@ class Dict(MutableMapping, dict):
     """
     Represents a :func:`dict`.
 
-    In order to use :class:`Dict`, you need to define the schema for keys and
-    values using :meth:`of`, which will return a new :class:`Dict` class::
+    :class:`Dict` maps homogenous keys to homogeneous values, in order to use
+    it you have to derive a :class:`Dict` schema using :meth:`of` specifying
+    the schemas used for keys and values:
 
-        Dict.of(Unicode, Integer)
+    .. doctest::
 
-    would be a :class:`Dict` whose keys are :class:`~relief.Unicode` strings
-    and whose values are :class:`~relief.Integer`.
+       >>> from relief import Dict, Unicode, Integer
+       >>> UnicodeIntegerDict = Dict.of(Unicode, Integer)
 
-    Anything that can be coerced to a dictionary will be accepted as a raw
-    value.
+    The derived schema will behave like other container schemas, anything you
+    can pass to :func:`dict` as positional argument can be used as a raw value.
+
+    .. doctest::
+
+       >>> element = UnicodeIntegerDict()
+       >>> element.set({u"foo": 1})
+
+    :class:`Dict` is a subclass of :func:`dict`, so all operations you can
+    perform on a :func:`dict` you can also perform on a :class:`Dict`. Any
+    operation that return objects stored within the dictionary will return the
+    element not the value.
     """
     native_type = dict
 
