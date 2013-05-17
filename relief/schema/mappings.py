@@ -159,7 +159,7 @@ class MutableMapping(Mapping):
 
 class Dict(MutableMapping, dict):
     """
-    Represents a :func:`dict`.
+    Represents a :class:`dict`.
 
     :class:`Dict` maps homogenous keys to homogeneous values, in order to use
     it you have to derive a :class:`Dict` schema using :meth:`of` specifying
@@ -171,15 +171,16 @@ class Dict(MutableMapping, dict):
        >>> UnicodeIntegerDict = Dict.of(Unicode, Integer)
 
     The derived schema will behave like other container schemas, anything you
-    can pass to :func:`dict` as positional argument can be used as a raw value.
+    can pass to :class:`dict` as positional argument can be used as a raw
+    value.
 
     .. doctest::
 
        >>> element = UnicodeIntegerDict()
        >>> element.set({u"foo": 1})
 
-    :class:`Dict` is a subclass of :func:`dict`, so all operations you can
-    perform on a :func:`dict` you can also perform on a :class:`Dict`. Any
+    :class:`Dict` is a subclass of :class:`dict`, so all operations you can
+    perform on a :class:`dict` you can also perform on a :class:`Dict`. Any
     operation that return objects stored within the dictionary will return the
     element not the value.
     """
@@ -237,31 +238,56 @@ class FormMeta(collections.Mapping.__class__, six.with_metaclass(Prepareable, ty
 @add_native_itermethods
 class Form(collections.Mapping, six.with_metaclass(FormMeta, Container)):
     """
-    Represents a :func:`dict` that maps a fixed set of keys to heterogeneous
+    Represents a :class:`dict` that maps a fixed set of keys to heterogeneous
     values.
 
-    In order to use :class:`Form`, you need to define the keys and the schema
-    to which they map using :meth:`of`, which will return a new :class:`Form`
-    class::
+    In order to use :class:`Form` you need to derive a :class:`Form` schema
+    that knows what kind of keys it contains and what schemas corresponding to
+    those keys are:
 
-        Form.of({
-            "foo": Integer,
-            "bar": Unicode
-        })
+    .. doctest::
 
-    You can also use a list of tuples or a :class:`~collections.OrderedDict` if
-    you care about the order of the items.
+       >>> from relief import Form, Integer, Unicode
+       >>> Something = Form.of({
+       ...     "foo": Integer,
+       ...     "bar": Unicode
+       ... })
 
-    Alternatively you can also use the equivalent declarative syntax::
+    `Something` is such a derived schema, defined to have to keys `foo` and
+    `bar` with an integer and a unicode string as values.
 
-        class MyForm(Form):
-            foo = Integer
-            bar = Unicode
+    Instead of passing a :class:`dict` to :meth:`of` you can also use an
+    :class:`collections.OrderedDict` this way you can enforce an order that
+    will be respected during iteration over the form. It will have no effect on
+    what is considered a valid value.
 
-    The order of the elements will be preserved.
+    Instead of using :meth:`of` to derive schemas :class:`Form` you can also
+    subclass :class:`Form` and define the contents declaratively:
 
-    Anything that can be coerced to a dictionary will be accepted as a raw
-    value.
+    .. doctest::
+
+       >>> class Something(Form):
+       ...     foo = Integer
+       ...     bar = Unicode
+
+    This is almost equivalent to the example using :meth:`of` above, the
+    difference being that the order will be remembered, the same way as it
+    would have been, if :class:`collections.OrderedDict` would have been used
+    in the :meth:`of` example.
+
+    Anything that can be passed as a positional argument to :class:`dict` can
+    be used as a raw value::
+
+       >>> element = Something()
+       >>> element.set([("foo", 1), ("bar", u"spam")])
+       >>> element.value
+       OrderedDict([('foo', 1), ('bar', u'spam')])
+
+    Unlike :class:`Dict` :class:`Form` is a subclass of
+    :class:`collections.Mapping` but not of :class:`dict`. While you can set
+    values using ``form[key] = value`` syntax, any operation that would remove
+    keys defined by the schema or add keys not defined in the schema will fail
+    with exceptions (excluding the use of :meth:`set`).
     """
     native_type = dict
 
