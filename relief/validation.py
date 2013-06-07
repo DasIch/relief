@@ -31,7 +31,7 @@ class Validator(object):
 
 class Present(Validator):
     """
-    A validator that fails with "May not be blank." if the value is
+    A validator that fails with ``"May not be blank."`` if the value is
     unspecified.
     """
     accepts_unspecified = True
@@ -45,7 +45,7 @@ class Present(Validator):
 
 class Converted(Validator):
     """
-    A validator that fails with "Not a valid value." if the value is not
+    A validator that fails with ``"Not a valid value."`` if the value is not
     unserializable.
     """
     accepts_not_unserializable = True
@@ -59,7 +59,7 @@ class Converted(Validator):
 
 class IsTrue(Validator):
     """
-    A validator that fails with "Must be true." if the value is false-ish.
+    A validator that fails with ``"Must be true."`` if the value is false-ish.
     """
     def validate(self, element, context):
         if not bool(element.value):
@@ -70,7 +70,7 @@ class IsTrue(Validator):
 
 class IsFalse(Validator):
     """
-    A validator that fails with "Must be false." if the value is true-ish.
+    A validator that fails with ``"Must be false."`` if the value is true-ish.
     """
     def validate(self, element, context):
         if bool(element.value):
@@ -81,7 +81,7 @@ class IsFalse(Validator):
 
 class ShorterThan(Validator):
     """
-    A validator that fails with "Must be shorter than {upperbound}." if the
+    A validator that fails with ``"Must be shorter than {upperbound}."`` if the
     length of the value is equal to or exceeds the given `upperbound`.
     """
     def __init__(self, upperbound):
@@ -100,7 +100,7 @@ class ShorterThan(Validator):
 
 class LongerThan(Validator):
     """
-    A validator that fails with "Must be longer than {lowerbound}." if the
+    A validator that fails with ``"Must be longer than {lowerbound}."`` if the
     length of the value is equal to or exceeds the given `lowerbound`.
     """
     def __init__(self, lowerbound):
@@ -119,8 +119,8 @@ class LongerThan(Validator):
 
 class LengthWithinRange(Validator):
     """
-    A validator that fails with "Must be longer than {start} and shorter than
-    {end}." if the length of the value is less than or equal to `start` or
+    A validator that fails with ``"Must be longer than {start} and shorter than
+    {end}."`` if the length of the value is less than or equal to `start` or
     greater than or equal to `end`.
     """
     def __init__(self, start, end):
@@ -140,7 +140,7 @@ class LengthWithinRange(Validator):
 
 class ContainedIn(Validator):
     """
-    A validator that fails with "Not a valid value." if the value is not
+    A validator that fails with ``"Not a valid value."`` if the value is not
     contained in `options`.
     """
     def __init__(self, options):
@@ -155,8 +155,8 @@ class ContainedIn(Validator):
 
 class LessThan(Validator):
     """
-    A validator that fails with "Must be less than {upperbound}." if the value
-    is greater than or equal to `upperbound`.
+    A validator that fails with ``"Must be less than {upperbound}."`` if the
+    value is greater than or equal to `upperbound`.
     """
     def __init__(self, upperbound):
         self.upperbound = upperbound
@@ -174,7 +174,7 @@ class LessThan(Validator):
 
 class GreaterThan(Validator):
     """
-    A validator that fails with "Must be greater than {lowerbound}." if the
+    A validator that fails with ``"Must be greater than {lowerbound}."`` if the
     value is less than or equal to `lowerbound`.
     """
     def __init__(self, lowerbound):
@@ -193,9 +193,9 @@ class GreaterThan(Validator):
 
 class WithinRange(Validator):
     """
-    A validator that fails with "Must be greater than {start} and shorter than
-    {end}." if the value is less than or equal to `start` or greater than or
-    equal to `end`.
+    A validator that fails with ``"Must be greater than {start} and shorter
+    than {end}."`` if the value is less than or equal to `start` or greater
+    than or equal to `end`.
     """
     def __init__(self, start, end):
         self.start = start
