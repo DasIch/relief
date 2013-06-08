@@ -210,3 +210,26 @@ class WithinRange(Validator):
             substitutions={"start": self.start, "end": self.end}
         )
         return False
+
+
+class ItemsEqual(Validator):
+    """
+    A validator that fails with ``"{a} and {b} must be equal."``
+
+    `a` and `b` should be tuples in the form ``(label, key)``. In the message
+    `a` and `b` is substituted with the `label` but the `key` is used to
+    determine the items to compare.
+    """
+    def __init__(self, a, b):
+        self.a = a
+        self.b = b
+
+    def validate(self, element, context):
+        if element[self.a[1]].value == element[self.b[1]].value:
+            return True
+        self.note_error(
+            element,
+            u"{a} and {b} must be equal.",
+            substitutions={"a": self.a[0], "b": self.b[0]}
+        )
+        return False

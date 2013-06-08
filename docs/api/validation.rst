@@ -25,3 +25,5 @@ relief.validation
 .. autoclass:: GreaterThan
 
 .. autoclass:: WithinRange
+
+.. autoclass:: ItemsEqual

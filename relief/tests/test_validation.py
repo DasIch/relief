@@ -8,9 +8,11 @@
 """
 from relief.validation import (
     Present, Converted, IsTrue, IsFalse, ShorterThan, LongerThan,
-    LengthWithinRange, ContainedIn, LessThan, GreaterThan, WithinRange
+    LengthWithinRange, ContainedIn, LessThan, GreaterThan, WithinRange,
+    ItemsEqual
 )
 from relief.schema.scalars import Unicode, Integer
+from relief.schema.mappings import Dict
 
 
 def test_present():
@@ -135,3 +137,16 @@ def test_within_range():
         integer = Validated(4)
         assert integer.validate()
         assert not integer.errors
+
+
+def test_items_equal():
+    Validated = Dict.of(Unicode, Unicode).validated_by(
+        [ItemsEqual((u"Spam", u"spam"), (u"Eggs", u"eggs"))]
+    )
+    dict = Validated({u"spam": u"foo", u"eggs": u"foo"})
+    assert dict.validate()
+    assert not dict.errors
+
+    dict = Validated({u"spam": u"foo", u"eggs": u"bar"})
+    assert not dict.validate()
+    assert dict.errors == [u"Spam and Eggs must be equal."]
