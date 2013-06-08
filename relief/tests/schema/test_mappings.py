@@ -427,3 +427,12 @@ class TestForm(object):
         form = Form.of({"spam": Unicode})({"spam": "foo"})
         assert form.value == {"spam": u"foo"}
         assert form.raw_value == {"spam": "foo"}
+
+    def test_attribute_access(self):
+        class Foo(Form):
+            spam = Unicode
+            eggs = Unicode
+
+        form = Foo({"spam": u"foo", "eggs": u"bar"})
+        assert form.spam.value == u"foo"
+        assert form.eggs.value == u"bar"

@@ -312,10 +312,10 @@ class Form(collections.Mapping, six.with_metaclass(FormMeta, Container)):
 
     def __new__(cls, *args, **kwargs):
         self = super(Form, cls).__new__(cls)
-        self._elements = collections.OrderedDict(
-            (name, element())
-            for name, element in six.iteritems(self.member_schema)
-        )
+        self._elements = collections.OrderedDict()
+        for name, element_cls in six.iteritems(self.member_schema):
+            self._elements[name] = element = element_cls()
+            setattr(self, name, element)
         return self
 
     def __getitem__(self, key):
