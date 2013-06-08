@@ -233,3 +233,26 @@ class ItemsEqual(Validator):
             substitutions={"a": self.a[0], "b": self.b[0]}
         )
         return False
+
+
+class AttributesEqual(Validator):
+    """
+    A validator that fails with ``"{a} and {b} must be equal."``
+
+    `a` and `b` should be tuples in the form ``(label, attribute_name)``. In
+    the message `a` and `b` is substituted with the `label` but the
+    `attribute_name` is used to determine the attributes to compare.
+    """
+    def __init__(self, a, b):
+        self.a = a
+        self.b = b
+
+    def validate(self, element, context):
+        if getattr(element, self.a[1]).value == getattr(element, self.b[1]).value:
+            return True
+        self.note_error(
+            element,
+            u"{a} and {b} must be equal.",
+            substitutions={"a": self.a[0], "b": self.b[0]}
+        )
+        return False

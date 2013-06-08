@@ -27,3 +27,5 @@ relief.validation
 .. autoclass:: WithinRange
 
 .. autoclass:: ItemsEqual
+
+.. autoclass:: AttributesEqual

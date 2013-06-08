@@ -9,10 +9,10 @@
 from relief.validation import (
     Present, Converted, IsTrue, IsFalse, ShorterThan, LongerThan,
     LengthWithinRange, ContainedIn, LessThan, GreaterThan, WithinRange,
-    ItemsEqual
+    ItemsEqual, AttributesEqual
 )
 from relief.schema.scalars import Unicode, Integer
-from relief.schema.mappings import Dict
+from relief.schema.mappings import Dict, Form
 
 
 def test_present():
@@ -150,3 +150,16 @@ def test_items_equal():
     dict = Validated({u"spam": u"foo", u"eggs": u"bar"})
     assert not dict.validate()
     assert dict.errors == [u"Spam and Eggs must be equal."]
+
+
+def test_attributes_equal():
+    Validated = Form.of({"spam": Unicode, "eggs": Unicode}).validated_by(
+        [AttributesEqual((u"Spam", "spam"), (u"Eggs", "eggs"))]
+    )
+    form = Validated({"spam": u"foo", "eggs": u"foo"})
+    assert form.validate()
+    assert not form.errors
+
+    form = Validated({"spam": u"foo", "eggs": u"bar"})
+    assert not form.validate()
+    assert form.errors == [u"Spam and Eggs must be equal."]
