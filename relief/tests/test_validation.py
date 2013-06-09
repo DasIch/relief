@@ -9,7 +9,7 @@
 from relief.validation import (
     Present, Converted, IsTrue, IsFalse, ShorterThan, LongerThan,
     LengthWithinRange, ContainedIn, LessThan, GreaterThan, WithinRange,
-    ItemsEqual, AttributesEqual
+    ItemsEqual, AttributesEqual, ProbablyAnEmailAddress
 )
 from relief.schema.scalars import Unicode, Integer
 from relief.schema.mappings import Dict, Form
@@ -163,3 +163,19 @@ def test_attributes_equal():
     form = Validated({"spam": u"foo", "eggs": u"bar"})
     assert not form.validate()
     assert form.errors == [u"Spam and Eggs must be equal."]
+
+
+def test_probably_an_email_address():
+    Validated = Unicode.validated_by([ProbablyAnEmailAddress()])
+    email = Validated(u"test@example.com")
+    assert email.validate()
+    assert not email.errors
+
+    invalid_addresses = [
+        u"foobar",  # @ missing
+        u"foo@bar", # tld missing
+    ]
+    for invalid_address in invalid_addresses:
+        email = Validated(invalid_address)
+        assert not email.validate()
+        assert email.errors == [u"Must be a valid e-mail address."]

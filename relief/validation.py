@@ -256,3 +256,31 @@ class AttributesEqual(Validator):
             substitutions={"a": self.a[0], "b": self.b[0]}
         )
         return False
+
+
+class ProbablyAnEmailAddress(Validator):
+    """
+    A validator that fails with ``"Must be a valid e-mail address."``, if the
+    value of the validated e-mail is not a valid e-mail address.
+
+    While this validator works on valid e-mail addresses it is not expected to
+    pick up all bad e-mail addresses. The reason for this is that parsing
+    e-mail addresses is very complicated, costly, probably would wrongly
+    recognize some valid e-mail addresses as invalid and cannot determine if
+    someone is reachable with this address.
+
+    If you want to truly validate e-mail addresses you need to send an e-mail
+    and wait for a response.
+    """
+    def validate(self, element, context):
+        if u"@" in element.value:
+            host = element.value.split(u"@", 1)[1]
+            if u"." in host:
+                parts = host.split(u".")
+                if len(parts) >= 2:
+                    return True
+        self.note_error(
+            element,
+            u"Must be a valid e-mail address."
+        )
+        return False

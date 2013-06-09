@@ -29,3 +29,5 @@ relief.validation
 .. autoclass:: ItemsEqual
 
 .. autoclass:: AttributesEqual
+
+.. autoclass:: ProbablyAnEmailAddress
