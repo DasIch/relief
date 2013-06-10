@@ -17,7 +17,7 @@ clean:
 delete-bytecode:
 	find relief -iname "*.pyc" -delete
 
-test: delete-bytecode style
+test: delete-bytecode
 	tox
 
 style:

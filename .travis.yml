@@ -9,7 +9,6 @@ install:
   - make dev
 
 script:
-  - find relief -iname "*.py" | xargs pyflakes
   - py.test -vv relief
   - sphinx-build -aEWb doctest docs docs/_build
 #  - sphinx-build -aEWb linkcheck docs docs/_build
