@@ -25,7 +25,6 @@ setup(
     author_email="ich@danielneuhaeuser.de",
     license="BSD",
     description="datastructure validation",
-    install_requires=["six"],
     packages=find_packages(),
     classifiers=[
         "License :: OSI Approved :: BSD License",

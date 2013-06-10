@@ -9,8 +9,7 @@
 import sys
 
 from relief import NotUnserializable, Element
-
-import six
+from relief._compat import text_type
 
 
 class Boolean(Element):
@@ -107,7 +106,7 @@ class Unicode(Element):
         >>> element.value
         u"Hello, World!"
     """
-    native_type = six.text_type
+    native_type = text_type
 
     #: The encoding used to decode raw values, can be set with :meth:`using`
     #: and defaults to the default encoding, which is usually ASCII or UTF-8
@@ -119,9 +118,9 @@ class Unicode(Element):
         raw_value = super(Unicode, cls).unserialize(raw_value)
         if raw_value is NotUnserializable:
             return raw_value
-        if isinstance(raw_value, six.text_type):
+        if isinstance(raw_value, text_type):
             return raw_value
-        elif isinstance(raw_value, six.binary_type):
+        elif isinstance(raw_value, bytes):
             if cls.encoding is None:
                 encoding = sys.getdefaultencoding()
             else:
@@ -130,7 +129,7 @@ class Unicode(Element):
                 return raw_value.decode(encoding)
             except UnicodeDecodeError:
                 return NotUnserializable
-        return six.text_type(raw_value)
+        return text_type(raw_value)
 
 
 class Bytes(Element):
@@ -157,7 +156,7 @@ class Bytes(Element):
             return raw_value
         if isinstance(raw_value, bytes):
             return raw_value
-        elif isinstance(raw_value, six.text_type):
+        elif isinstance(raw_value, text_type):
             try:
                 return raw_value.encode(sys.getdefaultencoding())
             except UnicodeEncodeError:

@@ -9,9 +9,9 @@
 from collections import Counter
 
 from relief import Tuple, List, Integer, Unspecified, NotUnserializable
+from relief._compat import iteritems
 from relief.tests.schema.conftest import ElementTest
 
-import six
 import py.test
 
 
@@ -50,7 +50,7 @@ class SequenceTest(ElementTest):
 
     def test_count(self, element_cls, possible_value):
         element = element_cls(possible_value)
-        for value, count in six.iteritems(Counter(possible_value)):
+        for value, count in iteritems(Counter(possible_value)):
             assert element.count(value) == count
         assert element.count(3) == 0
 

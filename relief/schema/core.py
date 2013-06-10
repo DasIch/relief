@@ -8,8 +8,7 @@
 """
 from relief import Unspecified, NotUnserializable
 from relief.utils import class_cloner
-
-import six
+from relief._compat import iteritems
 
 
 class Element(object):
@@ -35,7 +34,7 @@ class Element(object):
         Returns a clone of the class whose attributes have been overwritten
         with the given keyword arguments.
         """
-        for key, value in six.iteritems(kwargs):
+        for key, value in iteritems(kwargs):
             if not hasattr(cls, key):
                 raise TypeError("unexpected keyword argument %r" % key)
             setattr(cls, key, value)

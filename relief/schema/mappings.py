@@ -9,11 +9,11 @@
 import collections
 
 from relief import Unspecified, NotUnserializable, Element
-from relief._compat import add_native_itermethods, Prepareable
 from relief.utils import class_cloner
 from relief.schema.core import Container
-
-import six
+from relief._compat import (
+    add_native_itermethods, Prepareable, itervalues, iteritems, with_metaclass
+)
 
 
 class _Value(object):
@@ -46,7 +46,7 @@ class Mapping(Container):
         if self._state is not None:
             return self._state
         result = self.native_type()
-        for key, value in six.iteritems(self):
+        for key, value in iteritems(self):
             if key.value is NotUnserializable or value.value is NotUnserializable:
                 return NotUnserializable
             result[key.value] = value.value
@@ -90,14 +90,14 @@ class Mapping(Container):
         if context is None:
             context = {}
         self.is_valid = True
-        for key, value in six.iteritems(self):
+        for key, value in iteritems(self):
             self.is_valid &= key.validate(context)
             self.is_valid &= value.validate(context)
         self.is_valid &= super(Mapping, self).validate(context)
         return self.is_valid
 
     def traverse(self, prefix=None):
-        for i, (key, value) in enumerate(six.iteritems(self)):
+        for i, (key, value) in enumerate(iteritems(self)):
             if prefix is None:
                 current_prefix = [i]
             else:
@@ -151,7 +151,7 @@ class MutableMapping(Mapping):
                 mappings.append((key, args[0][key]) for key in args[0])
             else:
                 mappings.append(args[0])
-        mappings.append(six.iteritems(kwargs))
+        mappings.append(iteritems(kwargs))
         for mapping in mappings:
             for key, value in mapping:
                 self[key] = value
@@ -221,12 +221,12 @@ class OrderedDict(MutableMapping, collections.OrderedDict):
         return self.member_schema[1](default)
 
 
-class FormMeta(collections.Mapping.__class__, six.with_metaclass(Prepareable, type)):
+class FormMeta(collections.Mapping.__class__, with_metaclass(Prepareable, type)):
     def __new__(cls, cls_name, bases, attributes):
         member_schema = attributes["member_schema"] = collections.OrderedDict()
         for base in reversed(bases):
             member_schema.update(getattr(base, "member_schema", {}) or {})
-        for name, attribute in six.iteritems(attributes):
+        for name, attribute in iteritems(attributes):
             if isinstance(attribute, type) and issubclass(attribute, Element):
                 member_schema[name] = attribute
         return super(FormMeta, cls).__new__(cls, cls_name, bases, attributes)
@@ -236,7 +236,7 @@ class FormMeta(collections.Mapping.__class__, six.with_metaclass(Prepareable, ty
 
 
 @add_native_itermethods
-class Form(collections.Mapping, six.with_metaclass(FormMeta, Container)):
+class Form(with_metaclass(FormMeta, collections.Mapping, Container)):
     """
     Represents a :class:`dict` that maps a fixed set of keys to heterogeneous
     values.
@@ -313,7 +313,7 @@ class Form(collections.Mapping, six.with_metaclass(FormMeta, Container)):
     def __new__(cls, *args, **kwargs):
         self = super(Form, cls).__new__(cls)
         self._elements = collections.OrderedDict()
-        for name, element_cls in six.iteritems(self.member_schema):
+        for name, element_cls in iteritems(self.member_schema):
             self._elements[name] = element = element_cls()
             setattr(self, name, element)
         return self
@@ -337,7 +337,7 @@ class Form(collections.Mapping, six.with_metaclass(FormMeta, Container)):
         if self._state is not None:
             return self._state
         result = collections.OrderedDict()
-        for key, element in six.iteritems(self):
+        for key, element in iteritems(self):
             if element.value is Unspecified:
                 return NotUnserializable
             result[key] = element.value
@@ -350,17 +350,17 @@ class Form(collections.Mapping, six.with_metaclass(FormMeta, Container)):
 
     def _set_value(self, value):
         if value is Unspecified:
-            for element in six.itervalues(self):
+            for element in itervalues(self):
                 element.set(value)
         else:
-            for key, value in six.iteritems(value):
+            for key, value in iteritems(value):
                 self[key].set(value)
 
     def validate(self, context=None):
         if context is None:
             context = {}
         self.is_valid = True
-        for element in six.itervalues(self):
+        for element in itervalues(self):
             self.is_valid &= element.validate(context=context)
         self.is_valid &= super(Form, self).validate(context=context)
         return self.is_valid
@@ -368,5 +368,5 @@ class Form(collections.Mapping, six.with_metaclass(FormMeta, Container)):
     def traverse(self, prefix=None):
         if prefix is None:
             prefix = []
-        for key, element in six.iteritems(self):
+        for key, element in iteritems(self):
             yield prefix + [key], element

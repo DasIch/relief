@@ -10,13 +10,33 @@ import sys
 import inspect
 from functools import wraps
 
-import six
+
+PY2 = sys.version_info[0] == 2
+
+
+if PY2:
+    def itervalues(d):
+        return d.itervalues()
+
+    def iteritems(d):
+        return d.iteritems()
+
+    text_type = unicode
+
+else:
+    def itervalues(d):
+        return iter(d.values())
+
+    def iteritems(d):
+        return iter(d.items())
+
+    text_type = str
 
 
 def add_native_itermethods(cls):
     def set_method(cls, name):
         iter_method = getattr(cls, name)
-        if not six.PY3:
+        if PY2:
             setattr(cls, "iter" + name, iter_method)
             setattr(cls, "view" + name, iter_method)
             setattr(cls, name, lambda self: list(iter_method(self)))
@@ -26,7 +46,7 @@ def add_native_itermethods(cls):
 
 
 class Prepareable(type):
-    if not six.PY3:
+    if PY2:
         def __new__(cls, name, bases, attributes):
             try:
                 constructor = attributes["__new__"]
@@ -62,3 +82,7 @@ class Prepareable(type):
                 return constructor(cls, name, bases, namespace)
             attributes["__new__"] = wraps(constructor)(preparing_constructor)
             return super(Prepareable, cls).__new__(cls, name, bases, attributes)
+
+
+def with_metaclass(meta, *bases):
+    return meta("NewBase", bases, {})
