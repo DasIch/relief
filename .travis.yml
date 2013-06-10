@@ -11,4 +11,3 @@ install:
 script:
   - py.test -vv relief
   - sphinx-build -aEWb doctest docs docs/_build
-#  - sphinx-build -aEWb linkcheck docs docs/_build
