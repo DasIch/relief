@@ -31,59 +31,74 @@ class Validator(object):
 
 class Present(Validator):
     """
-    A validator that fails with ``"May not be blank."`` if the value is
-    unspecified.
+    Validator that fails with :attr:`message` if the value is unspecified.
     """
     accepts_unspecified = True
 
+    #: Message that is stored in :attr:`Element.errors`.
+    message = u"May not be blank."
+
     def validate(self, element, state):
         if element.value is Unspecified:
-            self.note_error(element, u"May not be blank.")
+            self.note_error(element, self.message)
             return False
         return True
 
 
 class Converted(Validator):
     """
-    A validator that fails with ``"Not a valid value."`` if the value is not
+    Validator that fails with :attr:`message` if the value is not
     unserializable.
     """
     accepts_not_unserializable = True
 
+    #: Message that is stored in :attr:`Element.errors`.
+    message = u"Not a valid value."
+
     def validate(self, element, state):
         if element.value is NotUnserializable:
-            self.note_error(element, u"Not a valid value.")
+            self.note_error(element, self.message)
             return False
         return True
 
 
 class IsTrue(Validator):
     """
-    A validator that fails with ``"Must be true."`` if the value is false-ish.
+    Validator that fails with :attr:`message` if the value is false-ish.
     """
+    #: Message that is stored in :attr:`Element.errors`.
+    message = u"Must be true."
+
     def validate(self, element, context):
         if not bool(element.value):
-            self.note_error(element, u"Must be true.")
+            self.note_error(element, self.message)
             return False
         return True
 
 
 class IsFalse(Validator):
     """
-    A validator that fails with ``"Must be false."`` if the value is true-ish.
+    Validator that fails with :attr:`message` if the value is true-ish.
     """
+    #: Message that is stored in :attr:`Element.errors`.
+    message = u"Must be false."
+
     def validate(self, element, context):
         if bool(element.value):
-            self.note_error(element, u"Must be false.")
+            self.note_error(element, self.message)
             return False
         return True
 
 
 class ShorterThan(Validator):
     """
-    A validator that fails with ``"Must be shorter than {upperbound}."`` if the
-    length of the value is equal to or exceeds the given `upperbound`.
+    Validator that fails with :attr:`message` if the length of the value is
+    equal to or longer than the given `upperbound`.
     """
+    #: Message that is stored in :attr:`Element.errors`. ``{upperbound}`` in
+    #: the message is substituted with the given `upperbound`.
+    message = u"Must be shorter than {upperbound}."
+
     def __init__(self, upperbound):
         self.upperbound = upperbound
 
@@ -91,7 +106,7 @@ class ShorterThan(Validator):
         if len(element.value) >= self.upperbound:
             self.note_error(
                 element,
-                u"Must be shorter than {upperbound}.",
+                self.message,
                 substitutions={"upperbound": self.upperbound}
             )
             return False
@@ -100,9 +115,13 @@ class ShorterThan(Validator):
 
 class LongerThan(Validator):
     """
-    A validator that fails with ``"Must be longer than {lowerbound}."`` if the
-    length of the value is equal to or exceeds the given `lowerbound`.
+    Validator that fails with :attr:`message` if the length of the value is
+    equal to or shorter than the given `lowerbound`.
     """
+    #: Message that is stored in :attr:`Element.errors`. ``{lowerbound}`` in
+    #: the message is substituted with the given `lowerbound`.
+    message = u"Must be longer than {lowerbound}."
+
     def __init__(self, lowerbound):
         self.lowerbound = lowerbound
 
@@ -110,7 +129,7 @@ class LongerThan(Validator):
         if len(element.value) <= self.lowerbound:
             self.note_error(
                 element,
-                u"Must be longer than {lowerbound}.",
+                self.message,
                 substitutions={"lowerbound": self.lowerbound}
             )
             return False
@@ -119,10 +138,13 @@ class LongerThan(Validator):
 
 class LengthWithinRange(Validator):
     """
-    A validator that fails with ``"Must be longer than {start} and shorter than
-    {end}."`` if the length of the value is less than or equal to `start` or
-    greater than or equal to `end`.
+    Validator that fails with :attr:`message` if the length of the value is
+    less than or equal to `start` or greater than or equal to `end`.
     """
+    #: Message that is stored in :attr:`Element.errors`. ``{start}`` and
+    #: ``{end}`` is substituted with the given `start` and `end`.
+    message = u"Must be longer than {start} and shorter than {end}."
+
     def __init__(self, start, end):
         self.start = start
         self.end = end
@@ -132,7 +154,7 @@ class LengthWithinRange(Validator):
             return True
         self.note_error(
             element,
-            u"Must be longer than {start} and shorter than {end}.",
+            self.message,
             substitutions={"start": self.start, "end": self.end}
         )
         return False
@@ -143,6 +165,9 @@ class ContainedIn(Validator):
     A validator that fails with ``"Not a valid value."`` if the value is not
     contained in `options`.
     """
+    #: Message that is stored in :attr:`Element.errors`.
+    message = u"Not a valid value."
+
     def __init__(self, options):
         self.options = options
 
@@ -155,9 +180,13 @@ class ContainedIn(Validator):
 
 class LessThan(Validator):
     """
-    A validator that fails with ``"Must be less than {upperbound}."`` if the
-    value is greater than or equal to `upperbound`.
+    Validator that fails with :attr:`message` if the value is greater than or
+    equal to `upperbound`.
     """
+    #: Message that is stored in :attr:`Element.errors`. ``{upperbound}`` is
+    #: substituted with the given `upperbound`.
+    message = u"Must be less than {upperbound}."
+
     def __init__(self, upperbound):
         self.upperbound = upperbound
 
@@ -165,7 +194,7 @@ class LessThan(Validator):
         if element.value >= self.upperbound:
             self.note_error(
                 element,
-                u"Must be less than {upperbound}.",
+                self.message,
                 substitutions={"upperbound": self.upperbound}
             )
             return False
@@ -174,9 +203,13 @@ class LessThan(Validator):
 
 class GreaterThan(Validator):
     """
-    A validator that fails with ``"Must be greater than {lowerbound}."`` if the
-    value is less than or equal to `lowerbound`.
+    Validator that fails with :attr:`message` if the value is less than or
+    equal to `lowerbound`.
     """
+    #: Message that is stored in the :attr:`Element.errors`. ``{lowerbound}``
+    #: is substituted with the given `lowerbound`.
+    message = u"Must be greater than {lowerbound}."
+
     def __init__(self, lowerbound):
         self.lowerbound = lowerbound
 
@@ -184,7 +217,7 @@ class GreaterThan(Validator):
         if element.value <= self.lowerbound:
             self.note_error(
                 element,
-                u"Must be greater than {lowerbound}.",
+                self.message,
                 substitutions={"lowerbound": self.lowerbound}
             )
             return False
@@ -193,10 +226,13 @@ class GreaterThan(Validator):
 
 class WithinRange(Validator):
     """
-    A validator that fails with ``"Must be greater than {start} and shorter
-    than {end}."`` if the value is less than or equal to `start` or greater
-    than or equal to `end`.
+    Validator that fails with :attr:`message` if the value is less than or
+    equal to `start` or greater than or equal to `end.`
     """
+    #: Message that is stored in :attr:`Element.errors`. ``{start}`` and
+    #: ``{end}`` are substituted with the given `start` and `end`.
+    message = u"Must be greater than {start} and shorter than {end}."
+
     def __init__(self, start, end):
         self.start = start
         self.end = end
@@ -206,7 +242,7 @@ class WithinRange(Validator):
             return True
         self.note_error(
             element,
-            u"Must be greater than {start} and shorter than {end}.",
+            self.message,
             substitutions={"start": self.start, "end": self.end}
         )
         return False
@@ -214,12 +250,17 @@ class WithinRange(Validator):
 
 class ItemsEqual(Validator):
     """
-    A validator that fails with ``"{a} and {b} must be equal."``
+    Validator that fails with :attr:`message` if two items in the value are
+    unequal.
 
-    `a` and `b` should be tuples in the form ``(label, key)``. In the message
-    `a` and `b` is substituted with the `label` but the `key` is used to
-    determine the items to compare.
+    The items are defined with the tuples `a` and `b` each of which consist of
+    two elements ``(label, key)``. The `key` is used to determine the item to
+    compare and the `label` is used for substitution in the message.
     """
+    #: Message that is stored in :attr:`Element.errors`. ``{a}`` and ``{b}``
+    #: are substituted with the labels in the given `a` and `b`.
+    message = u"{a} and {b} must be equal."
+
     def __init__(self, a, b):
         self.a = a
         self.b = b
@@ -229,7 +270,7 @@ class ItemsEqual(Validator):
             return True
         self.note_error(
             element,
-            u"{a} and {b} must be equal.",
+            self.message,
             substitutions={"a": self.a[0], "b": self.b[0]}
         )
         return False
@@ -237,12 +278,18 @@ class ItemsEqual(Validator):
 
 class AttributesEqual(Validator):
     """
-    A validator that fails with ``"{a} and {b} must be equal."``
+    Validator that fails with :attr:`message` if two attributes of the value
+    are unequal.
 
-    `a` and `b` should be tuples in the form ``(label, attribute_name)``. In
-    the message `a` and `b` is substituted with the `label` but the
-    `attribute_name` is used to determine the attributes to compare.
+    Similar to :class:`ItemsEqual` the attributes are defined with the tuples
+    `a` and `b` each of which consists of two element in the form ``(label,
+    attribute_name)``. `attribute_name` is used to determine the attributes to
+    compare and the `label` is used for substitution in the message.
     """
+    #: Message that is stored in :attr:`Element.errors`. ``{a}`` and ``{b}``
+    #: are substituted with the labels in the given `a` and `b`.
+    message = u"{a} and {b} must be equal."
+
     def __init__(self, a, b):
         self.a = a
         self.b = b
@@ -252,7 +299,7 @@ class AttributesEqual(Validator):
             return True
         self.note_error(
             element,
-            u"{a} and {b} must be equal.",
+            self.message,
             substitutions={"a": self.a[0], "b": self.b[0]}
         )
         return False
@@ -260,8 +307,8 @@ class AttributesEqual(Validator):
 
 class ProbablyAnEmailAddress(Validator):
     """
-    A validator that fails with ``"Must be a valid e-mail address."``, if the
-    value of the validated e-mail is not a valid e-mail address.
+    A validator that fails with :attr:`message`, if the value of the validated
+    e-mail is not a valid e-mail address.
 
     While this validator works on valid e-mail addresses it is not expected to
     pick up all bad e-mail addresses. The reason for this is that parsing
@@ -272,6 +319,9 @@ class ProbablyAnEmailAddress(Validator):
     If you want to truly validate e-mail addresses you need to send an e-mail
     and wait for a response.
     """
+    #: Message that is stored in the :attr:`Element.errors`.
+    message = u"Must be a valid e-mail address."
+
     def validate(self, element, context):
         if u"@" in element.value:
             host = element.value.split(u"@", 1)[1]
@@ -281,6 +331,6 @@ class ProbablyAnEmailAddress(Validator):
                     return True
         self.note_error(
             element,
-            u"Must be a valid e-mail address."
+            self.message
         )
         return False
