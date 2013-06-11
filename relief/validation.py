@@ -235,7 +235,7 @@ class WithinRange(Validator):
         self.end = end
 
     def validate(self, element, context):
-        if self.start < element.value < self.end:
+        if not self.is_unusable(element) and self.start < element.value < self.end:
             return True
         self.note_error(
             element,
