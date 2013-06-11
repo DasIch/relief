@@ -10,9 +10,6 @@ from relief import Unspecified, NotUnserializable
 
 
 class Validator(object):
-    accepts_unspecified = False
-    accepts_not_unserializable = False
-
     def validate(self, element, context):
         return False
 
@@ -21,11 +18,13 @@ class Validator(object):
             substitutions = {}
         element.errors.append(error.format(**substitutions))
 
+    def is_unusable(self, element):
+        return (
+            element.value is Unspecified or
+            element.value is NotUnserializable
+        )
+
     def __call__(self, element, context):
-        if element.value is Unspecified and not self.accepts_unspecified:
-            return False
-        elif element.value is NotUnserializable and not self.accepts_not_unserializable:
-            return False
         return self.validate(element, context)
 
 
@@ -33,8 +32,6 @@ class Present(Validator):
     """
     Validator that fails with :attr:`message` if the value is unspecified.
     """
-    accepts_unspecified = True
-
     #: Message that is stored in :attr:`Element.errors`.
     message = u"May not be blank."
 
@@ -50,13 +47,11 @@ class Converted(Validator):
     Validator that fails with :attr:`message` if the value is not
     unserializable.
     """
-    accepts_not_unserializable = True
-
     #: Message that is stored in :attr:`Element.errors`.
     message = u"Not a valid value."
 
     def validate(self, element, state):
-        if element.value is NotUnserializable:
+        if self.is_unusable(element):
             self.note_error(element, self.message)
             return False
         return True
@@ -70,7 +65,7 @@ class IsTrue(Validator):
     message = u"Must be true."
 
     def validate(self, element, context):
-        if not bool(element.value):
+        if self.is_unusable(element) or not element.value:
             self.note_error(element, self.message)
             return False
         return True
@@ -84,7 +79,7 @@ class IsFalse(Validator):
     message = u"Must be false."
 
     def validate(self, element, context):
-        if bool(element.value):
+        if self.is_unusable(element) or element.value:
             self.note_error(element, self.message)
             return False
         return True
@@ -103,7 +98,7 @@ class ShorterThan(Validator):
         self.upperbound = upperbound
 
     def validate(self, element, context):
-        if len(element.value) >= self.upperbound:
+        if self.is_unusable(element) or len(element.value) >= self.upperbound:
             self.note_error(
                 element,
                 self.message,
@@ -126,7 +121,7 @@ class LongerThan(Validator):
         self.lowerbound = lowerbound
 
     def validate(self, element, context):
-        if len(element.value) <= self.lowerbound:
+        if self.is_unusable(element) or len(element.value) <= self.lowerbound:
             self.note_error(
                 element,
                 self.message,
@@ -150,7 +145,9 @@ class LengthWithinRange(Validator):
         self.end = end
 
     def validate(self, element, context):
-        if self.start < len(element.value) < self.end:
+        if (not self.is_unusable(element) and
+            self.start < len(element.value) < self.end
+           ):
             return True
         self.note_error(
             element,
@@ -191,7 +188,7 @@ class LessThan(Validator):
         self.upperbound = upperbound
 
     def validate(self, element, context):
-        if element.value >= self.upperbound:
+        if self.is_unusable(element) or element.value >= self.upperbound:
             self.note_error(
                 element,
                 self.message,
@@ -214,7 +211,7 @@ class GreaterThan(Validator):
         self.lowerbound = lowerbound
 
     def validate(self, element, context):
-        if element.value <= self.lowerbound:
+        if self.is_unusable(element) or element.value <= self.lowerbound:
             self.note_error(
                 element,
                 self.message,
@@ -266,7 +263,9 @@ class ItemsEqual(Validator):
         self.b = b
 
     def validate(self, element, context):
-        if element[self.a[1]].value == element[self.b[1]].value:
+        if (not self.is_unusable(element) and
+            element.value[self.a[1]] == element.value[self.b[1]]
+           ):
             return True
         self.note_error(
             element,
@@ -295,7 +294,9 @@ class AttributesEqual(Validator):
         self.b = b
 
     def validate(self, element, context):
-        if getattr(element, self.a[1]).value == getattr(element, self.b[1]).value:
+        if (not self.is_unusable(element) and
+            getattr(element, self.a[1]).value == getattr(element, self.b[1]).value
+           ):
             return True
         self.note_error(
             element,
@@ -323,7 +324,7 @@ class ProbablyAnEmailAddress(Validator):
     message = u"Must be a valid e-mail address."
 
     def validate(self, element, context):
-        if u"@" in element.value:
+        if not self.is_unusable(element) and u"@" in element.value:
             host = element.value.split(u"@", 1)[1]
             if u"." in host:
                 parts = host.split(u".")

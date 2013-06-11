@@ -36,6 +36,10 @@ def test_converted():
     assert not integer.validate()
     assert integer.errors == [u"Not a valid value."]
 
+    integer = Validated()
+    assert not integer.validate()
+    assert integer.errors == [u"Not a valid value."]
+
 
 def test_is_true():
     Validated = Unicode.validated_by([IsTrue()])
@@ -46,6 +50,14 @@ def test_is_true():
     unicode = Validated(u"")
     assert not unicode.validate()
     assert unicode.errors == [u"Must be true."]
+
+    unicode = Validated()
+    assert not unicode.validate()
+    assert unicode.errors == [u"Must be true."]
+
+    integer = Integer.validated_by([IsTrue()])("foobar")
+    assert not integer.validate()
+    assert integer.errors == [u"Must be true."]
 
 
 def test_is_false():
@@ -58,6 +70,14 @@ def test_is_false():
     assert not unicode.validate()
     assert unicode.errors == [u"Must be false."]
 
+    unicode = Validated()
+    assert not unicode.validate()
+    assert unicode.errors == [u"Must be false."]
+
+    integer = Integer.validated_by([IsFalse()])("foobar")
+    assert not integer.validate()
+    assert integer.errors == [u"Must be false."]
+
 
 def test_shorter_than():
     Validated = Unicode.validated_by([ShorterThan(3)])
@@ -69,6 +89,10 @@ def test_shorter_than():
     assert not unicode.validate()
     assert unicode.errors == [u"Must be shorter than 3."]
 
+    unicode = Validated()
+    assert not unicode.validate()
+    assert unicode.errors == [u"Must be shorter than 3."]
+
 
 def test_longer_than():
     Validated = Unicode.validated_by([LongerThan(3)])
@@ -77,6 +101,10 @@ def test_longer_than():
     assert not unicode.errors
 
     unicode = Validated(u"abc")
+    assert not unicode.validate()
+    assert unicode.errors == [u"Must be longer than 3."]
+
+    unicode = Validated()
     assert not unicode.validate()
     assert unicode.errors == [u"Must be longer than 3."]
 
@@ -92,6 +120,10 @@ def test_length_within_range():
         assert not unicode.validate()
         assert unicode.errors == [u"Must be longer than 3 and shorter than 6."]
 
+    unicode = Validated()
+    assert not unicode.validate()
+    assert unicode.errors == [u"Must be longer than 3 and shorter than 6."]
+
 
 def test_contained_in():
     Validated = Unicode.validated_by([ContainedIn([u"foo", u"bar"])])
@@ -101,6 +133,10 @@ def test_contained_in():
         assert not unicode.errors
 
     unicode = Validated(u"baz")
+    assert not unicode.validate()
+    assert unicode.errors == [u"Not a valid value."]
+
+    unicode = Validated()
     assert not unicode.validate()
     assert unicode.errors == [u"Not a valid value."]
 
@@ -115,6 +151,14 @@ def test_less_than():
     assert not integer.validate()
     assert integer.errors == [u"Must be less than 3."]
 
+    integer = Validated()
+    assert not integer.validate()
+    assert integer.errors == [u"Must be less than 3."]
+
+    integer = Validated("foo")
+    assert not integer.validate()
+    assert integer.errors == [u"Must be less than 3."]
+
 
 def test_greater_than():
     Validated = Integer.validated_by([GreaterThan(3)])
@@ -126,6 +170,14 @@ def test_greater_than():
     assert not integer.validate()
     assert integer.errors == [u"Must be greater than 3."]
 
+    integer = Validated()
+    assert not integer.validate()
+    assert integer.errors == [u"Must be greater than 3."]
+
+    integer = Validated("foo")
+    assert not integer.validate()
+    assert integer.errors == [u"Must be greater than 3."]
+
 
 def test_within_range():
     Validated = Integer.validated_by([WithinRange(3, 6)])
@@ -134,9 +186,17 @@ def test_within_range():
     assert not integer.errors
 
     for value in [2, 7]:
-        integer = Validated(4)
-        assert integer.validate()
-        assert not integer.errors
+        integer = Validated(value)
+        assert not integer.validate()
+        assert integer.errors == [u"Must be greater than 3 and shorter than 6."]
+
+    integer = Validated()
+    assert not integer.validate()
+    assert integer.errors == [u"Must be greater than 3 and shorter than 6."]
+
+    integer = Validated("foo")
+    assert not integer.validate()
+    assert integer.errors == [u"Must be greater than 3 and shorter than 6."]
 
 
 def test_items_equal():
@@ -151,6 +211,14 @@ def test_items_equal():
     assert not dict.validate()
     assert dict.errors == [u"Spam and Eggs must be equal."]
 
+    dict = Validated()
+    assert not dict.validate()
+    assert dict.errors == [u"Spam and Eggs must be equal."]
+
+    dict = Validated("foo")
+    assert not dict.validate()
+    assert dict.errors == [u"Spam and Eggs must be equal."]
+
 
 def test_attributes_equal():
     Validated = Form.of({"spam": Unicode, "eggs": Unicode}).validated_by(
@@ -161,6 +229,14 @@ def test_attributes_equal():
     assert not form.errors
 
     form = Validated({"spam": u"foo", "eggs": u"bar"})
+    assert not form.validate()
+    assert form.errors == [u"Spam and Eggs must be equal."]
+
+    form = Validated()
+    assert not form.validate()
+    assert form.errors == [u"Spam and Eggs must be equal."]
+
+    form = Validated("foo")
     assert not form.validate()
     assert form.errors == [u"Spam and Eggs must be equal."]
 
@@ -179,3 +255,7 @@ def test_probably_an_email_address():
         email = Validated(invalid_address)
         assert not email.validate()
         assert email.errors == [u"Must be a valid e-mail address."]
+
+    email = Validated()
+    assert not email.validate()
+    assert email.errors == [u"Must be a valid e-mail address."]

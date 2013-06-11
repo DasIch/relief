@@ -38,7 +38,7 @@ class Mapping(Container):
             return raw_value
         try:
             return cls.native_type(raw_value)
-        except TypeError:
+        except (TypeError, ValueError):
             return NotUnserializable
 
     @property
@@ -304,7 +304,7 @@ class Form(with_metaclass(FormMeta, collections.Mapping, Container)):
         if not isinstance(raw_value, dict):
             try:
                 raw_value = dict(raw_value)
-            except TypeError:
+            except (TypeError, ValueError):
                 return NotUnserializable
         if set(raw_value) != set(cls.member_schema):
             return NotUnserializable
