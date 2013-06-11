@@ -41,3 +41,13 @@ class ElementTest(object):
         element = element_cls.validated_by([Present()]).validated_by([Converted()])()
         assert not element.validate()
         assert element.errors == [u"May not be blank."]
+
+    def test_default(self, element_cls, possible_value):
+        element = element_cls.using(default=possible_value)()
+        assert element.raw_value == possible_value
+        assert element.value == possible_value
+
+    def test_default_factory(self, element_cls, possible_value):
+        element = element_cls.using(default_factory=lambda e: possible_value)()
+        assert element.raw_value == possible_value
+        assert element.value == possible_value

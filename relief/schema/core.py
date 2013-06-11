@@ -28,6 +28,15 @@ class Element(object):
 
     validators = []
 
+    #: The default value that should be used for this element. This value will
+    #: be used if not initial value is given.
+    default = Unspecified
+
+    #: A callable that is called with the element, which should be used to
+    #: produce the default value that is used if no initial value is given.
+    #: :attr:`default` takes precedence.
+    default_factory = Unspecified
+
     @class_cloner
     def using(cls, **kwargs):
         """
@@ -88,6 +97,11 @@ class Element(object):
         #: :data:`~relief.NotUnserializable`.
         self.raw_value = Unspecified
 
+        if value is Unspecified:
+            if self.default is not Unspecified:
+                value = self.default
+            elif self.default_factory is not Unspecified:
+                value = self.default_factory()
         self.set(value)
 
     def set(self, raw_value):

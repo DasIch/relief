@@ -229,7 +229,7 @@ class TestOrderedDict(MutableMappingTest):
 
     @py.test.fixture
     def possible_value(self):
-        return [(u"foo", 1)]
+        return collections.OrderedDict([(u"foo", 1)])
 
     @python2_only
     def test_has_key(self, element_cls):

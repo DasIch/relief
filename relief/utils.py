@@ -19,7 +19,7 @@ class class_cloner(classmethod):
             # module name in the scope of the caller
             "__module__": sys._getframe(1).f_globals.get("__name__", "__main__")
         }
-        clone = type(cls.__name__, (cls, ), attributes)
+        clone = cls.__class__(cls.__name__, (cls, ), attributes)
         return super(class_cloner, self).__get__(instance, clone)
 
 
