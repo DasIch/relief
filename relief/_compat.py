@@ -9,6 +9,14 @@
 import sys
 import inspect
 from functools import wraps
+try:
+    from collections import Counter
+except ImportError: # < 2.7
+    from counter import Counter
+try:
+    from collections import OrderedDict
+except ImportError: # < 2.7
+    from ordereddict import OrderedDict
 
 
 PY2 = sys.version_info[0] == 2
@@ -86,3 +94,6 @@ class Prepareable(type):
 
 def with_metaclass(meta, *bases):
     return meta("NewBase", bases, {})
+
+
+__all__ = ['Counter', 'OrderedDict']

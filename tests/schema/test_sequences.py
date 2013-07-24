@@ -6,13 +6,8 @@
     :copyright: 2013 by Daniel Neuhäuser
     :license: BSD, see LICENSE.rst for details
 """
-try:
-    from collections import Counter
-except ImportError:
-    from counter import Counter
-
 from relief import Tuple, List, Integer, Unspecified, NotUnserializable
-from relief._compat import iteritems
+from relief._compat import iteritems, Counter
 
 from tests.schema.conftest import ElementTest
 

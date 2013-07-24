@@ -6,10 +6,9 @@
     :copyright: 2013 by Daniel Neuhäuser
     :license: BSD, see LICENSE.rst for details
 """
-import collections
-
 from relief import (
-    Dict, OrderedDict, Unicode, Integer, NotUnserializable, Form, Element
+    Dict, OrderedDict, Unicode, Integer, NotUnserializable, Form, Element,
+    _compat
 )
 
 from tests.conftest import python2_only
@@ -230,7 +229,7 @@ class TestOrderedDict(MutableMappingTest):
 
     @py.test.fixture
     def possible_value(self):
-        return collections.OrderedDict([(u"foo", 1)])
+        return _compat.OrderedDict([(u"foo", 1)])
 
     @python2_only
     def test_has_key(self, element_cls):
@@ -238,7 +237,7 @@ class TestOrderedDict(MutableMappingTest):
         assert not element_cls({u"foo": 1}).has_key(u"bar")
 
     def test_set_strict(self, element_cls):
-        value = collections.OrderedDict({u"foo": 1})
+        value = _compat.OrderedDict({u"foo": 1})
         element = element_cls.using(strict=True)(value)
         assert element.raw_value == value
         assert element.value == value

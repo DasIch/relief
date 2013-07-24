@@ -8,16 +8,12 @@
 """
 import collections
 
-from relief import Unspecified, NotUnserializable, Element
+from relief import Unspecified, NotUnserializable, Element, _compat
 from relief.utils import class_cloner
 from relief.schema.core import Container
 from relief._compat import (
     add_native_itermethods, Prepareable, itervalues, iteritems, with_metaclass
 )
-
-if not hasattr(collections, 'OrderedDict'):
-    import ordereddict
-    collections.OrderedDict = ordereddict.OrderedDict
 
 
 class _Value(object):
@@ -191,21 +187,21 @@ class Dict(MutableMapping, dict):
     native_type = dict
 
 
-class OrderedDict(MutableMapping, collections.OrderedDict):
+class OrderedDict(MutableMapping, _compat.OrderedDict):
     """
     Represents a :class:`collections.OrderedDict`.
 
     See :class:`Dict` for more information.
     """
-    native_type = collections.OrderedDict
+    native_type = _compat.OrderedDict
 
     def __init__(self, value=Unspecified):
-        collections.OrderedDict.__init__(self)
+        _compat.OrderedDict.__init__(self)
         MutableMapping.__init__(self, value=value)
 
     def __reversed__(self):
         for key in super(OrderedDict, self).__reversed__():
-            yield super(collections.OrderedDict, self).__getitem__(key).key
+            yield super(_compat.OrderedDict, self).__getitem__(key).key
 
     def popitem(self, last=True):
         if not self:
@@ -227,7 +223,7 @@ class OrderedDict(MutableMapping, collections.OrderedDict):
 
 class FormMeta(collections.Mapping.__class__, with_metaclass(Prepareable, type)):
     def __new__(cls, cls_name, bases, attributes):
-        member_schema = attributes["member_schema"] = collections.OrderedDict()
+        member_schema = attributes["member_schema"] = _compat.OrderedDict()
         for base in reversed(bases):
             member_schema.update(getattr(base, "member_schema", {}) or {})
         for name, attribute in iteritems(attributes):
@@ -236,7 +232,7 @@ class FormMeta(collections.Mapping.__class__, with_metaclass(Prepareable, type))
         return super(FormMeta, cls).__new__(cls, cls_name, bases, attributes)
 
     def __prepare__(name, bases, **kwargs):
-        return collections.OrderedDict()
+        return _compat.OrderedDict()
 
 
 @add_native_itermethods
@@ -297,7 +293,7 @@ class Form(with_metaclass(FormMeta, collections.Mapping, Container)):
 
     @class_cloner
     def of(cls, schema):
-        cls.member_schema = collections.OrderedDict(schema)
+        cls.member_schema = _compat.OrderedDict(schema)
         return cls
 
     @classmethod
@@ -316,7 +312,7 @@ class Form(with_metaclass(FormMeta, collections.Mapping, Container)):
 
     def __new__(cls, *args, **kwargs):
         self = super(Form, cls).__new__(cls)
-        self._elements = collections.OrderedDict()
+        self._elements = _compat.OrderedDict()
         for name, element_cls in iteritems(self.member_schema):
             self._elements[name] = element = element_cls()
             setattr(self, name, element)
@@ -340,7 +336,7 @@ class Form(with_metaclass(FormMeta, collections.Mapping, Container)):
     def value(self):
         if self._state is not None:
             return self._state
-        result = collections.OrderedDict()
+        result = _compat.OrderedDict()
         for key, element in iteritems(self):
             if element.value is Unspecified:
                 return NotUnserializable
