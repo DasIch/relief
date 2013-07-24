@@ -271,14 +271,6 @@ class TestForm(object):
         foo = Foo({"spam": u"one"})
         assert foo["spam"].value == u"one"
 
-    def test_setitem(self):
-        class Foo(Form):
-            spam = Integer
-
-        foo = Foo()
-        foo["spam"] = "1"
-        assert foo["spam"].value == 1
-
     def test_contains(self):
         class Foo(Form):
             spam = Unicode

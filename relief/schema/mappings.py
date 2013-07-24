@@ -321,11 +321,6 @@ class Form(with_metaclass(FormMeta, collections.Mapping, Container)):
     def __getitem__(self, key):
         return self._elements[key]
 
-    def __setitem__(self, key, value):
-        if key not in self:
-            raise KeyError(key)
-        self._elements[key].set(value)
-
     def __len__(self):
         return len(self._elements)
 
