@@ -264,7 +264,7 @@ class TestBytes(ScalarTest):
     @py.test.fixture
     def invalid_value(self):
         if sys.version_info >= (3, 0):
-            py.test.skip()
+            py.test.skip('sys.version_info >= (3, 0)')
         return u"äöü"
 
     @py.test.mark.parametrize(("raw_value", "value"), [
