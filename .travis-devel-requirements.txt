@@ -1,0 +1,2 @@
+# < 2.7 dependencies
+git+git://github.com/KelSolaar/Counter.git#egg=Counter

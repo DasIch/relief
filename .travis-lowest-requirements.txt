@@ -1,0 +1,3 @@
+# < 2.7 dependencies
+ordereddict==1.1
+Counter==1.0.0
