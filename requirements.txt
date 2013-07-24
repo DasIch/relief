@@ -1,6 +1,8 @@
 # testing
 pytest
+pytest-cov
 tox
 pyflakes
+
 # documentation
 sphinx==1.1.3
