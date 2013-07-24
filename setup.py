@@ -3,8 +3,6 @@ import os
 import sys
 from setuptools import setup
 
-from relief import __version__
-
 
 PACKAGE_PATH = os.path.join(
     os.path.abspath(os.path.dirname(__file__)), "relief"
@@ -17,9 +15,19 @@ else:
     install_requires = []
 
 
+def get_version():
+    path = os.path.join(PACKAGE_PATH, "__init__.py")
+    with open(path) as f:
+        for line in f:
+            if line.startswith("__version__"):
+                return line.split("=")[1].replace('"', '').strip()
+        else:
+            raise ValueError("__version__ not found in %s" % path)
+
+
 setup(
     name="Relief",
-    version=__version__,
+    version=get_version(),
     author="Daniel Neuhäuser",
     author_email="ich@danielneuhaeuser.de",
     license="BSD",
