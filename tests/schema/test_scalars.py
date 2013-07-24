@@ -1,7 +1,7 @@
 # coding: utf-8
 """
-    relief.tests.schema.test_scalars
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    tests.schema.test_scalars
+    ~~~~~~~~~~~~~~~~~~~~~~~~~
 
     :copyright: 2013 by Daniel Neuhäuser
     :license: BSD, see LICENSE.rst for details
@@ -12,7 +12,8 @@ from relief import (
     Boolean, Integer, Float, Complex, Unicode, Bytes, Unspecified, 
     NotUnserializable
 )
-from relief.tests.schema.conftest import ElementTest
+
+from tests.schema.conftest import ElementTest
 
 import py.test
 

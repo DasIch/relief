@@ -1,7 +1,7 @@
 # coding: utf-8
 """
-    relief.tests.schema.test_mappings
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    tests.schema.test_mappings
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     :copyright: 2013 by Daniel Neuhäuser
     :license: BSD, see LICENSE.rst for details
@@ -11,8 +11,9 @@ import collections
 from relief import (
     Dict, OrderedDict, Unicode, Integer, NotUnserializable, Form, Element
 )
-from relief.tests.conftest import python2_only
-from relief.tests.schema.conftest import ElementTest
+
+from tests.conftest import python2_only
+from tests.schema.conftest import ElementTest
 
 import py.test
 

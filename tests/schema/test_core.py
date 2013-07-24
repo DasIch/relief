@@ -1,13 +1,14 @@
 # coding: utf-8
 """
-    relief.tests.schema.test_core
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    tests.schema.test_core
+    ~~~~~~~~~~~~~~~~~~~~~~
 
     :copyright: 2013 by Daniel Neuhäuser
     :license: BSD, see LICENSE.rst for details
 """
 from relief import Unspecified, Element
-from relief.tests.schema.conftest import ElementTest
+
+from tests.schema.conftest import ElementTest
 
 import py.test
 

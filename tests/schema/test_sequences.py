@@ -1,16 +1,20 @@
 # coding: utf-8
 """
-    relief.tests.schema.test_sequences
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    tests.schema.test_sequences
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     :copyright: 2013 by Daniel Neuhäuser
     :license: BSD, see LICENSE.rst for details
 """
-from collections import Counter
+try:
+    from collections import Counter
+except ImportError:
+    from counter import Counter
 
 from relief import Tuple, List, Integer, Unspecified, NotUnserializable
 from relief._compat import iteritems
-from relief.tests.schema.conftest import ElementTest
+
+from tests.schema.conftest import ElementTest
 
 import py.test
 

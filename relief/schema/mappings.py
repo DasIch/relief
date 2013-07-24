@@ -15,6 +15,10 @@ from relief._compat import (
     add_native_itermethods, Prepareable, itervalues, iteritems, with_metaclass
 )
 
+if not hasattr(collections, 'OrderedDict'):
+    import ordereddict
+    collections.OrderedDict = ordereddict.OrderedDict
+
 
 class _Value(object):
     __slots__ = ["key", "value"]

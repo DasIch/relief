@@ -1,7 +1,7 @@
 # coding: utf-8
 """
-    relief.tests.test_utils
-    ~~~~~~~~~~~~~~~~~~~~~~~
+    tests.test_utils
+    ~~~~~~~~~~~~~~~~
 
     :copyright: 2013 by Daniel Neuhäuser
     :license: BSD, see LICENSE.rst for details
@@ -23,7 +23,7 @@ class TestClassCloner(object):
         unbound = self.Foo.method
 
         assert unbound.__name__ == "method"
-        assert unbound.__module__ == "relief.tests.test_utils"
+        assert unbound.__module__ == "tests.test_utils"
         assert unbound.__doc__ == "Documentation"
         if sys.version_info < (3, 0):
             assert issubclass(unbound.im_self, self.Foo)
@@ -33,7 +33,7 @@ class TestClassCloner(object):
         instance = self.Foo()
         bound = instance.method
         assert bound.__name__ == "method"
-        assert bound.__module__ == "relief.tests.test_utils"
+        assert bound.__module__ == "tests.test_utils"
         assert bound.__doc__ == "Documentation"
         if sys.version_info < (3, 0):
             assert issubclass(bound.im_self, self.Foo)
