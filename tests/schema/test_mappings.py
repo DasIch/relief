@@ -161,40 +161,17 @@ class MappingTest(ElementTest):
 class MutableMappingTest(MappingTest):
     def test_setitem(self, element_cls):
         element = element_cls()
-        element[u"foo"] = 1
-        assert element[u"foo"].value == 1
+        with py.test.raises(TypeError):
+            element[u"foo"] = 1
 
-    def test_setdefault(self, element_cls):
+    @py.test.mark.parametrize('method', [
+        'setdefault', 'popitem', 'pop', 'update', 'clear'
+    ])
+    def test_mutating_method_missing(self, element_cls, method):
         element = element_cls()
-        assert element.setdefault(u"foo", 1).value == 1
-        assert element[u"foo"].value == 1
-        assert element.setdefault(u"foo", 2).value == 1
-        assert element[u"foo"].value == 1
-
-    def test_popitem(self, element_cls):
-        key, value = element_cls({u"foo": 1}).popitem()
-        assert key.value == u"foo"
-        assert value.value == 1
-
-    def test_pop(self, element_cls):
-        element = element_cls({u"foo": 1})
-        assert element.pop(u"foo").value == 1
-        with py.test.raises(KeyError):
-            element.pop(u"foo")
-        assert element.pop(u"foo", 2).value == 2
-
-    def test_update(self, element_cls):
-        element = element_cls()
-        element.update([(u"foo", 1)])
-        assert element[u"foo"].value == 1
-
-        element = element_cls()
-        element.update({u"foo": 1})
-        assert element[u"foo"].value == 1
-
-        element = element_cls()
-        element.update(foo=1)
-        assert element[u"foo"].value == 1
+        assert not hasattr(element, method)
+        with py.test.raises(AttributeError):
+            getattr(element, method)
 
 
 class TestDict(MutableMappingTest):

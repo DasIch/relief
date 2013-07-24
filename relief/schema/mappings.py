@@ -58,14 +58,23 @@ class Mapping(Container):
             raise AttributeError("can't set attribute")
 
     def _set_value(self, value):
-        self.clear()
+        super(Mapping, self).clear()
         if value is not Unspecified:
             if hasattr(self, "_raw_value"):
                 del self._raw_value
-            self.update(value)
+            for key in value:
+                super(Mapping, self).__setitem__(key, _Value(
+                    self.member_schema[0](key),
+                    self.member_schema[1](value[key])
+                ))
 
     def __getitem__(self, key):
         return super(Mapping, self).__getitem__(key).value
+
+    def __setitem__(self, key, value):
+        raise TypeError(
+            "%r object does not support item assignment" % self.__class__.__name__
+        )
 
     def get(self, key, default=None):
         try:
@@ -107,57 +116,16 @@ class Mapping(Container):
             for child in value.traverse(current_prefix + [1]):
                 yield child
 
-
-class MutableMapping(Mapping):
-    def __setitem__(self, key, value):
-        super(Mapping, self).__setitem__(key, _Value(
-            self.member_schema[0](key),
-            self.member_schema[1](value)
-        ))
-
-    def setdefault(self, key, default=None):
-        try:
-            return self[key]
-        except KeyError:
-            self[key] = default
-            return self[key]
-
-    def popitem(self):
-        v = super(MutableMapping, self).popitem()[1]
-        return v.key, v.value
-
-    def pop(self, key, *args):
-        if len(args) > 1:
-            raise TypeError(
-                "pop expected at most 2 arguments, got %d" % (len(args) + 1)
-            )
-        try:
-            value = super(MutableMapping, self).pop(key).value
-        except KeyError:
-            if args:
-                value = self.member_schema[1](args[0])
-            else:
-                raise
-        return value
-
-    def update(self, *args, **kwargs):
-        if len(args) > 1:
-            raise TypeError(
-                "update expected at most 1 argument, got %d" % len(args)
-            )
-        mappings = []
-        if args:
-            if hasattr(args[0], "keys"):
-                mappings.append((key, args[0][key]) for key in args[0])
-            else:
-                mappings.append(args[0])
-        mappings.append(iteritems(kwargs))
-        for mapping in mappings:
-            for key, value in mapping:
-                self[key] = value
+    def __getattribute__(self, name):
+        mutating_methods = set([
+            'setdefault', 'popitem', 'pop', 'update', 'clear'
+        ])
+        if name in mutating_methods:
+            raise AttributeError(name)
+        return super(Mapping, self).__getattribute__(name)
 
 
-class Dict(MutableMapping, dict):
+class Dict(Mapping, dict):
     """
     Represents a :class:`dict`.
 
@@ -187,7 +155,7 @@ class Dict(MutableMapping, dict):
     native_type = dict
 
 
-class OrderedDict(MutableMapping, _compat.OrderedDict):
+class OrderedDict(Mapping, _compat.OrderedDict):
     """
     Represents a :class:`collections.OrderedDict`.
 
@@ -197,28 +165,11 @@ class OrderedDict(MutableMapping, _compat.OrderedDict):
 
     def __init__(self, value=Unspecified):
         _compat.OrderedDict.__init__(self)
-        MutableMapping.__init__(self, value=value)
+        Mapping.__init__(self, value=value)
 
     def __reversed__(self):
         for key in super(OrderedDict, self).__reversed__():
             yield super(_compat.OrderedDict, self).__getitem__(key).key
-
-    def popitem(self, last=True):
-        if not self:
-            raise KeyError("dictionary is empty")
-        key = next(reversed(self) if last else iter(self))
-        value = self.pop(key.value)
-        return key, value
-
-    __missing = object()
-    def pop(self, key, default=__missing):
-        if key in self:
-            value = self[key]
-            del self[key]
-            return value
-        if default is self.__missing:
-            raise KeyError(key)
-        return self.member_schema[1](default)
 
 
 class FormMeta(collections.Mapping.__class__, with_metaclass(Prepareable, type)):
