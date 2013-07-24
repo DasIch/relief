@@ -161,36 +161,7 @@ class Tuple(Sequence, tuple):
                 element.set(raw_value)
 
 
-class MutableSequence(Sequence):
-    def __setitem__(self, key, value):
-        if isinstance(key, slice):
-            value = map(self.member_schema, value)
-        super(MutableSequence, self).__setitem__(key, value)
-
-    def __setslice__(self, start, stop, values):
-        self.__setitem__(slice(start, stop), values)
-
-    def append(self, value):
-        super(MutableSequence, self).append(self.member_schema(value))
-
-    def extend(self, value):
-        super(MutableSequence, self).extend(map(self.member_schema, value))
-
-    def insert(self, index, value):
-        self[index:index] = [value]
-
-    def pop(self, index=None):
-        if index is None:
-            index = len(self) - 1
-        value = self[index]
-        del self[index]
-        return value
-
-    def remove(self, value):
-        del self[self.index(value)]
-
-
-class List(MutableSequence, list):
+class List(Sequence, list):
     """
     Represents a :func:`list`.
 
@@ -249,6 +220,34 @@ class List(MutableSequence, list):
             raise AttributeError("can't set attribute")
 
     def _set_value(self, value):
-        del self[:]
+        super(List, self).__delslice__(0, len(self)) # del self[:]
         if value is not Unspecified:
-            self.extend(value)
+            super(List, self).extend(map(self.member_schema, value))
+
+    def __setitem__(self, index):
+        raise TypeError(
+            '%r object does not support item assignment' % self.__class__.__name__
+        )
+
+    def __setslice__(self, slice):
+        raise TypeError(
+            '%r object does not support slicing assignment' % self.__class__.__name__
+        )
+
+    def __delitem__(self, index):
+        raise TypeError(
+            '%r object does not support item deletion' % self.__class__.__name__
+        )
+
+    def __delslice__(self, i, j):
+        raise TypeError(
+            '%r object does not support slice deletion' % self.__class__.__name__
+        )
+
+    def __getattribute__(self, name):
+        mutating_methods = set([
+            'append', 'extend', 'insert', 'pop', 'remove'
+        ])
+        if name in mutating_methods:
+            raise AttributeError(name)
+        return super(List, self).__getattribute__(name)

@@ -156,59 +156,7 @@ class TestTuple(SequenceTest):
         ]
 
 
-class MutableSequenceTest(SequenceTest):
-    def test_setitem(self, element_cls):
-        element = element_cls([0])
-        element[0] = 1
-        assert element[0] == 1
-
-    def test_setslice(self, element_cls):
-        element = element_cls([1, 2, 3, 4, 5])
-        element[:5] = [6, 7, 8, 9, 10]
-        assert [e.value for e in element] == [6, 7, 8, 9, 10]
-
-    def test_delitem(self, element_cls):
-        element = element_cls([1])
-        del element[0]
-        with py.test.raises(IndexError):
-            del element[0]
-
-    def test_delslice(self, element_cls):
-        element = element_cls([1, 2])
-        del element[:]
-        assert not element
-
-    def test_append(self, element_cls):
-        element = element_cls()
-        element.append(1)
-        assert element[0].value == 1
-
-    def test_extend(self, element_cls):
-        element = element_cls()
-        element.extend([1, 2, 3])
-        assert [e.value for e in element] == [1, 2, 3]
-
-    def test_insert(self, element_cls):
-        element = element_cls()
-        for value in [1, 2, 3]:
-            element.insert(0, value)
-        assert [e.value for e in element] == [3, 2, 1]
-
-    def test_pop(self, element_cls):
-        element = element_cls([1, 2, 3])
-        assert element.pop().value == 3
-        assert element.pop(0).value == 1
-        with py.test.raises(IndexError):
-            element.pop(1)
-
-    def test_remove(self, element_cls):
-        element = element_cls([1])
-        element.remove(1)
-        with py.test.raises(ValueError):
-            element.remove(1)
-
-
-class TestList(MutableSequenceTest):
+class TestList(SequenceTest):
     @py.test.fixture
     def element_cls(self):
         return List.of(Integer)
@@ -253,3 +201,32 @@ class TestList(MutableSequenceTest):
             ([1, 0], 3),
             ([1, 1], 4)
         ]
+
+    def test_setitem(self):
+        element = List.of(Integer)()
+        with py.test.raises(TypeError):
+            element[0] = 1
+
+    def test_setslice(self):
+        element = List.of(Integer)()
+        with py.test.raises(TypeError):
+            element[0:1] = [1, 2]
+
+    def test_delitem(self):
+        element = List.of(Integer)([1])
+        with py.test.raises(TypeError):
+            del element[0]
+
+    def test_delslice(self):
+        element = List.of(Integer)([1, 2])
+        with py.test.raises(TypeError):
+            del element[0:1]
+
+    @py.test.mark.parametrize('method', [
+        'append', 'extend', 'insert', 'pop', 'remove'
+    ])
+    def test_does_not_have_mutating_list_methods(self, method):
+        element = List.of(Integer)()
+        assert not hasattr(element, method)
+        with py.test.raises(AttributeError):
+            getattr(element, method)
