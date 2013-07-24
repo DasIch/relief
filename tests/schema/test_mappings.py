@@ -135,6 +135,28 @@ class MappingTest(ElementTest):
             (["foo", 0, 1], 1)
         ]
 
+    def test_validate_value_empty(self, element_cls):
+        element = element_cls({})
+        assert element.is_valid is None
+        assert element.validate()
+        assert element.is_valid
+
+    def test_validate_value(self, element_cls):
+        element = element_cls({"foo": "1"})
+        assert element.raw_value == {"foo": "1"}
+        assert element.value == {u"foo": 1}
+        assert element.is_valid is None
+        assert element.validate()
+        assert element.is_valid
+
+    def test_validate_invalid_value(self, element_cls):
+        element = element_cls({"foo": "foo"})
+        assert element.raw_value == {"foo": "foo"}
+        assert element.value is NotUnserializable
+        assert element.is_valid is None
+        assert not element.validate()
+        assert not element.is_valid
+
 
 class MutableMappingTest(MappingTest):
     def test_setitem(self, element_cls):
@@ -173,28 +195,6 @@ class MutableMappingTest(MappingTest):
         element = element_cls()
         element.update(foo=1)
         assert element[u"foo"].value == 1
-
-    def test_validate_value_empty(self, element_cls):
-        element = element_cls({})
-        assert element.is_valid is None
-        assert element.validate()
-        assert element.is_valid
-
-    def test_validate_value(self, element_cls):
-        element = element_cls({"foo": "1"})
-        assert element.raw_value == {"foo": "1"}
-        assert element.value == {u"foo": 1}
-        assert element.is_valid is None
-        assert element.validate()
-        assert element.is_valid
-
-    def test_validate_invalid_value(self, element_cls):
-        element = element_cls({"foo": "foo"})
-        assert element.raw_value == {"foo": "foo"}
-        assert element.value is NotUnserializable
-        assert element.is_valid is None
-        assert not element.validate()
-        assert not element.is_valid
 
 
 class TestDict(MutableMappingTest):
