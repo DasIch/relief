@@ -220,7 +220,7 @@ class List(Sequence, list):
             raise AttributeError("can't set attribute")
 
     def _set_value(self, value):
-        super(List, self).__delslice__(0, len(self)) # del self[:]
+        super(List, self).__delitem__(slice(None, None, None)) # del self[:]
         if value is not Unspecified:
             super(List, self).extend(map(self.member_schema, value))
 
