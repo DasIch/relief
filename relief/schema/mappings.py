@@ -164,7 +164,12 @@ class OrderedDict(Mapping, _compat.OrderedDict):
     native_type = _compat.OrderedDict
 
     def __init__(self, value=Unspecified):
-        _compat.OrderedDict.__init__(self)
+        # The non-stdlib OrderedDict implementation we use for < 2.7 does weird
+        # things in __init__ causing issues, so we don't call it. We do have to
+        # call __init__ when we use the stdlib implementation because not
+        # calling that does cause issues as well.
+        if hasattr(collections, 'OrderedDict'):
+            _compat.OrderedDict.__init__(self)
         Mapping.__init__(self, value=value)
 
     def __reversed__(self):

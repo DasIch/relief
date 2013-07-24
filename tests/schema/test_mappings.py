@@ -198,6 +198,14 @@ class TestDict(MutableMappingTest):
         assert element.raw_value == [(u"foo", 1)]
         assert element.value is NotUnserializable
 
+    def test_retains_ordering(self, element_cls):
+        value = [
+            (u"foo", 1),
+            (u"bar", 2),
+            (u"baz", 3)
+        ]
+        assert element_cls(value).value == _compat.OrderedDict(value)
+
 
 class TestOrderedDict(MutableMappingTest):
     @py.test.fixture
