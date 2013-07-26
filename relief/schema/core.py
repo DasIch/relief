@@ -114,6 +114,7 @@ class Element(object):
             self.value = raw_value
         else:
             self.value = self.unserialize(raw_value)
+        self.is_valid = None
 
     def validate(self, context=None):
         """
@@ -176,3 +177,4 @@ class Container(Element):
                 self._state = NotUnserializable
             else:
                 self._set_value(unserialized)
+        self.is_valid = None

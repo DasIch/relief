@@ -51,3 +51,11 @@ class ElementTest(object):
         element = element_cls.using(default_factory=lambda e: possible_value)()
         assert element.raw_value == possible_value
         assert element.value == possible_value
+
+    def test_set_invalidates_is_valid(self, element_cls, possible_value):
+        element = element_cls()
+        element.set(possible_value)
+        assert element.validate()
+        assert element.is_valid
+        element.set(possible_value)
+        assert element.is_valid is None
