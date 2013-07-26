@@ -32,3 +32,4 @@ Additional Information
 
    other/contributing.rst
    other/license.rst
+   other/changelog.rst
