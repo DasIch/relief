@@ -32,7 +32,7 @@ setup(
     author_email="ich@danielneuhaeuser.de",
     license="BSD",
     description="datastructure validation",
-    packages=['relief', 'relief.schema'],
+    packages=['relief', 'relief.schema', 'relief.utils'],
     install_requires=install_requires,
     classifiers=[
         "License :: OSI Approved :: BSD License",
