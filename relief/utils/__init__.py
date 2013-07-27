@@ -8,6 +8,8 @@
 """
 import sys
 
+from relief.utils.idd import InheritingDictDescriptor
+
 
 class class_cloner(classmethod):
     """
@@ -25,3 +27,6 @@ class class_cloner(classmethod):
 
 def as_singleton(cls):
     return cls()
+
+
+__all__ = ['InheritingDictDescriptor', 'class_cloner', 'as_singleton']
