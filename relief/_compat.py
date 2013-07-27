@@ -99,4 +99,7 @@ def with_metaclass(meta, *bases):
     return meta("NewBase", bases, {})
 
 
-__all__ = ['Counter', 'OrderedDict']
+__all__ = [
+    'Counter', 'OrderedDict', 'itervalues', 'iteritems', 'text_type',
+    'Prepareable', 'add_native_itermethods', 'with_metaclass'
+]
