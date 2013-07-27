@@ -31,35 +31,14 @@ if PY2:
 
     text_type = unicode
 
-else:
-    def itervalues(d):
-        return iter(d.values())
-
-    def iteritems(d):
-        return iter(d.items())
-
-    text_type = str
-
-
-def add_native_itermethods(cls):
-    def set_method(cls, name):
-        iter_method = getattr(cls, name)
-        if PY2:
-            setattr(cls, "iter" + name, iter_method)
-            setattr(cls, "view" + name, iter_method)
-            setattr(cls, name, lambda self: list(iter_method(self)))
-    for name in ["keys", "values", "items"]:
-        set_method(cls, name)
-    return cls
-
-
-class Prepareable(type):
-    if PY2:
+    class Prepareable(type):
         def __new__(cls, name, bases, attributes):
             try:
                 constructor = attributes["__new__"]
             except KeyError:
-                return super(Prepareable, cls).__new__(cls, name, bases, attributes)
+                return super(Prepareable, cls).__new__(
+                    cls, name, bases, attributes
+                )
 
             def preparing_constructor(cls, name, bases, attributes):
                 try:
@@ -70,9 +49,9 @@ class Prepareable(type):
                 defining_frame = sys._getframe(1)
                 for constant in reversed(defining_frame.f_code.co_consts):
                     if inspect.iscode(constant) and constant.co_name == name:
-                        def get_index(attribute_name, _names=constant.co_names):
+                        def get_index(name, _index=constant.co_names.index):
                             try:
-                                return _names.index(attribute_name)
+                                return _index(name)
                             except ValueError:
                                 return 0
                         assert get_index # silence pyflakes
@@ -89,7 +68,31 @@ class Prepareable(type):
                     namespace[key] = value
                 return constructor(cls, name, bases, namespace)
             attributes["__new__"] = wraps(constructor)(preparing_constructor)
-            return super(Prepareable, cls).__new__(cls, name, bases, attributes)
+            return super(Prepareable, cls).__new__(
+                cls, name, bases, attributes
+            )
+else:
+    def itervalues(d):
+        return iter(d.values())
+
+    def iteritems(d):
+        return iter(d.items())
+
+    text_type = str
+
+    Prepareable = type
+
+
+def add_native_itermethods(cls):
+    def set_method(cls, name):
+        iter_method = getattr(cls, name)
+        if PY2:
+            setattr(cls, "iter" + name, iter_method)
+            setattr(cls, "view" + name, iter_method)
+            setattr(cls, name, lambda self: list(iter_method(self)))
+    for name in ["keys", "values", "items"]:
+        set_method(cls, name)
+    return cls
 
 
 def with_metaclass(meta, *bases):
