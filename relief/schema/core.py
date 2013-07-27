@@ -7,7 +7,7 @@
     :license: BSD, see LICENSE.rst for details
 """
 from relief import Unspecified, NotUnserializable
-from relief.utils import class_cloner
+from relief.utils import class_cloner, InheritingDictDescriptor
 from relief._compat import iteritems
 
 
@@ -37,6 +37,10 @@ class Element(object):
     #: :attr:`default` takes precedence.
     default_factory = Unspecified
 
+    #: A dictionary whose contents are inherited by subclasses, which should be
+    #: used for application-specific information associated with an element.
+    properties = InheritingDictDescriptor('properties')
+
     @class_cloner
     def using(cls, **kwargs):
         """
@@ -56,6 +60,16 @@ class Element(object):
         iterable of `validators`.
         """
         return cls.using(validators=cls.validators + validators)
+
+    @classmethod
+    def with_properties(cls, **properties):
+        """
+        Returns a clone of the class whose :attr:`properties` contain the given
+        `properties` in addition to the ones inherited from this one.
+        """
+        return cls.using(
+            properties=InheritingDictDescriptor('properties', **properties)
+        )
 
     @classmethod
     def unserialize(cls, raw_value):
