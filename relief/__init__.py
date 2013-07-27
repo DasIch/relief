@@ -20,7 +20,14 @@ __version_info__ = (0, 1, 0)
 
 
 __all__ = [
-    "Unspecified", "NotUnserializable", "Element", "Boolean", "Integer",
-    "Float", "Complex", "Unicode", "Bytes", "Form", "Dict", "OrderedDict",
+    # constants
+    "Unspecified", "NotUnserializable",
+    # core
+    "Element",
+    # scalars
+    "Boolean", "Integer", "Float", "Complex", "Unicode", "Bytes",
+    # mappings
+    "Dict", "OrderedDict", "Form",
+    # sequences
     "Tuple", "List"
 ]
