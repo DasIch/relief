@@ -3,7 +3,8 @@ help:
 	@echo "make dev           - Installs all dependencies and development tools"
 	@echo "make clean         - Delete all untracked/ignored files and" \
 	                            "directories"
-	@echo "make test          - Tests everything"
+	@echo "make test          - Runs tests"
+	@echo "make test-all      - Runs tox"
 	@echo "make coverage      - Make coverage report"
 	@echo "make view-coverage - View coverage report in a browser"
 	@echo "make style         - Run pyflakes on all files"
@@ -21,6 +22,9 @@ delete-bytecode:
 	find relief -iname "*.pyc" -delete
 
 test: delete-bytecode
+	py.test
+
+test-all: delete-bytecode
 	tox
 
 coverage:
