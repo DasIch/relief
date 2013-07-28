@@ -33,25 +33,6 @@ class Sequence(Container):
         self.is_valid &= super(Sequence, self).validate(context)
         return self.is_valid
 
-    def traverse(self, prefix=None):
-        """
-        Recursively traverses over the elements over the list. Adds the index
-        of each element to the prefix:
-
-        >>> from relief import Integer
-        >>> Sequence.of(Integer)([1, 2, 3]).traverse()
-        ([0], 1)
-        ([1], 2)
-        ([2], 3)
-        """
-        for i, element in enumerate(self):
-            if prefix is None:
-                current_prefix = [i]
-            else:
-                current_prefix = prefix + [i]
-            for child in element.traverse(current_prefix):
-                yield child
-
 
 class Tuple(Sequence, tuple):
     """

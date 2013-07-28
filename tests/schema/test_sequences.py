@@ -92,16 +92,6 @@ class SequenceTest(ElementTest):
         assert element.is_valid
         assert is_recursive[0]
 
-    def test_traverse(self, element_cls, possible_value):
-        element = element_cls(possible_value)
-        assert [
-            (prefix, child.value) for prefix, child in element.traverse()
-        ] == [([i], value) for i, value in enumerate(possible_value)]
-        assert [
-            (prefix, child.value)
-            for prefix, child in element.traverse(prefix=["foo"])
-        ] == [(["foo", i], value) for i, value in enumerate(possible_value)]
-
 
 class TestTuple(SequenceTest):
     @py.test.fixture
@@ -144,17 +134,6 @@ class TestTuple(SequenceTest):
         assert element.value == ()
         assert element.validate()
 
-    def test_traverse_nested(self):
-        element_cls = Tuple.of(Tuple.of(Integer, Integer), Integer)
-        element = element_cls(((1, 2), (3)))
-        assert [
-            (prefix, child.value) for prefix, child in element.traverse()
-        ] == [
-            ([0, 0], 1),
-            ([0, 1], 2),
-            ([1], 3)
-        ]
-
 
 class TestList(SequenceTest):
     @py.test.fixture
@@ -189,18 +168,6 @@ class TestList(SequenceTest):
         element = element_cls.using(strict=True)((1, 2, 3))
         assert element.raw_value == (1, 2, 3)
         assert element.value is NotUnserializable
-
-    def test_traverse_nested(self):
-        element_cls = List.of(List.of(Integer))
-        element = element_cls([[1, 2], [3, 4]])
-        assert [
-            (prefix, child.value) for prefix, child in element.traverse()
-        ] == [
-            ([0, 0], 1),
-            ([0, 1], 2),
-            ([1, 0], 3),
-            ([1, 1], 4)
-        ]
 
     def test_setitem(self):
         element = List.of(Integer)()

@@ -105,17 +105,6 @@ class Mapping(Container):
         self.is_valid &= super(Mapping, self).validate(context)
         return self.is_valid
 
-    def traverse(self, prefix=None):
-        for i, (key, value) in enumerate(iteritems(self)):
-            if prefix is None:
-                current_prefix = [i]
-            else:
-                current_prefix = prefix + [i]
-            for child in key.traverse(current_prefix + [0]):
-                yield child
-            for child in value.traverse(current_prefix + [1]):
-                yield child
-
     def __getattribute__(self, name):
         mutating_methods = set([
             'setdefault', 'popitem', 'pop', 'update', 'clear'
@@ -315,9 +304,3 @@ class Form(with_metaclass(FormMeta, collections.Mapping, Container)):
             self.is_valid &= element.validate(context=context)
         self.is_valid &= super(Form, self).validate(context=context)
         return self.is_valid
-
-    def traverse(self, prefix=None):
-        if prefix is None:
-            prefix = []
-        for key, element in iteritems(self):
-            yield prefix + [key], element

@@ -119,22 +119,6 @@ class MappingTest(ElementTest):
         assert element.is_valid
         assert validators == ["key", "value"]
 
-    def test_traverse(self, element_cls):
-        element = element_cls({u"foo": 1})
-        assert [
-            (prefix, child.value) for prefix, child in element.traverse()
-        ] == [
-            ([0, 0], u"foo"),
-            ([0, 1], 1)
-        ]
-        assert [
-            (prefix, child.value)
-            for prefix, child in element.traverse(prefix=["foo"])
-        ] == [
-            (["foo", 0, 0], u"foo"),
-            (["foo", 0, 1], 1)
-        ]
-
     def test_validate_value_empty(self, element_cls):
         element = element_cls({})
         assert element.is_valid is None
@@ -387,18 +371,6 @@ class TestForm(object):
         assert foo.validate()
         assert foo.is_valid
         assert validators == ["spam"]
-
-    def test_traverse(self):
-        class Foo(Form):
-            spam = Unicode
-            eggs = Unicode
-        foo = Foo({"spam": u"one", "eggs": u"two"})
-        assert [
-            (prefix, child.value) for prefix, child in foo.traverse()
-        ] == [(["spam"], u"one"), (["eggs"], u"two")]
-        assert [
-            (prefix, child.value) for prefix, child in foo.traverse(prefix=["foo"])
-        ] == [(["foo", "spam"], u"one"), (["foo", "eggs"], u"two")]
 
     def test_of(self):
         form = Form.of({"spam": Unicode})({"spam": "foo"})

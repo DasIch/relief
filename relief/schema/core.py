@@ -154,16 +154,6 @@ class Element(object):
             self.is_valid = self.value not in [Unspecified, NotUnserializable]
         return self.is_valid
 
-    def traverse(self, prefix=None):
-        """
-        Returns an iterator that yields ``(prefix, element)`` for each element
-        contained in the element or for the element itself. `prefix` will be
-        either the given `prefix` or ``prefix + [something]`` where `something`
-        depends on the kind of element being traversed but is most likely an
-        index or a key.
-        """
-        yield prefix, self
-
 
 class Container(Element):
     member_schema = None
