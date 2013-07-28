@@ -25,9 +25,9 @@ test: delete-bytecode
 
 coverage:
 	py.test --cov relief
+	coverage html
 
 view-coverage: coverage
-	coverage html
 	open htmlcov/index.html
 
 style:
