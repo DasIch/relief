@@ -30,6 +30,7 @@ setup(
     version=get_version(),
     author="Daniel Neuhäuser",
     author_email="ich@danielneuhaeuser.de",
+    url="https://github.com/DasIch/relief",
     license="BSD",
     description="datastructure validation",
     packages=['relief', 'relief.schema', 'relief.utils'],
