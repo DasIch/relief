@@ -4,9 +4,8 @@ import sys
 from setuptools import setup
 
 
-PACKAGE_PATH = os.path.join(
-    os.path.abspath(os.path.dirname(__file__)), "relief"
-)
+PROJECT_PATH = os.path.abspath(os.path.dirname(__file__))
+PACKAGE_PATH = os.path.join(PROJECT_PATH, "relief")
 
 
 if sys.version_info[:2] < (2, 7):
@@ -33,6 +32,7 @@ setup(
     url="https://github.com/DasIch/relief",
     license="BSD",
     description="datastructure validation",
+    long_description=open(os.path.join(PROJECT_PATH, "README.rst")).read(),
     include_package_data=True,
     packages=['relief', 'relief.schema', 'relief.utils'],
     install_requires=install_requires,
