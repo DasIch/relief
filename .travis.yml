@@ -15,5 +15,5 @@ install:
   - make dev
 
 script:
-  - py.test -vv relief
+  - py.test
   - sphinx-build -aEWb doctest docs docs/_build
