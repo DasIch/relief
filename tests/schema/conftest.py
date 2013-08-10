@@ -61,5 +61,7 @@ class ElementTest(object):
         assert element.is_valid is None
 
     def test_with_properties(self, element_cls):
-        e = element_cls.with_properties(foo=1)
-        assert e.properties == {'foo': 1}
+        a = element_cls.with_properties(foo=1)
+        assert a.properties == {'foo': 1}
+        b = a.with_properties(bar=2)
+        assert b.properties == {'foo': 1, 'bar': 2}
