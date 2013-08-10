@@ -33,6 +33,7 @@ setup(
     url="https://github.com/DasIch/relief",
     license="BSD",
     description="datastructure validation",
+    include_package_data=True,
     packages=['relief', 'relief.schema', 'relief.utils'],
     install_requires=install_requires,
     classifiers=[
