@@ -108,6 +108,8 @@ a new schema with :meth:`~relief.Element.using`.
    >>> element.validate()
    False
 
+You can find a couple of commonly used validators in :mod:`relief.validation`.
+
 
 Containers
 ----------
