@@ -13,7 +13,11 @@ env:
 
 install:
   - make dev
+  - pip install coveralls
 
 script:
-  - py.test
+  - py.test --cov=relief/ --cov=tests/
   - sphinx-build -aEWb doctest docs docs/_build
+
+after_success:
+  - coveralls
