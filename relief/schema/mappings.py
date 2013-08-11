@@ -136,10 +136,10 @@ class Dict(Mapping, dict):
        >>> element = UnicodeIntegerDict()
        >>> element.set({u"foo": 1})
 
-    :class:`Dict` is a subclass of :class:`dict`, so all operations you can
-    perform on a :class:`dict` you can also perform on a :class:`Dict`. Any
-    operation that return objects stored within the dictionary will return the
-    element not the value.
+    :class:`Dict` is a subclass of :class:`dict`, so all non-mutating
+    operations you can perform on a :class:`dict` you can also perform on a
+    :class:`Dict`. Any operation that return objects stored within the
+    dictionary will return the element not the value.
     """
     native_type = dict
 
@@ -227,12 +227,6 @@ class Form(with_metaclass(FormMeta, collections.Mapping, Container)):
        >>> element.set([("foo", 1), ("bar", u"spam")])
        >>> element.value
        OrderedDict([('foo', 1), ('bar', u'spam')])
-
-    Unlike :class:`Dict` :class:`Form` is a subclass of
-    :class:`collections.Mapping` but not of :class:`dict`. While you can set
-    values using ``form[key] = value`` syntax, any operation that would remove
-    keys defined by the schema or add keys not defined in the schema will fail
-    with exceptions (excluding the use of :meth:`set`).
 
     It is quite common to have very specific validation requirements for values
     in forms. In order to conveniently handle this case, you can add methods
