@@ -233,6 +233,21 @@ class Form(with_metaclass(FormMeta, collections.Mapping, Container)):
     values using ``form[key] = value`` syntax, any operation that would remove
     keys defined by the schema or add keys not defined in the schema will fail
     with exceptions (excluding the use of :meth:`set`).
+
+    It is quite common to have very specific validation requirements for values
+    in forms. In order to conveniently handle this case, you can add methods
+    with names like `validate_{key}` where `key` is the key under which the
+    value is reachable::
+
+        class Something(Form):
+            foo = Integer
+
+            def validate_foo(self, element, context):
+                # Perform validation on `foo` value.
+                ...
+
+    .. versionadded:: 0.2
+       Added the ability to validate values with `validate_{key}` methods.
     """
     native_type = dict
 
@@ -257,10 +272,19 @@ class Form(with_metaclass(FormMeta, collections.Mapping, Container)):
 
     def __new__(cls, *args, **kwargs):
         self = super(Form, cls).__new__(cls)
+        for attribute_name in dir(self):
+            if not attribute_name.startswith('validate_'):
+                continue
+            attribute = getattr(self, attribute_name)
+            member_name = attribute_name[len('validate_'):]
+            member = self.member_schema[member_name]
+            self.member_schema[member_name] = member.validated_by([attribute])
+
         self._elements = _compat.OrderedDict()
         for name, element_cls in iteritems(self.member_schema):
             self._elements[name] = element = element_cls()
             setattr(self, name, element)
+
         return self
 
     def __getitem__(self, key):

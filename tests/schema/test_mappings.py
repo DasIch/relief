@@ -372,6 +372,21 @@ class TestForm(object):
         assert foo.is_valid
         assert validators == ["spam"]
 
+    def test_validate_methods(self):
+        class Foo(Form):
+            spam = Unicode
+
+            def validate_spam(self, element, context):
+                return element.value == u'spam'
+
+        foo = Foo({'spam': u'spam'})
+        assert foo.validate()
+        assert foo.is_valid
+
+        foo = Foo({'spam': u'eggs'})
+        assert not foo.validate()
+        assert not foo.is_valid
+
     def test_of(self):
         form = Form.of({"spam": Unicode})({"spam": "foo"})
         assert form.value == {"spam": u"foo"}
