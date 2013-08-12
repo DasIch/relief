@@ -4,8 +4,6 @@ Changelog
 Version 0.2.0
 -------------
 
-*In development*
-
 - Values in :class:`~relief.Form` structures can now be validated by
   subclassing :class:`~relief.Form` and adding `validate_{key}` methods.
 
