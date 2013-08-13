@@ -47,7 +47,7 @@ class Mapping(Container):
         if new_value is not Unspecified:
             raise AttributeError("can't set attribute")
 
-    def _set_value(self, value):
+    def _set_value_from_raw(self, value):
         super(Mapping, self).clear()
         if value is not Unspecified:
             if hasattr(self, "_raw_value"):
@@ -291,7 +291,7 @@ class Form(with_metaclass(FormMeta, collections.Mapping, Container)):
         if new_value is not Unspecified:
             raise AttributeError("can't set attribute")
 
-    def _set_value(self, value):
+    def _set_value_from_raw(self, value):
         if value is Unspecified:
             for element in itervalues(self):
                 element.set_from_raw(value)

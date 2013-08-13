@@ -120,7 +120,7 @@ class Tuple(Sequence, tuple):
         if new_value is not Unspecified:
             raise ValueError("can't set attribute")
 
-    def _set_value(self, value):
+    def _set_value_from_raw(self, value):
         if value is Unspecified:
             for element in self:
                 element.set_from_raw(value)
@@ -190,7 +190,7 @@ class List(Sequence, list):
         if new_value is not Unspecified:
             raise AttributeError("can't set attribute")
 
-    def _set_value(self, value):
+    def _set_value_from_raw(self, value):
         super(List, self).__delitem__(slice(None, None, None)) # del self[:]
         if value is not Unspecified:
             super(List, self).extend(map(self.member_schema, value))

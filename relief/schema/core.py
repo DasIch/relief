@@ -173,11 +173,11 @@ class Container(Element):
         self._state = None
         if raw_value is Unspecified:
             self._state = Unspecified
-            self._set_value(raw_value)
+            self._set_value_from_raw(raw_value)
         else:
             unserialized = self.unserialize(raw_value)
             if unserialized is NotUnserializable:
                 self._state = NotUnserializable
             else:
-                self._set_value(unserialized)
+                self._set_value_from_raw(unserialized)
         self.is_valid = None
