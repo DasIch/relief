@@ -94,19 +94,6 @@ class Tuple(Sequence, tuple):
         cls.member_schema = schemas
         return cls
 
-    @classmethod
-    def unserialize(cls, raw_value):
-        raw_value = super(Tuple, cls).unserialize(raw_value)
-        if raw_value is NotUnserializable:
-            return raw_value
-        try:
-            raw_value = tuple(raw_value)
-        except TypeError:
-            return NotUnserializable
-        if len(raw_value) != len(cls.member_schema):
-            return NotUnserializable
-        return raw_value
-
     def __new__(cls, *args, **kwargs):
         if cls.member_schema is None:
             raise TypeError(
@@ -141,6 +128,19 @@ class Tuple(Sequence, tuple):
             for element, raw_value in zip(self, value):
                 element.set(raw_value)
 
+    def unserialize(self, raw_value):
+        raw_value = super(Tuple, self).unserialize(raw_value)
+        if raw_value is NotUnserializable:
+            return raw_value
+        try:
+            raw_value = tuple(raw_value)
+        except TypeError:
+            return NotUnserializable
+        if len(raw_value) != len(self.member_schema):
+            return NotUnserializable
+        return raw_value
+
+
 
 class List(Sequence, list):
     """
@@ -174,16 +174,6 @@ class List(Sequence, list):
     """
     native_type = list
 
-    @classmethod
-    def unserialize(cls, raw_value):
-        raw_value = super(List, cls).unserialize(raw_value)
-        if raw_value is NotUnserializable:
-            return raw_value
-        try:
-            return list(raw_value)
-        except TypeError:
-            return NotUnserializable
-
     @property
     def value(self):
         if self._state is not None:
@@ -204,6 +194,15 @@ class List(Sequence, list):
         super(List, self).__delitem__(slice(None, None, None)) # del self[:]
         if value is not Unspecified:
             super(List, self).extend(map(self.member_schema, value))
+
+    def unserialize(self, raw_value):
+        raw_value = super(List, self).unserialize(raw_value)
+        if raw_value is NotUnserializable:
+            return raw_value
+        try:
+            return list(raw_value)
+        except TypeError:
+            return NotUnserializable
 
     def __setitem__(self, index):
         raise TypeError(

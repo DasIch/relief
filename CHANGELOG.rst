@@ -6,6 +6,8 @@ Version 1.0.0
 
 *In development*
 
+- Turn :meth:`Element.unserialize` into an instance method.
+
 Version 0.2.0
 -------------
 

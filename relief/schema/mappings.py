@@ -31,16 +31,6 @@ class Mapping(Container):
         cls.member_schema = (key_schema, value_schema)
         return cls
 
-    @classmethod
-    def unserialize(cls, raw_value):
-        raw_value = super(Mapping, cls).unserialize(raw_value)
-        if raw_value is NotUnserializable:
-            return raw_value
-        try:
-            return cls.native_type(raw_value)
-        except (TypeError, ValueError):
-            return NotUnserializable
-
     @property
     def value(self):
         if self._state is not None:
@@ -67,6 +57,15 @@ class Mapping(Container):
                     self.member_schema[0](key),
                     self.member_schema[1](value[key])
                 ))
+
+    def unserialize(self, raw_value):
+        raw_value = super(Mapping, self).unserialize(raw_value)
+        if raw_value is NotUnserializable:
+            return raw_value
+        try:
+            return self.native_type(raw_value)
+        except (TypeError, ValueError):
+            return NotUnserializable
 
     def __getitem__(self, key):
         return super(Mapping, self).__getitem__(key).value
@@ -250,20 +249,6 @@ class Form(with_metaclass(FormMeta, collections.Mapping, Container)):
         cls.member_schema = _compat.OrderedDict(schema)
         return cls
 
-    @classmethod
-    def unserialize(cls, raw_value):
-        raw_value = super(Form, cls).unserialize(raw_value)
-        if raw_value is NotUnserializable:
-            return raw_value
-        if not isinstance(raw_value, dict):
-            try:
-                raw_value = dict(raw_value)
-            except (TypeError, ValueError):
-                return NotUnserializable
-        if set(raw_value) != set(cls.member_schema):
-            return NotUnserializable
-        return raw_value
-
     def __new__(cls, *args, **kwargs):
         self = super(Form, cls).__new__(cls)
         for attribute_name in dir(self):
@@ -313,6 +298,19 @@ class Form(with_metaclass(FormMeta, collections.Mapping, Container)):
         else:
             for key, value in iteritems(value):
                 self[key].set(value)
+
+    def unserialize(self, raw_value):
+        raw_value = super(Form, self).unserialize(raw_value)
+        if raw_value is NotUnserializable:
+            return raw_value
+        if not isinstance(raw_value, dict):
+            try:
+                raw_value = dict(raw_value)
+            except (TypeError, ValueError):
+                return NotUnserializable
+        if set(raw_value) != set(self.member_schema):
+            return NotUnserializable
+        return raw_value
 
     def validate(self, context=None):
         if context is None:

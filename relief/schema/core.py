@@ -71,16 +71,6 @@ class Element(object):
             properties=InheritingDictDescriptor('properties', **properties)
         )
 
-    @classmethod
-    def unserialize(cls, raw_value):
-        """
-        Tries to unserialize the given `raw_value` and returns an object whose
-        type matches the type described by the element.
-        """
-        if cls.strict and not isinstance(raw_value, cls.native_type):
-            return NotUnserializable
-        return raw_value
-
     def __init__(self, value=Unspecified):
         #: Defines the validation state of the element, may be one of the
         #: following values:
@@ -129,6 +119,15 @@ class Element(object):
         else:
             self.value = self.unserialize(raw_value)
         self.is_valid = None
+
+    def unserialize(self, raw_value):
+        """
+        Tries to unserialize the given `raw_value` and returns an object whose
+        type matches the type described by the element.
+        """
+        if self.strict and not isinstance(raw_value, self.native_type):
+            return NotUnserializable
+        return raw_value
 
     def validate(self, context=None):
         """

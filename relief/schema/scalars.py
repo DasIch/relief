@@ -23,9 +23,8 @@ class Boolean(Element):
     """
     native_type = bool
 
-    @classmethod
-    def unserialize(cls, raw_value):
-        raw_value = super(Boolean, cls).unserialize(raw_value)
+    def unserialize(self, raw_value):
+        raw_value = super(Boolean, self).unserialize(raw_value)
         if isinstance(raw_value, bool):
             return raw_value
         elif raw_value in [u"True", b"True"]:
@@ -36,17 +35,16 @@ class Boolean(Element):
 
 
 class Number(Element):
-    @classmethod
-    def unserialize(cls, raw_value):
-        raw_value = super(Number, cls).unserialize(raw_value)
+    def unserialize(self, raw_value):
+        raw_value = super(Number, self).unserialize(raw_value)
         if raw_value is NotUnserializable:
             return raw_value
-        if isinstance(raw_value, cls.native_type):
+        if isinstance(raw_value, self.native_type):
             return raw_value
         elif isinstance(raw_value, bytes):
             raw_value = raw_value.decode(sys.getdefaultencoding())
         try:
-            return cls.native_type(raw_value)
+            return self.native_type(raw_value)
         except (ValueError, TypeError):
             return NotUnserializable
 
@@ -113,18 +111,17 @@ class Unicode(Element):
     #: depending on whether you use 2.x or 3.x.
     encoding = None
 
-    @classmethod
-    def unserialize(cls, raw_value):
-        raw_value = super(Unicode, cls).unserialize(raw_value)
+    def unserialize(self, raw_value):
+        raw_value = super(Unicode, self).unserialize(raw_value)
         if raw_value is NotUnserializable:
             return raw_value
         if isinstance(raw_value, text_type):
             return raw_value
         elif isinstance(raw_value, bytes):
-            if cls.encoding is None:
+            if self.encoding is None:
                 encoding = sys.getdefaultencoding()
             else:
-                encoding  = cls.encoding
+                encoding  = self.encoding
             try:
                 return raw_value.decode(encoding)
             except UnicodeDecodeError:
@@ -149,9 +146,8 @@ class Bytes(Element):
     """
     native_type = bytes
 
-    @classmethod
-    def unserialize(cls, raw_value):
-        raw_value = super(Bytes, cls).unserialize(raw_value)
+    def unserialize(self, raw_value):
+        raw_value = super(Bytes, self).unserialize(raw_value)
         if raw_value is NotUnserializable:
             return raw_value
         if isinstance(raw_value, bytes):
