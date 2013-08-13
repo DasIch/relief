@@ -133,7 +133,7 @@ class Dict(Mapping, dict):
     .. doctest::
 
        >>> element = UnicodeIntegerDict()
-       >>> element.set({u"foo": 1})
+       >>> element.set_from_raw({u"foo": 1})
 
     :class:`Dict` is a subclass of :class:`dict`, so all non-mutating
     operations you can perform on a :class:`dict` you can also perform on a
@@ -223,7 +223,7 @@ class Form(with_metaclass(FormMeta, collections.Mapping, Container)):
     be used as a raw value::
 
        >>> element = Something()
-       >>> element.set([("foo", 1), ("bar", u"spam")])
+       >>> element.set_from_raw([("foo", 1), ("bar", u"spam")])
        >>> element.value
        OrderedDict([('foo', 1), ('bar', u'spam')])
 

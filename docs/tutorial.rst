@@ -16,7 +16,7 @@ validate objects, to find out whether they match your schema.
 
    >>> from relief import Integer
    >>> element = Integer()
-   >>> element.set(1)
+   >>> element.set_from_raw(1)
    >>> element.validate()
    True
 
@@ -31,7 +31,7 @@ to the integer ``1``. Relief will do that for your by default:
 
 .. doctest::
 
-   >>> element.set('1')
+   >>> element.set_from_raw('1')
    >>> element.validate()
    True
 
@@ -57,7 +57,7 @@ solved by the :meth:`~relief.Element.using` class method.
 
    >>> StrictInteger = Integer.using(strict=True)
    >>> element = StrictInteger()
-   >>> element.set("1")
+   >>> element.set_from_raw("1")
    >>> element.validate()
    False
 
@@ -101,10 +101,10 @@ a new schema with :meth:`~relief.Element.using`.
 .. doctest::
 
    >>> element = Integer.validated_by([is_greater_than_3])()
-   >>> element.set(4)
+   >>> element.set_from_raw(4)
    >>> element.validate()
    True
-   >>> element.set(3)
+   >>> element.set_from_raw(3)
    >>> element.validate()
    False
 
@@ -124,7 +124,7 @@ schemas, that contain other schemas.
    >>> from relief import List
    >>> ListOfIntegers = List.of(Integer)
    >>> element = ListOfIntegers()
-   >>> element.set([1, 2, 3])
+   >>> element.set_from_raw([1, 2, 3])
    >>> element.validate()
    True
 

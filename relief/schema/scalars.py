@@ -60,10 +60,10 @@ class Integer(Number):
 
        >>> from relief import Integer
        >>> element = Integer()
-       >>> element.set(u"1")
+       >>> element.set_from_raw(u"1")
        >>> element.value
        1
-       >>> element.set(b"1")
+       >>> element.set_from_raw(b"1")
        >>> element.value
        1
     """
@@ -97,10 +97,10 @@ class Unicode(Element):
 
         >>> from relief import Unicode
         >>> element = Unicode()
-        >>> element.set(u"Hello, World!")
+        >>> element.set_from_raw(u"Hello, World!")
         >>> element.value
         u"Hello, World!"
-        >>> element.set(b"Hello, World!")
+        >>> element.set_from_raw(b"Hello, World!")
         >>> element.value
         u"Hello, World!"
     """
@@ -137,10 +137,10 @@ class Bytes(Element):
 
         >>> from relief import Bytes
         >>> element = Bytes()
-        >>> element.set(b"Hello, World!")
+        >>> element.set_from_raw(b"Hello, World!")
         >>> element.value
         b"Hello, World!"
-        >>> element.set(u"Hello, World!")
+        >>> element.set_from_raw(u"Hello, World!")
         >>> element.value
         b"Hello, World!"
     """

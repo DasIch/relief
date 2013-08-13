@@ -58,7 +58,7 @@ class Tuple(Sequence, tuple):
     The derived schema can then be used like any other schema::
 
         >>> element = UsableTuple()
-        >>> element.set((1, u"Hello, World!"))
+        >>> element.set_from_raw((1, u"Hello, World!"))
         >>> element.value
         (1, u"Hello, World!")
 
@@ -67,7 +67,7 @@ class Tuple(Sequence, tuple):
     contained within the tuple fail to unserialize a raw value yielded by an
     iterable, :attr:`value` will be :data:`~relief.NotUnserializable`::
 
-        >>> element.set((u"foobar", u"Hello, World!"))
+        >>> element.set_from_raw((u"foobar", u"Hello, World!"))
         >>> element.value
         NotUnserializable
 
@@ -162,13 +162,13 @@ class List(Sequence, list):
     .. doctest::
 
        >>> element = IntegerList()
-       >>> element.set([])
+       >>> element.set_from_raw([])
        >>> element.value
        []
-       >>> element.set([1, 2, 3])
+       >>> element.set_from_raw([1, 2, 3])
        >>> element.value
        [1, 2, 3]
-       >>> element.set(["foobar", 2, 3])
+       >>> element.set_from_raw(["foobar", 2, 3])
        >>> element.value
        NotUnserializable
     """
