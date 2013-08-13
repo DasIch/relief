@@ -22,10 +22,10 @@ class ScalarTest(ElementTest):
     def test_value(self, element_cls, possible_value):
         element = element_cls()
         assert element.value is Unspecified
-        element.set(possible_value)
+        element.set_from_raw(possible_value)
         assert element.value == possible_value
         assert element.raw_value == possible_value
-        element.set(Unspecified)
+        element.set_from_raw(Unspecified)
         assert element.value is Unspecified
         assert element.raw_value is Unspecified
 
@@ -57,9 +57,9 @@ class ScalarTest(ElementTest):
         assert element.raw_value == possible_raw_value
         assert element.value is NotUnserializable
 
-    def test_set_native(self, element_cls, possible_value):
+    def test_set_from_raw_native(self, element_cls, possible_value):
         element = element_cls()
-        element.set(possible_value)
+        element.set_from_raw(possible_value)
         assert element.raw_value == possible_value
         assert element.value == possible_value
 

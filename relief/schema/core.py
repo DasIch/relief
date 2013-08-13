@@ -106,9 +106,9 @@ class Element(object):
                 value = self.default
             elif self.default_factory is not Unspecified:
                 value = self.default_factory()
-        self.set(value)
+        self.set_from_raw(value)
 
-    def set(self, raw_value):
+    def set_from_raw(self, raw_value):
         """
         Sets :attr:`raw_value` with the given `raw_value` and sets
         :attr:`value` to the unserialized form of `raw_value` if applicable.
@@ -168,7 +168,7 @@ class Container(Element):
         if self.member_schema is None:
             raise TypeError("member_schema is unknown")
 
-    def set(self, raw_value):
+    def set_from_raw(self, raw_value):
         self.raw_value = raw_value
         self._state = None
         if raw_value is Unspecified:

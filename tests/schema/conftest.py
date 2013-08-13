@@ -52,12 +52,12 @@ class ElementTest(object):
         assert element.raw_value == possible_value
         assert element.value == possible_value
 
-    def test_set_invalidates_is_valid(self, element_cls, possible_value):
+    def test_set_from_raw_invalidates_is_valid(self, element_cls, possible_value):
         element = element_cls()
-        element.set(possible_value)
+        element.set_from_raw(possible_value)
         assert element.validate()
         assert element.is_valid
-        element.set(possible_value)
+        element.set_from_raw(possible_value)
         assert element.is_valid is None
 
     def test_with_properties(self, element_cls):

@@ -29,10 +29,10 @@ class TestElement(ElementTest):
         with py.test.raises(TypeError):
             Element.using(does_not_exist=True)
 
-    def test_set(self):
+    def test_set_from_raw(self):
         element = Element()
         assert element.value is Unspecified
         assert element.raw_value is Unspecified
-        element.set(1)
+        element.set_from_raw(1)
         assert element.value == 1
         assert element.raw_value == 1

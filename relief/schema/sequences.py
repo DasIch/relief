@@ -123,10 +123,10 @@ class Tuple(Sequence, tuple):
     def _set_value(self, value):
         if value is Unspecified:
             for element in self:
-                element.set(value)
+                element.set_from_raw(value)
         else:
             for element, raw_value in zip(self, value):
-                element.set(raw_value)
+                element.set_from_raw(raw_value)
 
     def unserialize(self, raw_value):
         raw_value = super(Tuple, self).unserialize(raw_value)

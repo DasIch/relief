@@ -294,10 +294,10 @@ class Form(with_metaclass(FormMeta, collections.Mapping, Container)):
     def _set_value(self, value):
         if value is Unspecified:
             for element in itervalues(self):
-                element.set(value)
+                element.set_from_raw(value)
         else:
             for key, value in iteritems(value):
-                self[key].set(value)
+                self[key].set_from_raw(value)
 
     def unserialize(self, raw_value):
         raw_value = super(Form, self).unserialize(raw_value)
