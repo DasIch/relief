@@ -113,7 +113,7 @@ class Element(object):
         Sets :attr:`value` to the given `value` and sets attr:`raw_value` to
         the serialized form of `value`.
 
-        .. versionadded:: 0.2.0
+        .. versionadded:: 1.0.0
         """
         self.value = value
         if value is Unspecified:
@@ -128,7 +128,7 @@ class Element(object):
         Sets :attr:`raw_value` with the given `raw_value` and sets
         :attr:`value` to the unserialized form of `raw_value` if applicable.
 
-        .. versionadded:: 0.2.0
+        .. versionadded:: 1.0.0
            Was previously named :meth:`set`.
         """
         self.raw_value = raw_value
@@ -143,7 +143,7 @@ class Element(object):
         Tries to serialize the given `value` and returns an object than can be
         unserialized with :meth:`unserialize`.
 
-        .. versionadded:: 0.2.0
+        .. versionadded:: 1.0.0
         """
         return value
 
