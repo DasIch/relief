@@ -108,6 +108,21 @@ class Element(object):
                 value = self.default_factory()
         self.set_from_raw(value)
 
+    def set_from_native(self, value):
+        """
+        Sets :attr:`value` to the given `value` and sets attr:`raw_value` to
+        the serialized form of `value`.
+
+        .. versionadded:: 0.2.0
+        """
+        self.value = value
+        if value is Unspecified:
+            self.raw_value
+        else:
+            self.value = value
+            self.raw_value = self.serialize(value)
+        self.is_valid = None
+
     def set_from_raw(self, raw_value):
         """
         Sets :attr:`raw_value` with the given `raw_value` and sets
@@ -119,6 +134,15 @@ class Element(object):
         else:
             self.value = self.unserialize(raw_value)
         self.is_valid = None
+
+    def serialize(self, value):
+        """
+        Tries to serialize the given `value` and returns an object than can be
+        unserialized with :meth:`unserialize`.
+
+        .. versionadded:: 0.2.0
+        """
+        return value
 
     def unserialize(self, raw_value):
         """
@@ -167,6 +191,14 @@ class Container(Element):
         super(Container, self).__init__(value)
         if self.member_schema is None:
             raise TypeError("member_schema is unknown")
+
+    def set_from_native(self, value):
+        self._state = None
+        if value is Unspecified:
+            self._state = Unspecified
+        self._set_value_from_native(value)
+        self.raw_value = self.serialize(self.value)
+        self.is_valid = None
 
     def set_from_raw(self, raw_value):
         self.raw_value = raw_value

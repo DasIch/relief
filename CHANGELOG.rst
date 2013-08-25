@@ -8,6 +8,7 @@ Version 1.0.0
 
 - Turn :meth:`Element.unserialize` into an instance method.
 - Rename :meth:`Element.set` to `Element.set_from_raw`.
+- Add :meth:`Element.serialize` and :meth:`Element.set_from_native`.
 
 Version 0.2.0
 -------------
