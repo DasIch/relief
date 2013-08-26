@@ -12,6 +12,8 @@ Version 1.0.0
 - Make :data:`Unspecified` and :data:`NotUnserializable` false-ish.
 - Make ``unicode(Unspecified)`` and ``unicode(NotUnserializable)`` return an
   empty string.
+- Make ``bytes(Unspecified)`` and ``bytes(NotUnserializable)`` return an
+  empty string.
 
 Version 0.2.0
 -------------

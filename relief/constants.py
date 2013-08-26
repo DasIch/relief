@@ -22,6 +22,9 @@ class Unspecified(object):
     def __str__(self):
         return u''
 
+    def __bytes__(self):
+        return b''
+
     def __repr__(self):
         return self.__class__.__name__
 
@@ -37,6 +40,9 @@ class NotUnserializable(object):
 
     def __str__(self):
         return u''
+
+    def __bytes__(self):
+        return b''
 
     def __repr__(self):
         return self.__class__.__name__

@@ -17,6 +17,9 @@ class TestUnspecified(object):
     def test_str(self):
         assert text_type(Unspecified) == u''
 
+    def test_bytes(self):
+        assert bytes(Unspecified) == b''
+
     def test_repr(self):
         assert repr(Unspecified) == 'Unspecified'
 
@@ -27,6 +30,9 @@ class TestNotUnserializable(object):
 
     def test_str(self):
         assert text_type(NotUnserializable) == u''
+
+    def test_bytes(self):
+        assert bytes(NotUnserializable) == b''
 
     def test_repr(self):
         assert repr(NotUnserializable) == 'NotUnserializable'
