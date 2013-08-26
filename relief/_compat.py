@@ -99,7 +99,14 @@ def with_metaclass(meta, *bases):
     return meta("NewBase", bases, {})
 
 
+def implements_bool(cls):
+    if PY2:
+        cls.__nonzero__ = cls.__bool__
+    return cls
+
+
 __all__ = [
     'Counter', 'OrderedDict', 'itervalues', 'iteritems', 'text_type',
-    'Prepareable', 'add_native_itermethods', 'with_metaclass'
+    'Prepareable', 'add_native_itermethods', 'with_metaclass',
+    'implements_bool'
 ]
