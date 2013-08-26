@@ -106,7 +106,9 @@ class Element(object):
                 value = self.default
             elif self.default_factory is not Unspecified:
                 value = self.default_factory()
-        self.set_from_raw(value)
+            self.set_from_native(value)
+        else:
+            self.set_from_raw(value)
 
     def set_from_native(self, value):
         """
