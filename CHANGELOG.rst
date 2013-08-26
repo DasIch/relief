@@ -10,6 +10,8 @@ Version 1.0.0
 - Rename :meth:`Element.set` to `Element.set_from_raw`.
 - Add :meth:`Element.serialize` and :meth:`Element.set_from_native`.
 - Make :data:`Unspecified` and :data:`NotUnserializable` false-ish.
+- Make ``unicode(Unspecified)`` and ``unicode(NotUnserializable)`` return an
+  empty string.
 
 Version 0.2.0
 -------------

@@ -19,6 +19,9 @@ class Unspecified(object):
     def __bool__(self):
         return False
 
+    def __str__(self):
+        return u''
+
     def __repr__(self):
         return self.__class__.__name__
 
@@ -31,6 +34,9 @@ class NotUnserializable(object):
     """
     def __bool__(self):
         return False
+
+    def __str__(self):
+        return u''
 
     def __repr__(self):
         return self.__class__.__name__
