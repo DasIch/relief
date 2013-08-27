@@ -6,6 +6,9 @@ Version 2.0.0
 
 *In development*
 
+- Pass :data:`Unspecified` to :meth:`Element.serialize` and
+  :meth:`Element.serialize`, when setting values.
+
 Version 1.0.0
 -------------
 

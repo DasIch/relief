@@ -118,11 +118,7 @@ class Element(object):
         .. versionadded:: 1.0.0
         """
         self.value = value
-        if value is Unspecified:
-            self.raw_value
-        else:
-            self.value = value
-            self.raw_value = self.serialize(value)
+        self.raw_value = self.serialize(value)
         self.is_valid = None
 
     def set_from_raw(self, raw_value):
@@ -134,10 +130,7 @@ class Element(object):
            Was previously named :meth:`set`.
         """
         self.raw_value = raw_value
-        if raw_value is Unspecified:
-            self.value = raw_value
-        else:
-            self.value = self.unserialize(raw_value)
+        self.value = self.unserialize(raw_value)
         self.is_valid = None
 
     def serialize(self, value):

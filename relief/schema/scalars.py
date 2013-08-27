@@ -8,7 +8,7 @@
 """
 import sys
 
-from relief import NotUnserializable, Element
+from relief import Unspecified, NotUnserializable, Element
 from relief._compat import text_type
 
 
@@ -25,7 +25,7 @@ class Boolean(Element):
 
     def unserialize(self, raw_value):
         raw_value = super(Boolean, self).unserialize(raw_value)
-        if isinstance(raw_value, bool):
+        if isinstance(raw_value, bool) or raw_value is Unspecified:
             return raw_value
         elif raw_value in [u"True", b"True"]:
             return True
@@ -37,7 +37,7 @@ class Boolean(Element):
 class Number(Element):
     def unserialize(self, raw_value):
         raw_value = super(Number, self).unserialize(raw_value)
-        if raw_value is NotUnserializable:
+        if raw_value is Unspecified or raw_value is NotUnserializable:
             return raw_value
         if isinstance(raw_value, self.native_type):
             return raw_value
@@ -113,7 +113,7 @@ class Unicode(Element):
 
     def unserialize(self, raw_value):
         raw_value = super(Unicode, self).unserialize(raw_value)
-        if raw_value is NotUnserializable:
+        if raw_value is Unspecified or raw_value is NotUnserializable:
             return raw_value
         if isinstance(raw_value, text_type):
             return raw_value
@@ -148,7 +148,7 @@ class Bytes(Element):
 
     def unserialize(self, raw_value):
         raw_value = super(Bytes, self).unserialize(raw_value)
-        if raw_value is NotUnserializable:
+        if raw_value is Unspecified or raw_value is NotUnserializable:
             return raw_value
         if isinstance(raw_value, bytes):
             return raw_value
