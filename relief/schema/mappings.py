@@ -277,6 +277,16 @@ class Form(with_metaclass(FormMeta, collections.Mapping, Container)):
 
         return self
 
+    def _set_default_value(self):
+        if self.default is not Unspecified:
+            self.set_from_native(self.default)
+        elif self.default_factory is not Unspecified:
+            self.set_from_native(self.default_factory())
+        else:
+            self._state = None
+            for key, value in iteritems(self):
+                value._set_default_value()
+
     def __getitem__(self, key):
         return self._elements[key]
 

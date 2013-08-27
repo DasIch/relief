@@ -400,3 +400,11 @@ class TestForm(object):
         form = Foo({"spam": u"foo", "eggs": u"bar"})
         assert form.spam.value == u"foo"
         assert form.eggs.value == u"bar"
+
+    def test_respects_member_defaults(self):
+        class Foo(Form):
+            spam = Unicode.using(default=u'eggs')
+
+        form = Foo()
+        assert form.value == {'spam': u'eggs'}
+        assert form.spam.value == u'eggs'

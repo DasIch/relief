@@ -8,6 +8,7 @@ Version 2.0.0
 
 - Pass :data:`Unspecified` to :meth:`Element.serialize` and
   :meth:`Element.serialize`, when setting values.
+- Don't ignore defaults of members in :class:`Form`.
 
 Version 1.0.0
 -------------

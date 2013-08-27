@@ -102,13 +102,18 @@ class Element(object):
         self.raw_value = Unspecified
 
         if value is Unspecified:
-            if self.default is not Unspecified:
-                value = self.default
-            elif self.default_factory is not Unspecified:
-                value = self.default_factory()
-            self.set_from_native(value)
+            self._set_default_value()
         else:
             self.set_from_raw(value)
+
+    def _set_default_value(self):
+        if self.default is not Unspecified:
+            value = self.default
+        elif self.default_factory is not Unspecified:
+            value = self.default_factory()
+        else:
+            value = Unspecified
+        self.set_from_native(value)
 
     def set_from_native(self, value):
         """
