@@ -15,7 +15,7 @@ from relief.schema.mappings import Dict, OrderedDict, Form
 from relief.schema.sequences import Tuple, List
 
 
-__version__ = "2.0.0-dev"
+__version__ = "2.0.0"
 __version_info__ = (2, 0, 0)
 
 
