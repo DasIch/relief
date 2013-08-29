@@ -319,12 +319,20 @@ class ProbablyAnEmailAddress(Validator):
 
     If you want to truly validate e-mail addresses you need to send an e-mail
     and wait for a response.
+
+    .. versionadded:: 2.1.0
+       Added the `allow_unspecified` parameter.
     """
     #: Message that is stored in the :attr:`Element.errors`.
     message = u"Must be a valid e-mail address."
 
+    def __init__(self, allow_unspecified=False):
+        self.allow_unspecified = allow_unspecified
+
     def validate(self, element, context):
-        if not self.is_unusable(element) and u"@" in element.value:
+        if self.allow_unspecified and element.value is Unspecified:
+            return True
+        elif not self.is_unusable(element) and u"@" in element.value:
             host = element.value.split(u"@", 1)[1]
             if u"." in host:
                 parts = host.split(u".")
