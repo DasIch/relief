@@ -21,8 +21,6 @@ class BaseElement(object):
        Was previously part of :class:`Element`, is now split up into a separate
        class.
     """
-    validators = []
-
     #: The default value that should be used for this element. This value will
     #: be used if not initial value is given.
     default = Unspecified
@@ -49,14 +47,6 @@ class BaseElement(object):
         return cls
 
     @classmethod
-    def validated_by(cls, validators):
-        """
-        Returns a clone of the class that is *also* validated by the given
-        iterable of `validators`.
-        """
-        return cls.using(validators=cls.validators + validators)
-
-    @classmethod
     def with_properties(cls, **properties):
         """
         Returns a clone of the class whose :attr:`properties` contain the given
@@ -79,10 +69,6 @@ class BaseElement(object):
         #: `False`
         #:     The element is not valid.
         self.is_valid = None
-
-        #: A list that is supposed to be populated with unicode strings by a
-        #: validator as an explanation of why the element is invalid.
-        self.errors = []
 
         #: The unserialized concrete value this element represents. May also be
         #: :data:`~relief.Unspecified` if the value has not been set or
@@ -154,23 +140,12 @@ class BaseElement(object):
         Returns `True` when the element is valid and `False` otherwise, and
         sets :attr:`is_valid` to the returned value.
 
-        If any validators have been defined for this element, each validator is
-        called with the element and the given `context` (which defaults to
-        `None`). If any validator returns `False`, the element will be
-        considered invalid.
-
-        If no validators have been defined, the element will be considered
-        invalid if :attr:`value` is :data:`~relief.Unspecified` or
-        :data:`~relief.NotUnserializable`.
+        The element will be considered invalid if :attr:`value` is
+        :data:`~relief.Unspecified` or :data:`~relief.NotUnserializable`.
         """
         if context is None:
             context = {}
-        if self.validators:
-            self.is_valid = all(
-                validator(self, context) for validator in self.validators
-            )
-        else:
-            self.is_valid = self.value not in [Unspecified, NotUnserializable]
+        self.is_valid = self.value not in [Unspecified, NotUnserializable]
         return self.is_valid
 
 
@@ -204,7 +179,58 @@ class NativeMixin(object):
         return raw_value
 
 
-class Element(NativeMixin, BaseElement):
+class ValidatedByMixin(object):
+    """
+    Implements the :meth:`validated_by` method for :class:`BaseElement`
+    subclasses, that allow adding validators.
+
+    .. versionadded:: 2.1.0
+       Was previously part of :class:`Element` and is now split up into this
+       separate class.
+    """
+    validators = []
+
+    @classmethod
+    def validated_by(cls, validators):
+        """
+        Returns a clone of the class that is *also* validated by the given
+        iterable of `validators`.
+        """
+        return cls.using(validators=cls.validators + validators)
+
+    def __init__(self, *args, **kwargs):
+        super(ValidatedByMixin, self).__init__(*args, **kwargs)
+        #: A list that is supposed to be populated with unicode strings by a
+        #: validator as an explanation of why the element is invalid.
+        self.errors = []
+
+    def validate(self, context=None):
+        """
+        Returns `True` when the element is valid and `False` otherwise, and
+        sets :attr:`is_valid` to the returned value.
+
+        If any validators have been defined for this element, each validator is
+        called with the element and the given `context` (which defaults to
+        `None`). If any validator returns `False`, the element will be
+        considered invalid.
+
+        If no validators have been defined, the element will be considered
+        invalid if :attr:`value` is :data:`~relief.Unspecified` or
+        :data:`~relief.NotUnserializable`.
+        """
+        if context is None:
+            context = {}
+        if self.validators:
+            self.is_valid = all(
+                validator(self, context) for validator in self.validators
+            )
+        else:
+            super(ValidatedByMixin, self).validate(context)
+        return self.is_valid
+
+
+
+class Element(ValidatedByMixin, NativeMixin, BaseElement):
     """
     Base class for elements. An element allows you to describe Python objects.
 

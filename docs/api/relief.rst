@@ -11,6 +11,9 @@ relief
 .. autoclass:: relief.schema.core.NativeMixin
    :members:
 
+.. autoclass:: relief.schema.core.ValidatedByMixin
+   :members:
+
 .. autoclass:: Element
    :members:
 
