@@ -6,6 +6,8 @@ Version 2.1.0
 
 *In development*
 
+- Split :class:`Element` up into :class:`BaseElement` and :class:`NativeMixin`.
+
 Version 2.0.0
 -------------
 

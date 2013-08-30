@@ -11,21 +11,16 @@ from relief.utils import class_cloner, InheritingDictDescriptor
 from relief._compat import iteritems
 
 
-class Element(object):
+class BaseElement(object):
     """
-    Base class for elements. An element allows you to describe Python objects.
+    A base class for elements, that allows describing python objects or
+    meta-elements - elements that affect other elements but do not themselves
+    describe data.
 
-    This class specifically defines a basic interface for elements and provides
-    some generally useful methods.
+    .. versionadded:: 2.1.0
+       Was previously part of :class:`Element`, is now split up into a separate
+       class.
     """
-    #: When `True` :meth:`unserialize` should not attempt to unserialize raw
-    #: values that are instances of :attr:`native_type` and return
-    #: :data:`~relief.NotUnserializable` instead.
-    strict = False
-
-    #: The "native" type represented by this element.
-    native_type = None.__class__
-
     validators = []
 
     #: The default value that should be used for this element. This value will
@@ -151,10 +146,8 @@ class Element(object):
         """
         Tries to unserialize the given `raw_value` and returns an object whose
         type matches the type described by the element.
-        """
-        if self.strict and not isinstance(raw_value, self.native_type):
-            return NotUnserializable
         return raw_value
+        """
 
     def validate(self, context=None):
         """
@@ -179,6 +172,45 @@ class Element(object):
         else:
             self.is_valid = self.value not in [Unspecified, NotUnserializable]
         return self.is_valid
+
+
+class NativeMixin(object):
+    """
+    Implements behaviour useful for :class:`BaseElement` subclasses that
+    describe some "native" type.
+
+    .. versionadded:: 2.1.0
+       Was previously part of :class:`Element` and is now split up into this
+       separate class.
+    """
+    #: When `True` :meth:`unserialize` should not attempt to unserialize raw
+    #: values that are instances of :attr:`native_type` and return
+    #: :data:`~relief.NotUnserializable` instead.
+    strict = False
+
+    #: The "native" type represented by this element.
+    native_type = None.__class__
+
+    def unserialize(self, raw_value):
+        """
+        Tries to unserialize the given `raw_value` and returns an object whose
+        type matches the type described by the element.
+
+        If :attr:`strict` is `True`, :data:`NotUnserializable` will be returned
+        if `raw_value` is not an instance of :attr:`native_type`.
+        """
+        if self.strict and not isinstance(raw_value, self.native_type):
+            return NotUnserializable
+        return raw_value
+
+
+class Element(NativeMixin, BaseElement):
+    """
+    Base class for elements. An element allows you to describe Python objects.
+
+    This class specifically defines a basic interface for elements and provides
+    some generally useful methods.
+    """
 
 
 class Container(Element):

@@ -5,6 +5,12 @@ relief
 .. module:: relief
 
 
+.. autoclass:: relief.schema.core.BaseElement
+   :members:
+
+.. autoclass:: relief.schema.core.NativeMixin
+   :members:
+
 .. autoclass:: Element
    :members:
 
