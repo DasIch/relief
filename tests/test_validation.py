@@ -247,10 +247,6 @@ def test_probably_an_email_address():
     assert email.validate()
     assert not email.errors
 
-    email = Unicode.validated_by([ProbablyAnEmailAddress(allow_unspecified=True)])()
-    assert email.validate()
-    assert not email.errors
-
     invalid_addresses = [
         u"foobar",  # @ missing
         u"foo@bar", # tld missing

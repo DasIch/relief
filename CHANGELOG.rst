@@ -6,9 +6,6 @@ Version 2.1.0
 
 *In development*
 
-- Add `allow_unspecified` argument to
-  :class:`relief.validation.ProbablyAnEmailAddress`.
-
 Version 2.0.0
 -------------
 
