@@ -6,7 +6,8 @@ Version 2.1.0
 
 *In development*
 
-- Split :class:`Element` up into :class:`BaseElement` and :class:`NativeMixin`.
+- Split :class:`Element` up into :class:`BaseElement`, :class:`NativeMixin`,
+  :class:`ValidatedByMixin` and :class:`DefaultMixin`.
 
 Version 2.0.0
 -------------

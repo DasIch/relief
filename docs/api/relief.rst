@@ -14,6 +14,9 @@ relief
 .. autoclass:: relief.schema.core.ValidatedByMixin
    :members:
 
+.. autoclass:: relief.schema.core.DefaultMixin
+   :members:
+
 .. autoclass:: Element
    :members:
 

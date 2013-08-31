@@ -21,15 +21,6 @@ class BaseElement(object):
        Was previously part of :class:`Element`, is now split up into a separate
        class.
     """
-    #: The default value that should be used for this element. This value will
-    #: be used if not initial value is given.
-    default = Unspecified
-
-    #: A callable that is called with the element, which should be used to
-    #: produce the default value that is used if no initial value is given.
-    #: :attr:`default` takes precedence.
-    default_factory = Unspecified
-
     #: A dictionary whose contents are inherited by subclasses, which should be
     #: used for application-specific information associated with an element.
     properties = InheritingDictDescriptor('properties')
@@ -82,19 +73,7 @@ class BaseElement(object):
         #: :data:`~relief.NotUnserializable`.
         self.raw_value = Unspecified
 
-        if value is Unspecified:
-            self._set_default_value()
-        else:
-            self.set_from_raw(value)
-
-    def _set_default_value(self):
-        if self.default is not Unspecified:
-            value = self.default
-        elif self.default_factory is not Unspecified:
-            value = self.default_factory()
-        else:
-            value = Unspecified
-        self.set_from_native(value)
+        self.set_from_raw(value)
 
     def set_from_native(self, value):
         """
@@ -229,8 +208,39 @@ class ValidatedByMixin(object):
         return self.is_valid
 
 
+class DefaultMixin(object):
+    """
+    Implements default values for :class:`BaseElement` subclasses.
 
-class Element(ValidatedByMixin, NativeMixin, BaseElement):
+    .. versionadded:: 2.1.0
+       Was previously part of :class:`Element` and is now split up into this
+       separate class.
+    """
+    #: The default value that should be used for this element. This value will
+    #: be used if not initial value is given.
+    default = Unspecified
+
+    #: A callable that is called with the element, which should be used to
+    #: produce the default value that is used if no initial value is given.
+    #: :attr:`default` takes precedence.
+    default_factory = Unspecified
+
+    def __init__(self, value=Unspecified):
+        super(DefaultMixin, self).__init__(value=value)
+        if value is Unspecified:
+            self._set_default_value()
+
+    def _set_default_value(self):
+        if self.default is not Unspecified:
+            value = self.default
+        elif self.default_factory is not Unspecified:
+            value = self.default_factory()
+        else:
+            value = Unspecified
+        self.set_from_native(value)
+
+
+class Element(DefaultMixin, ValidatedByMixin, NativeMixin, BaseElement):
     """
     Base class for elements. An element allows you to describe Python objects.
 
