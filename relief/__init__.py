@@ -8,6 +8,7 @@
 """
 from relief.constants import Unspecified, NotUnserializable
 from relief.schema.core import Element
+from relief.schema.meta import Maybe
 from relief.schema.scalars import (
     Boolean, Integer, Float, Complex, Unicode, Bytes
 )
@@ -29,5 +30,7 @@ __all__ = [
     # mappings
     "Dict", "OrderedDict", "Form",
     # sequences
-    "Tuple", "List"
+    "Tuple", "List",
+    # meta
+    "Maybe"
 ]

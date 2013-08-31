@@ -9,7 +9,41 @@
 from relief.validation import Present, Converted
 
 
-class ElementTest(object):
+class BaseElementTest(object):
+    def test_set_from_native_invalidates_is_valid(self, element_cls, possible_value):
+        element = element_cls()
+        element.set_from_native(possible_value)
+        assert element.validate()
+        assert element.is_valid
+        element.set_from_native(possible_value)
+        assert element.is_valid is None
+
+    def test_set_from_raw_invalidates_is_valid(self, element_cls, possible_value):
+        element = element_cls()
+        element.set_from_raw(possible_value)
+        assert element.validate()
+        assert element.is_valid
+        element.set_from_raw(possible_value)
+        assert element.is_valid is None
+
+    def test_with_properties(self, element_cls):
+        a = element_cls.with_properties(foo=1)
+        assert a.properties == {'foo': 1}
+        b = a.with_properties(bar=2)
+        assert b.properties == {'foo': 1, 'bar': 2}
+
+    def test_set_from_native_custom_serialize(self, element_cls, possible_value):
+        class FooElement(element_cls):
+            def serialize(self, value):
+                return 'foo'
+
+        element = FooElement()
+        element.set_from_native(possible_value)
+        assert element.value == possible_value
+        assert element.raw_value == 'foo'
+
+
+class ValidatedByTestMixin(object):
     def test_validate_with_context(self, element_cls, possible_value):
         def is_empty_dict(element, context):
             assert context == {}
@@ -42,6 +76,8 @@ class ElementTest(object):
         assert not element.validate()
         assert element.errors == [u"May not be blank."]
 
+
+class DefaultTestMixin(object):
     def test_default(self, element_cls, possible_value):
         element = element_cls.using(default=possible_value)()
         assert element.raw_value == possible_value
@@ -52,34 +88,6 @@ class ElementTest(object):
         assert element.raw_value == possible_value
         assert element.value == possible_value
 
-    def test_set_from_native_invalidates_is_valid(self, element_cls, possible_value):
-        element = element_cls()
-        element.set_from_native(possible_value)
-        assert element.validate()
-        assert element.is_valid
-        element.set_from_native(possible_value)
-        assert element.is_valid is None
 
-    def test_set_from_raw_invalidates_is_valid(self, element_cls, possible_value):
-        element = element_cls()
-        element.set_from_raw(possible_value)
-        assert element.validate()
-        assert element.is_valid
-        element.set_from_raw(possible_value)
-        assert element.is_valid is None
-
-    def test_with_properties(self, element_cls):
-        a = element_cls.with_properties(foo=1)
-        assert a.properties == {'foo': 1}
-        b = a.with_properties(bar=2)
-        assert b.properties == {'foo': 1, 'bar': 2}
-
-    def test_set_from_native_custom_serialize(self, element_cls, possible_value):
-        class FooElement(element_cls):
-            def serialize(self, value):
-                return 'foo'
-
-        element = FooElement()
-        element.set_from_native(possible_value)
-        assert element.value == possible_value
-        assert element.raw_value == 'foo'
+class ElementTest(DefaultTestMixin, ValidatedByTestMixin, BaseElementTest):
+    pass
