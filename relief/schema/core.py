@@ -113,6 +113,7 @@ class BaseElement(object):
         type matches the type described by the element.
         return raw_value
         """
+        return raw_value
 
     def validate(self, context=None):
         """
