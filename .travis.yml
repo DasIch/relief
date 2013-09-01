@@ -13,7 +13,7 @@ env:
 
 install:
   - make dev
-  - pip install coveralls
+  - pip install --use-mirrors coveralls
 
 script:
   - py.test --cov=relief/ --cov=tests/
