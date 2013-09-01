@@ -6,11 +6,12 @@
     :copyright: 2013 by Daniel Neuhäuser
     :license: BSD, see LICENSE.rst for details
 """
+import pytest
+
 from relief import Maybe, Unicode, Unspecified
 
 from tests.schema.conftest import BaseElementTest
 
-import pytest
 
 
 class TestMaybe(BaseElementTest):

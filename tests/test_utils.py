@@ -9,9 +9,10 @@
 import sys
 import inspect
 
+import pytest
+
 from relief.utils import class_cloner, InheritingDictDescriptor
 
-import pytest
 
 
 class TestClassCloner(object):

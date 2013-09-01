@@ -6,11 +6,11 @@
     :copyright: 2013 by Daniel Neuhäuser
     :license: BSD, see LICENSE.rst for details
 """
+import pytest
+
 from relief import Unspecified, Element
 
 from tests.schema.conftest import ElementTest
-
-import pytest
 
 
 class TestElement(ElementTest):

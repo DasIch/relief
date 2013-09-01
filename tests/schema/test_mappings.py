@@ -6,6 +6,8 @@
     :copyright: 2013 by Daniel Neuhäuser
     :license: BSD, see LICENSE.rst for details
 """
+import pytest
+
 from relief import (
     Dict, OrderedDict, Unicode, Integer, NotUnserializable, Form, Element,
     _compat
@@ -13,8 +15,6 @@ from relief import (
 
 from tests.conftest import python2_only
 from tests.schema.conftest import ElementTest
-
-import pytest
 
 
 class MappingTest(ElementTest):

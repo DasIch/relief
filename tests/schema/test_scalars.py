@@ -8,6 +8,8 @@
 """
 import sys
 
+import pytest
+
 from relief import (
     Boolean, Integer, Float, Complex, Unicode, Bytes, Unspecified, 
     NotUnserializable
@@ -15,7 +17,6 @@ from relief import (
 
 from tests.schema.conftest import ElementTest
 
-import pytest
 
 
 class ScalarTest(ElementTest):

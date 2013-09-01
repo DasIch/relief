@@ -6,12 +6,12 @@
     :copyright: 2013 by Daniel Neuhäuser
     :license: BSD, see LICENSE.rst for details
 """
+import pytest
+
 from relief import Tuple, List, Integer, Unspecified, NotUnserializable
 from relief._compat import iteritems, Counter
 
 from tests.schema.conftest import ElementTest
-
-import pytest
 
 
 class SequenceTest(ElementTest):
