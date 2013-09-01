@@ -11,7 +11,7 @@ from relief._compat import iteritems, Counter
 
 from tests.schema.conftest import ElementTest
 
-import py.test
+import pytest
 
 
 class SequenceTest(ElementTest):
@@ -21,7 +21,7 @@ class SequenceTest(ElementTest):
             assert isinstance(element[i], Integer)
             assert element[i].value == value
 
-        with py.test.raises(IndexError):
+        with pytest.raises(IndexError):
             element[i + 1]
 
         assert len(element[:]) == len(possible_value)
@@ -44,7 +44,7 @@ class SequenceTest(ElementTest):
             assert element.index(value) == i
             seen.add(value)
 
-        with py.test.raises(ValueError):
+        with pytest.raises(ValueError):
             element.index(3)
 
     def test_count(self, element_cls, possible_value):
@@ -94,19 +94,19 @@ class SequenceTest(ElementTest):
 
 
 class TestTuple(SequenceTest):
-    @py.test.fixture
+    @pytest.fixture
     def element_cls(self):
         return Tuple.of(Integer, Integer, Integer)
 
-    @py.test.fixture
+    @pytest.fixture
     def possible_value(self):
         return (1, 1, 2)
 
-    @py.test.fixture
+    @pytest.fixture
     def possible_raw_value(self):
         return ("1", 1, "2")
 
-    @py.test.fixture(params=[(1, "1", "foobar"), 1])
+    @pytest.fixture(params=[(1, "1", "foobar"), 1])
     def invalid_raw_values(self, request):
         return request.param
 
@@ -136,19 +136,19 @@ class TestTuple(SequenceTest):
 
 
 class TestList(SequenceTest):
-    @py.test.fixture
+    @pytest.fixture
     def element_cls(self):
         return List.of(Integer)
 
-    @py.test.fixture
+    @pytest.fixture
     def possible_value(self):
         return [1, 1, 2]
 
-    @py.test.fixture
+    @pytest.fixture
     def possible_raw_value(self):
         return ["1", 1, "2"]
 
-    @py.test.fixture(params=[("1", 1, "foobar"), 1])
+    @pytest.fixture(params=[("1", 1, "foobar"), 1])
     def invalid_raw_values(self, request):
         if isinstance(request.param, tuple):
             return list(request.param)
@@ -171,29 +171,29 @@ class TestList(SequenceTest):
 
     def test_setitem(self):
         element = List.of(Integer)()
-        with py.test.raises(TypeError):
+        with pytest.raises(TypeError):
             element[0] = 1
 
     def test_setslice(self):
         element = List.of(Integer)()
-        with py.test.raises(TypeError):
+        with pytest.raises(TypeError):
             element[0:1] = [1, 2]
 
     def test_delitem(self):
         element = List.of(Integer)([1])
-        with py.test.raises(TypeError):
+        with pytest.raises(TypeError):
             del element[0]
 
     def test_delslice(self):
         element = List.of(Integer)([1, 2])
-        with py.test.raises(TypeError):
+        with pytest.raises(TypeError):
             del element[0:1]
 
-    @py.test.mark.parametrize('method', [
+    @pytest.mark.parametrize('method', [
         'append', 'extend', 'insert', 'pop', 'remove'
     ])
     def test_does_not_have_mutating_list_methods(self, method):
         element = List.of(Integer)()
         assert not hasattr(element, method)
-        with py.test.raises(AttributeError):
+        with pytest.raises(AttributeError):
             getattr(element, method)

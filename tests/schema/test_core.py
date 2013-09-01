@@ -10,23 +10,23 @@ from relief import Unspecified, Element
 
 from tests.schema.conftest import ElementTest
 
-import py.test
+import pytest
 
 
 class TestElement(ElementTest):
-    @py.test.fixture
+    @pytest.fixture
     def element_cls(self):
         return Element
 
-    @py.test.fixture
+    @pytest.fixture
     def possible_value(self):
         return object()
 
     def test_using(self):
-        with py.test.raises(AttributeError):
+        with pytest.raises(AttributeError):
             Element.does_not_exist
 
-        with py.test.raises(TypeError):
+        with pytest.raises(TypeError):
             Element.using(does_not_exist=True)
 
     def test_set_from_raw(self):

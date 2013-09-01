@@ -14,7 +14,7 @@ from relief import (
 from tests.conftest import python2_only
 from tests.schema.conftest import ElementTest
 
-import py.test
+import pytest
 
 
 class MappingTest(ElementTest):
@@ -145,25 +145,25 @@ class MappingTest(ElementTest):
 class MutableMappingTest(MappingTest):
     def test_setitem(self, element_cls):
         element = element_cls()
-        with py.test.raises(TypeError):
+        with pytest.raises(TypeError):
             element[u"foo"] = 1
 
-    @py.test.mark.parametrize('method', [
+    @pytest.mark.parametrize('method', [
         'setdefault', 'popitem', 'pop', 'update', 'clear'
     ])
     def test_mutating_method_missing(self, element_cls, method):
         element = element_cls()
         assert not hasattr(element, method)
-        with py.test.raises(AttributeError):
+        with pytest.raises(AttributeError):
             getattr(element, method)
 
 
 class TestDict(MutableMappingTest):
-    @py.test.fixture
+    @pytest.fixture
     def element_cls(self):
         return Dict.of(Unicode, Integer)
 
-    @py.test.fixture
+    @pytest.fixture
     def possible_value(self):
         return {u"foo": 1}
 
@@ -192,11 +192,11 @@ class TestDict(MutableMappingTest):
 
 
 class TestOrderedDict(MutableMappingTest):
-    @py.test.fixture
+    @pytest.fixture
     def element_cls(self):
         return OrderedDict.of(Unicode, Integer)
 
-    @py.test.fixture
+    @pytest.fixture
     def possible_value(self):
         return _compat.OrderedDict([(u"foo", 1)])
 

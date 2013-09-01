@@ -10,15 +10,15 @@ from relief import Maybe, Unicode, Unspecified
 
 from tests.schema.conftest import BaseElementTest
 
-import py.test
+import pytest
 
 
 class TestMaybe(BaseElementTest):
-    @py.test.fixture
+    @pytest.fixture
     def element_cls(self):
         return Maybe.of(Unicode)
 
-    @py.test.fixture
+    @pytest.fixture
     def possible_value(self):
         return u'foo'
 

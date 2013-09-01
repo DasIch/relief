@@ -15,7 +15,7 @@ from relief import (
 
 from tests.schema.conftest import ElementTest
 
-import py.test
+import pytest
 
 
 class ScalarTest(ElementTest):
@@ -65,23 +65,23 @@ class ScalarTest(ElementTest):
 
 
 class TestBoolean(ScalarTest):
-    @py.test.fixture
+    @pytest.fixture
     def element_cls(self):
         return Boolean
 
-    @py.test.fixture(params=[True, False])
+    @pytest.fixture(params=[True, False])
     def possible_value(self, request):
         return request.param
 
-    @py.test.fixture(params=[u"True", u"False"])
+    @pytest.fixture(params=[u"True", u"False"])
     def possible_raw_value(self, request):
         return request.param
 
-    @py.test.fixture
+    @pytest.fixture
     def invalid_value(self):
         return "asd"
 
-    @py.test.mark.parametrize(("raw_value", "value"), [
+    @pytest.mark.parametrize(("raw_value", "value"), [
         (u"True", True),
         (u"False", False),
         (u"foo", NotUnserializable)
@@ -91,7 +91,7 @@ class TestBoolean(ScalarTest):
         assert boolean.raw_value is raw_value
         assert boolean.value is value
 
-    @py.test.mark.parametrize(("raw_value", "value"), [
+    @pytest.mark.parametrize(("raw_value", "value"), [
         (b"True", True),
         (b"False", False),
         (b"foo", NotUnserializable)
@@ -103,23 +103,23 @@ class TestBoolean(ScalarTest):
 
 
 class TestInteger(ScalarTest):
-    @py.test.fixture
+    @pytest.fixture
     def element_cls(self):
         return Integer
 
-    @py.test.fixture
+    @pytest.fixture
     def possible_value(self):
         return 1
 
-    @py.test.fixture
+    @pytest.fixture
     def possible_raw_value(self):
         return "1"
 
-    @py.test.fixture
+    @pytest.fixture
     def invalid_value(self):
         return "asd"
 
-    @py.test.mark.parametrize(("raw_value", "value"), [
+    @pytest.mark.parametrize(("raw_value", "value"), [
         (u"1", 1),
         (u"foo", NotUnserializable)
     ])
@@ -128,7 +128,7 @@ class TestInteger(ScalarTest):
         assert integer.raw_value == raw_value
         assert integer.value == value
 
-    @py.test.mark.parametrize(("raw_value", "value"), [
+    @pytest.mark.parametrize(("raw_value", "value"), [
         (b"1", 1),
         (b"foo", NotUnserializable)
     ])
@@ -139,23 +139,23 @@ class TestInteger(ScalarTest):
 
 
 class TestFloat(ScalarTest):
-    @py.test.fixture
+    @pytest.fixture
     def element_cls(self):
         return Float
 
-    @py.test.fixture
+    @pytest.fixture
     def possible_value(self):
         return 1.0
 
-    @py.test.fixture
+    @pytest.fixture
     def possible_raw_value(self):
         return "1.0"
 
-    @py.test.fixture
+    @pytest.fixture
     def invalid_value(self):
         return "asd"
 
-    @py.test.mark.parametrize(("raw_value", "value"), [
+    @pytest.mark.parametrize(("raw_value", "value"), [
         (u"1.0", 1.0),
         (u"foo", NotUnserializable)
     ])
@@ -164,7 +164,7 @@ class TestFloat(ScalarTest):
         assert float.raw_value == raw_value
         assert float.value == value
 
-    @py.test.mark.parametrize(("raw_value", "value"), [
+    @pytest.mark.parametrize(("raw_value", "value"), [
         (b"1.0", 1.0),
         (b"foo", NotUnserializable)
     ])
@@ -175,23 +175,23 @@ class TestFloat(ScalarTest):
 
 
 class TestComplex(ScalarTest):
-    @py.test.fixture
+    @pytest.fixture
     def element_cls(self):
         return Complex
 
-    @py.test.fixture
+    @pytest.fixture
     def possible_value(self):
         return 1j
 
-    @py.test.fixture
+    @pytest.fixture
     def possible_raw_value(self):
         return "1j"
 
-    @py.test.fixture
+    @pytest.fixture
     def invalid_value(self):
         return "asd"
 
-    @py.test.mark.parametrize(("raw_value", "value"), [
+    @pytest.mark.parametrize(("raw_value", "value"), [
         (u"1j", 1j),
         (u"foo", NotUnserializable)
     ])
@@ -200,7 +200,7 @@ class TestComplex(ScalarTest):
         assert complex.raw_value == raw_value
         assert complex.value == value
 
-    @py.test.mark.parametrize(("raw_value", "value"), [
+    @pytest.mark.parametrize(("raw_value", "value"), [
         (b"1j", 1j),
         (b"foo", NotUnserializable)
     ])
@@ -211,24 +211,24 @@ class TestComplex(ScalarTest):
 
 
 class TestUnicode(ScalarTest):
-    @py.test.fixture
+    @pytest.fixture
     def element_cls(self):
         return Unicode
 
-    @py.test.fixture
+    @pytest.fixture
     def possible_value(self):
         return u"foobar"
 
-    @py.test.fixture
+    @pytest.fixture
     def possible_raw_value(self):
         return b"foobar"
 
-    @py.test.fixture
+    @pytest.fixture
     def invalid_value(self):
         # is missing \xc4 after the first character
         return b"\xc3\xc3\xb6\xc3\xbc"
 
-    @py.test.mark.parametrize(("raw_value", "value"), [
+    @pytest.mark.parametrize(("raw_value", "value"), [
         (b"hello", u"hello"),
         # is missing \xc4 after the first character
         (b"\xc3\xc3\xb6\xc3\xbc", NotUnserializable)
@@ -245,25 +245,25 @@ class TestUnicode(ScalarTest):
 
 
 class TestBytes(ScalarTest):
-    @py.test.fixture
+    @pytest.fixture
     def element_cls(self):
         return Bytes
 
-    @py.test.fixture
+    @pytest.fixture
     def possible_value(self):
         return b"foobar"
 
-    @py.test.fixture
+    @pytest.fixture
     def possible_raw_value(self):
         return u"foobar"
 
-    @py.test.fixture
+    @pytest.fixture
     def invalid_value(self):
         if sys.version_info >= (3, 0):
-            py.test.skip('sys.version_info >= (3, 0)')
+            pytest.skip('sys.version_info >= (3, 0)')
         return u"äöü"
 
-    @py.test.mark.parametrize(("raw_value", "value"), [
+    @pytest.mark.parametrize(("raw_value", "value"), [
         (u"hello", b"hello"),
         (u"hëllö", u"hëllö".encode("utf-8") if sys.version_info >= (3, 0) else NotUnserializable)
     ])
