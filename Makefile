@@ -13,7 +13,7 @@ help:
 
 dev:
 	pip install --use-mirrors -r requirements.txt
-	pip install -e .
+	pip install --use-mirrors -e .
 
 clean:
 	git ls-files --other --directory | xargs rm -rf
