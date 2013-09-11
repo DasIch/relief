@@ -6,6 +6,8 @@
     :copyright: 2013 by Daniel Neuhäuser
     :license: BSD, see LICENSE.rst for details
 """
+import re
+
 from relief import Unspecified, NotUnserializable
 
 
@@ -334,4 +336,29 @@ class ProbablyAnEmailAddress(Validator):
             element,
             self.message
         )
+        return False
+
+
+class MatchesRegex(Validator):
+    """
+    Validator that fails with :attr:`message` if the value does not match the
+    given `regex`.
+
+    .. versionadded:: 2.1.0
+    """
+    #: The default regular expression used.
+    regex = u''
+
+    #: Message that is stored in :attr:`Element.errors`.
+    message = u'Must be a valid value.'
+
+    def __init__(self, regex=None):
+        if regex is None:
+            regex = self.regex
+        self.regex = re.compile(regex)
+
+    def validate(self, element, context):
+        if not self.is_unusable(element) and self.regex.match(element.value):
+            return True
+        self.note_error(element, self.message)
         return False

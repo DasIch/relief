@@ -45,3 +45,6 @@ relief.validation
 
 .. autoclass:: ProbablyAnEmailAddress
    :members:
+
+.. autoclass:: MatchesRegex
+   :members:

@@ -9,7 +9,7 @@
 from relief.validation import (
     Present, Converted, IsTrue, IsFalse, ShorterThan, LongerThan,
     LengthWithinRange, ContainedIn, LessThan, GreaterThan, WithinRange,
-    ItemsEqual, AttributesEqual, ProbablyAnEmailAddress
+    ItemsEqual, AttributesEqual, ProbablyAnEmailAddress, MatchesRegex
 )
 from relief.schema.scalars import Unicode, Integer
 from relief.schema.mappings import Dict, Form
@@ -259,3 +259,18 @@ def test_probably_an_email_address():
     email = Validated()
     assert not email.validate()
     assert email.errors == [u"Must be a valid e-mail address."]
+
+
+def test_matches_regex():
+    Validated = Unicode.validated_by([MatchesRegex(u'^foo$')])
+    element = Validated(u'foo')
+    assert element.validate()
+    assert not element.errors
+
+    element = Validated(u'bar')
+    assert not element.validate()
+    assert element.errors == [u'Must be a valid value.']
+
+    element = Validated()
+    assert not element.validate()
+    assert element.errors == [u'Must be a valid value.']
