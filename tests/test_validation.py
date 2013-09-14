@@ -9,7 +9,7 @@
 from relief.validation import (
     Present, Converted, IsTrue, IsFalse, ShorterThan, LongerThan,
     LengthWithinRange, ContainedIn, LessThan, GreaterThan, WithinRange,
-    ItemsEqual, AttributesEqual, ProbablyAnEmailAddress, MatchesRegex
+    ItemsEqual, AttributesEqual, ProbablyAnEmailAddress, MatchesRegex, IsURL
 )
 from relief.schema.scalars import Unicode, Integer
 from relief.schema.mappings import Dict, Form
@@ -274,3 +274,20 @@ def test_matches_regex():
     element = Validated()
     assert not element.validate()
     assert element.errors == [u'Must be a valid value.']
+
+
+def test_is_url():
+    Validated = Unicode.validated_by([IsURL()])
+    element = Validated(u'http://example.com')
+    assert element.validate()
+    assert not element.errors
+
+    invalid_urls = [u'example.com', u'http://']
+    for invalid_url in invalid_urls:
+        element = Validated(invalid_url)
+        assert not element.validate()
+        assert element.errors == ['Must be a URL.']
+
+    element = Validated()
+    assert not element.validate()
+    assert element.errors == ['Must be a URL.']

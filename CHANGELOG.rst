@@ -10,6 +10,7 @@ Version 2.1.0
   :class:`ValidatedByMixin` and :class:`DefaultMixin`.
 - Add :class:`Maybe`.
 - Add :class:`relief.validation.MatchesRegex`.
+- Add :class:`relief.validation.IsURL`.
 
 Version 2.0.0
 -------------

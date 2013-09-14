@@ -7,6 +7,10 @@
     :license: BSD, see LICENSE.rst for details
 """
 import re
+try:
+    from urllib.parse import urlparse
+except ImportError:
+    from urlparse import urlparse
 
 from relief import Unspecified, NotUnserializable
 
@@ -360,5 +364,24 @@ class MatchesRegex(Validator):
     def validate(self, element, context):
         if not self.is_unusable(element) and self.regex.match(element.value):
             return True
+        self.note_error(element, self.message)
+        return False
+
+
+class IsURL(Validator):
+    """
+    Validator that fails with :attr:`message` if the value is not an absolute
+    URL.
+
+    .. versionadded:: 2.1.0
+    """
+    #: Message that is stored in :attr:`Element.errors`.
+    message = u'Must be a URL.'
+
+    def validate(self, element, context):
+        if not self.is_unusable(element):
+            parsed = urlparse(element.value)
+            if parsed.scheme and parsed.netloc:
+                return True
         self.note_error(element, self.message)
         return False
